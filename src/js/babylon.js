@@ -17,18 +17,21 @@ function initScene() {
   scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
 
   // Crear una cámara
-  const camera = new BABYLON.FreeCamera(
+  const camera = new BABYLON.ArcRotateCamera(
     "camera",
-    new BABYLON.Vector3(0, 0, 0),
+    -Math.PI / 2,
+    Math.PI / 4,
+    7,
+    BABYLON.Vector3.Zero(),
     scene
   );
-  camera.checkCollisions = true;
-  camera.applyGravity = true;
-  camera.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
-
+  camera.minZ = 0.1;
+  camera.maxZ = 100;
   camera.attachControl(canvas, true);
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
+  
+  camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
   const cameraInitialPosition = camera.position.clone();
 
   // Crear una luz
@@ -95,7 +98,7 @@ function initScene() {
       cameraMode = "default";
       // Ajustar las propiedades de la cámara para volver a la posición inicial
       camera.position = cameraInitialPosition;
-      camera.radius = 70;
+      camera.radius = 7;
       camera.alpha = -Math.PI / 2;
       camera.beta = Math.PI / 4;
 
@@ -111,10 +114,10 @@ function initScene() {
   // Iniciar la renderización de la escena
   engine.runRenderLoop(() => {
     // Mover el personaje según las teclas presionadas
-    if (keys.W) character.moveForward(characters, scene);
-    if (keys.A) character.moveLeft(characters, scene);
-    if (keys.S) character.moveBackward(characters, scene);
-    if (keys.D) character.moveRight(characters, scene);
+    if (keys.W) character.move(keys, characters, scene);
+    if (keys.A) character.move(keys, characters, scene);
+    if (keys.S) character.move(keys, characters, scene);
+    if (keys.D) character.move(keys, characters, scene);
 
     if (character) {
       if (keys.W || keys.A || keys.S || keys.D) {
@@ -135,29 +138,7 @@ function initScene() {
     }
 
     if (cameraMode === "followPlayer") {
-      // Ajusta el valor de lerpFactor según la suavidad deseada
-      const lerpFactor = 0.1;
-
-      // Calcula la posición deseada de la cámara
-      const targetPosition = character.mesh.position
-        .clone()
-        .add(new BABYLON.Vector3(0, 10, -10));
-      const targetRotation = character.mesh.rotation.clone(); // o ajusta según sea necesario
-
-      // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
-      camera.position = BABYLON.Vector3.Lerp(
-        camera.position,
-        targetPosition,
-        lerpFactor
-      );
-      camera.rotation = BABYLON.Vector3.Lerp(
-        camera.rotation,
-        targetRotation,
-        lerpFactor
-      );
-
-      // Mira al jugador
-      camera.setTarget(character.mesh.position);
+      character.moveCamera(camera, scene);
     }
 
     scene.render();

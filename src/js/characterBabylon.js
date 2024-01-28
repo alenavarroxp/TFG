@@ -44,9 +44,9 @@ export class Character {
         // Posición y rotación
         this.mesh.position.set(position.x, position.y, position.z);
         this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
-        this.mesh.scaling.set(0.75, 0.75, 0.75);
+        this.mesh.scaling.set(0.05, 0.05, 0.05);
         this.mesh.name = id;
-        this.speed = 0.1;
+        this.speed = 0.025;
 
         // Cambiar el color de las partes del personaje
         const characterMaterial = new BABYLON.StandardMaterial(
@@ -140,22 +140,59 @@ export class Character {
       this.smoothRotate(-Math.PI / 2, scene); // Rotar 90 grados para ir a la derecha
     }
   }
+
+  move(keys, characters, scene) {
+    let computedRotation = this.mesh.rotation.z;
+    let computedMovement = new BABYLON.Vector3();
+
+    if (keys["A"]) {
+      computedRotation -= this.speed;
+    } else if (keys["D"]) {
+      computedRotation += this.speed;
+    }
+
+    this.smoothRotate(computedRotation, scene);
+
+    const fullCircle = 2 * Math.PI;
+    if (computedRotation > fullCircle) {
+      computedRotation = fullCircle - computedRotation;
+    } else if (computedRotation < 0) {
+      computedRotation = fullCircle + computedRotation;
+    }
+
+    const movementSpeedFactor = 0.3; // Reduce este valor para hacer el movimiento más lento
+    const zMovement =
+      this.speed * Math.cos(this.mesh.rotation.z) * movementSpeedFactor;
+    const xMovement =
+      this.speed * Math.sin(this.mesh.rotation.z) * movementSpeedFactor;
+
+    if (keys["W"]) {
+      computedMovement = new BABYLON.Vector3(-xMovement, 0, -zMovement);
+    } else if (keys["S"]) {
+      computedMovement = new BABYLON.Vector3(xMovement, 0, zMovement);
+    }
+
+    this.mesh.position = new BABYLON.Vector3(
+      this.mesh.position.x + computedMovement.x,
+      this.mesh.position.y + computedMovement.y,
+      this.mesh.position.z + computedMovement.z
+    );
+  }
+
   smoothRotate(targetRotation, scene) {
     this.meshes.forEach((mesh) => {
-      const currentRotation = mesh.rotation.z * (180 / Math.PI); // Convertir radianes a grados
-      const targetRotationDegrees = targetRotation * (180 / Math.PI);
-
+      const currentRotation = mesh.rotation.z;
       const shortestDistance = this.shortestAngleDistance(
         currentRotation,
-        targetRotationDegrees
+        targetRotation
       );
       const lerpedRotation = this.lerpAngle(
         currentRotation,
         currentRotation + shortestDistance,
-        0.1
+        1
       );
 
-      mesh.rotation.z = lerpedRotation * (Math.PI / 180); // Convertir grados a radianes
+      mesh.rotation.z = lerpedRotation;
     });
   }
   shortestAngleDistance(a, b) {
@@ -198,5 +235,36 @@ export class Character {
     }
 
     return false; // No hay colisiones
+  }
+
+  moveCamera(camera, scene) {
+    const lerpFactor = 0.5;
+    const distanceFromPlayer = 1.2; // Ajusta esto para cambiar la distancia de la cámara al jugador
+
+    // Calcula la posición deseada de la cámara
+    const cameraOffset = new BABYLON.Vector3(
+      -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
+      0.75,
+      -distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
+    );
+    const targetPosition = this.mesh.position.add(cameraOffset);
+
+    const ray = new BABYLON.Ray(
+      this.mesh.position,
+      this.mesh.position.add(cameraOffset),
+      distanceFromPlayer
+    );
+    const hit = scene.pickWithRay(ray);
+    if (!hit.hit) {
+      // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
+      camera.position = BABYLON.Vector3.Lerp(
+        camera.position,
+        targetPosition,
+        lerpFactor
+      );
+    
+      // Mira al jugador
+      camera.setTarget(this.mesh.position);
+    }
   }
 }

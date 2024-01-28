@@ -11,16 +11,19 @@ export class Escenario {
   }
 
   createMap(number) {
+    console.log("NUMBER", number);
+    let fileName = "escenario" + number + (number == 2 ? ".gltf" : ".glb");
+
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
-      "escenario" + number + ".glb",
+      fileName,
       this.scene,
       (newMeshes, particleSystems, skeletons) => {
         this.meshes = newMeshes;
         this.map = newMeshes[0];
         this.map.position.set(0, 0, 0);
-        this.map.scaling.set(1, 1, 1);
+        this.map.scaling.set(0.1, 0.1, 0.1);
         this.map.name = "escenario" + number;
 
         this.map.checkCollisions = true;
