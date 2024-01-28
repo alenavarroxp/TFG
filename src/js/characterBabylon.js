@@ -249,22 +249,14 @@ export class Character {
     );
     const targetPosition = this.mesh.position.add(cameraOffset);
 
-    const ray = new BABYLON.Ray(
-      this.mesh.position,
-      this.mesh.position.add(cameraOffset),
-      distanceFromPlayer
+    // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
+    camera.position = BABYLON.Vector3.Lerp(
+      camera.position,
+      targetPosition,
+      lerpFactor
     );
-    const hit = scene.pickWithRay(ray);
-    if (!hit.hit) {
-      // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
-      camera.position = BABYLON.Vector3.Lerp(
-        camera.position,
-        targetPosition,
-        lerpFactor
-      );
-    
-      // Mira al jugador
-      camera.setTarget(this.mesh.position);
-    }
+
+    // Mira al jugador
+    camera.setTarget(this.mesh.position);
   }
 }
