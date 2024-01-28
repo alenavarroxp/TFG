@@ -2,6 +2,8 @@ import * as BABYLON from "babylonjs";
 import { Character } from "./characterBabylon.js";
 import { io } from "socket.io-client";
 import { Escenario } from "./escenario.js";
+import * as CANNON from "cannon";
+window.CANNON = CANNON;
 
 const socket = io();
 
@@ -14,7 +16,10 @@ function initScene() {
   // Crear una escena
   const scene = new BABYLON.Scene(engine);
   scene.collisionsEnabled = true;
-  scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
+
+  const gravityVector = new BABYLON.Vector3(0, -9.81, 0);
+  const physicsPlugin = new BABYLON.CannonJSPlugin();
+  scene.enablePhysics(gravityVector, physicsPlugin);
 
   // Crear una cámara
   const camera = new BABYLON.ArcRotateCamera(
@@ -30,7 +35,6 @@ function initScene() {
   camera.attachControl(canvas, true);
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
-  
   camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
   const cameraInitialPosition = camera.position.clone();
 
@@ -46,25 +50,44 @@ function initScene() {
   const escenario = new Escenario();
   escenario.initMap(scene, 1);
 
-  // Crear un plano de 50x50
-  // const ground = BABYLON.MeshBuilder.CreateGround(
-  //   "ground",
-  //   { width: 50, height: 50, subdivisions: 4, updatable: true, depth: 50 },
-  //   scene
-  // );
+  // Assuming you have a Babylon.js scene created (variable: scene)
 
-  // // Crear un material para el suelo y establecer su color
-  // const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-  // groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5); // Color gris
+  // Create a ground mesh
+  var ground = BABYLON.MeshBuilder.CreateBox(
+    "ground",
+    { width: 20, height: 20, depth: 1 },
+    scene
+  );
+    ground.position.y = -0.5;
+  ground.rotate(BABYLON.Axis.X, Math.PI / 2, BABYLON.Space.WORLD);
 
-  // // Asignar el material al suelo
-  // ground.material = groundMaterial;
+  var materialVerde = new BABYLON.StandardMaterial("materialVerde", scene);
+  materialVerde.diffuseColor = new BABYLON.Color3(0, 1, 0);
+  ground.material = materialVerde;
+
+  // Enable collisions for the ground
+  ground.checkCollisions = true;
+
+  // Add a physics impostor to the ground
+  ground.physicsImpostor = new BABYLON.PhysicsImpostor(
+    ground,
+    BABYLON.PhysicsImpostor.BoxImpostor,
+    { mass: 0, restitution: 0.5 },
+    scene
+  );
 
   const characters = [];
   let character;
 
   // Control de teclado
-  const keys = { W: false, A: false, S: false, D: false };
+  const keys = {
+    W: false,
+    A: false,
+    S: false,
+    D: false,
+    SPACE: false,
+    SHIFT: false,
+  };
 
   document.addEventListener("keydown", (event) => {
     handleKeyDown(event);
@@ -120,13 +143,25 @@ function initScene() {
     if (keys.D) character.move(keys, characters, scene);
 
     if (character) {
-      if (keys.W || keys.A || keys.S || keys.D) {
+      if (keys.SHIFT) {
+        character.increaseSpeed();
+        character.playAnimation("CharacterArmature|Run");
+      } else if (keys.W || keys.A || keys.S || keys.D) {
         // Si se presiona alguna tecla de movimiento, reproducir la animación de caminar
         character.playAnimation("CharacterArmature|Walk");
+        character.decreaseSpeed();
       } else {
         // Si no se presiona ninguna tecla, reproducir la animación Idle
         character.playAnimation("CharacterArmature|Idle");
+        character.decreaseSpeed();
       }
+
+      if (keys.SPACE) {
+        character.jump();
+      }
+
+      character.update();
+
       try {
         socket.emit("moveCharacter", {
           id: socket.id,
@@ -169,7 +204,7 @@ function initScene() {
       socket.id,
       new BABYLON.Vector3(
         Math.random() * (10 - -10) + -10,
-        0,
+        10,
         Math.random() * (10 - -10) + -10
       ),
       new BABYLON.Vector3(0, 0, 0),
@@ -185,6 +220,15 @@ function initScene() {
         });
 
         socket.emit("recuperarPersonajes", socket.id);
+
+        character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
+          character.mesh,
+          BABYLON.PhysicsImpostor.BoxImpostor,
+          { mass: 10, restitution: 0 },
+          scene
+        );
+        //Quiero ver la physics impostor
+        character.mesh.showBoundingBox = true;
       }
     );
   });

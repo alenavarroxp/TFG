@@ -8,6 +8,12 @@ export class Character {
     this.animations = {}; // Diccionario para almacenar animaciones
     this.mixer = null;
     this.isMoving = false;
+    this.speed = 0;
+    this.MAX_SPEED = 0.035;
+    this.MIN_SPEED = 0.025;
+    this.SPEED_CHANGE = 0.025;
+    this.isJumping = false;
+    this.jumpSpeed = 0;
 
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
     BABYLON.SceneLoader.ImportMesh(
@@ -46,7 +52,7 @@ export class Character {
         this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
         this.mesh.scaling.set(0.05, 0.05, 0.05);
         this.mesh.name = id;
-        this.speed = 0.025;
+        this.speed = this.SPEED_CHANGE;
 
         // Cambiar el color de las partes del personaje
         const characterMaterial = new BABYLON.StandardMaterial(
@@ -101,54 +107,14 @@ export class Character {
     }
   }
 
-  moveForward(characters, scene) {
-    const newPosition = this.mesh.position.clone();
-    newPosition.z += this.speed;
-
-    if (!this.checkCollisions(newPosition, characters)) {
-      this.mesh.position.z = newPosition.z;
-      this.smoothRotate(Math.PI, scene); // Rotar 180 grados para ir hacia adelante
-    }
-  }
-
-  moveBackward(characters, scene) {
-    const newPosition = this.mesh.position.clone();
-    newPosition.z -= this.speed;
-
-    if (!this.checkCollisions(newPosition, characters)) {
-      this.mesh.position.z = newPosition.z;
-      this.smoothRotate(0, scene); // Rotar 0 grados para ir hacia atrás
-    }
-  }
-
-  moveLeft(characters, scene) {
-    const newPosition = this.mesh.position.clone();
-    newPosition.x -= this.speed;
-
-    if (!this.checkCollisions(newPosition, characters)) {
-      this.mesh.position.x = newPosition.x;
-      this.smoothRotate(Math.PI / 2, scene); // Rotar -90 grados para ir a la izquierda
-    }
-  }
-
-  moveRight(characters, scene) {
-    const newPosition = this.mesh.position.clone();
-    newPosition.x += this.speed;
-
-    if (!this.checkCollisions(newPosition, characters)) {
-      this.mesh.position.x = newPosition.x;
-      this.smoothRotate(-Math.PI / 2, scene); // Rotar 90 grados para ir a la derecha
-    }
-  }
-
   move(keys, characters, scene) {
     let computedRotation = this.mesh.rotation.z;
     let computedMovement = new BABYLON.Vector3();
 
     if (keys["A"]) {
-      computedRotation -= this.speed;
+      computedRotation -= this.SPEED_CHANGE;
     } else if (keys["D"]) {
-      computedRotation += this.speed;
+      computedRotation += this.SPEED_CHANGE;
     }
 
     this.smoothRotate(computedRotation, scene);
@@ -258,5 +224,33 @@ export class Character {
 
     // Mira al jugador
     camera.setTarget(this.mesh.position);
+  }
+
+  increaseSpeed() {
+    if (this.speed < this.MAX_SPEED) this.speed += this.SPEED_CHANGE;
+  }
+
+  decreaseSpeed() {
+    if (this.speed > this.MIN_SPEED) this.speed -= this.SPEED_CHANGE;
+  }
+
+  jump() {
+    if (!this.isJumping) {
+      this.isJumping = true;
+      var jumpForce = new BABYLON.Vector3(0, 100, 0);
+      this.mesh.physicsImpostor.applyImpulse(jumpForce, this.mesh.getAbsolutePosition());
+    }
+  }
+
+  update() {
+    if (this.isJumping) {
+      this.mesh.position.y += this.jumpSpeed;
+      this.jumpSpeed -= 0.005; // Ajusta este valor según sea necesario
+
+      if (this.mesh.position.y <= 0) {
+        this.mesh.position.y = 0;
+        this.isJumping = false;
+      }
+    }
   }
 }

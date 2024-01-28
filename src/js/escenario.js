@@ -29,8 +29,16 @@ export class Escenario {
         this.map.checkCollisions = true;
         this.meshes.forEach((mesh) => {
           mesh.checkCollisions = true;
+          //   mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
+          //     mesh,
+          //     BABYLON.PhysicsImpostor.MeshImpostor,
+          //     { mass: 0, restitution: 0.9 },
+          //     this.scene
+          //   );
         });
         console.log("meshes", this.meshes);
+
+        
       }
     );
   }
