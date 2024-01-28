@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon app.js",
-    "dev": "vite",
+    "dev": "npm run build & npm run start",
     "build": "vite build",
     "buildweb": "webpack",
     "preview": "vite preview",

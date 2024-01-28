@@ -1,5 +1,5 @@
-import 'babylonjs-loaders';
- 
+import "babylonjs-loaders";
+
 export class Character {
   constructor(id, position, rotation, color, scene, callback) {
     this.id = id;
@@ -68,6 +68,14 @@ export class Character {
           if (partsToColor.includes(object.name)) {
             object.material = characterMaterial;
           }
+        });
+        this.mesh.checkCollisions = true;
+        this.mesh.applyGravity = true;
+
+        this.mesh.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
+
+        this.meshes.forEach((mesh) => {
+          mesh.checkCollisions = true;
         });
 
         if (callback) {

@@ -1,6 +1,7 @@
 import * as BABYLON from "babylonjs";
 import { Character } from "./characterBabylon.js";
 import { io } from "socket.io-client";
+import { Escenario } from "./escenario.js";
 
 const socket = io();
 
@@ -12,16 +13,19 @@ function initScene() {
 
   // Crear una escena
   const scene = new BABYLON.Scene(engine);
+  scene.collisionsEnabled = true;
+  scene.gravity = new BABYLON.Vector3(0, -0.9, 0);
 
   // Crear una cámara
-  const camera = new BABYLON.ArcRotateCamera(
+  const camera = new BABYLON.FreeCamera(
     "camera",
-    -Math.PI / 2,
-    Math.PI / 4,
-    70,
-    BABYLON.Vector3.Zero(),
+    new BABYLON.Vector3(0, 0, 0),
     scene
   );
+  camera.checkCollisions = true;
+  camera.applyGravity = true;
+  camera.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
+
   camera.attachControl(canvas, true);
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
@@ -36,19 +40,22 @@ function initScene() {
 
   // ...
 
+  const escenario = new Escenario();
+  escenario.initMap(scene, 1);
+
   // Crear un plano de 50x50
-  const ground = BABYLON.MeshBuilder.CreateGround(
-    "ground",
-    { width: 50, height: 50 },
-    scene
-  );
+  // const ground = BABYLON.MeshBuilder.CreateGround(
+  //   "ground",
+  //   { width: 50, height: 50, subdivisions: 4, updatable: true, depth: 50 },
+  //   scene
+  // );
 
-  // Crear un material para el suelo y establecer su color
-  const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-  groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5); // Color gris
+  // // Crear un material para el suelo y establecer su color
+  // const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+  // groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5); // Color gris
 
-  // Asignar el material al suelo
-  ground.material = groundMaterial;
+  // // Asignar el material al suelo
+  // ground.material = groundMaterial;
 
   const characters = [];
   let character;
@@ -100,11 +107,9 @@ function initScene() {
   // Asignar la función al evento de clic del botón
   const changeCameraBtn = document.getElementById("changeCameraBtn");
   changeCameraBtn.addEventListener("click", changeCameraMode);
-  
 
   // Iniciar la renderización de la escena
   engine.runRenderLoop(() => {
-    
     // Mover el personaje según las teclas presionadas
     if (keys.W) character.moveForward(characters, scene);
     if (keys.A) character.moveLeft(characters, scene);
@@ -161,6 +166,11 @@ function initScene() {
   // Redimensionar la escena cuando se cambie el tamaño de la ventana
   window.addEventListener("resize", () => {
     engine.resize();
+  });
+
+  document.getElementById("escenarios").addEventListener("change", function () {
+    console.log("El valor seleccionado es: " + this.value);
+    escenario.changeMap(this.value);
   });
 
   function eliminarPersonaje(id) {
