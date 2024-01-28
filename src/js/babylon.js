@@ -58,13 +58,9 @@ function initScene() {
     { width: 20, height: 20, depth: 1 },
     scene
   );
-    ground.position.y = -0.5;
+  ground.position.y = -0.5;
   ground.rotate(BABYLON.Axis.X, Math.PI / 2, BABYLON.Space.WORLD);
-
-  var materialVerde = new BABYLON.StandardMaterial("materialVerde", scene);
-  materialVerde.diffuseColor = new BABYLON.Color3(0, 1, 0);
-  ground.material = materialVerde;
-
+  ground.visibility = 0;
   // Enable collisions for the ground
   ground.checkCollisions = true;
 
@@ -72,7 +68,7 @@ function initScene() {
   ground.physicsImpostor = new BABYLON.PhysicsImpostor(
     ground,
     BABYLON.PhysicsImpostor.BoxImpostor,
-    { mass: 0, restitution: 0.5 },
+    { mass: 0, restitution: 0 },
     scene
   );
 
@@ -99,6 +95,10 @@ function initScene() {
 
   function handleKeyDown(event) {
     const key = event.key.toUpperCase();
+    if (key === " ") {
+      // No es necesario convertir a mayúsculas
+      keys.SPACE = true;
+    }
     if (keys.hasOwnProperty(key)) {
       keys[key] = true;
     }
@@ -106,6 +106,10 @@ function initScene() {
 
   function handleKeyUp(event) {
     const key = event.key.toUpperCase();
+    if (key === " ") {
+      // No es necesario convertir a mayúsculas
+      keys.SPACE = false;
+    }
     if (keys.hasOwnProperty(key)) {
       keys[key] = false;
     }
@@ -143,24 +147,25 @@ function initScene() {
     if (keys.D) character.move(keys, characters, scene);
 
     if (character) {
-      if (keys.SHIFT) {
-        character.increaseSpeed();
-        character.playAnimation("CharacterArmature|Run");
-      } else if (keys.W || keys.A || keys.S || keys.D) {
-        // Si se presiona alguna tecla de movimiento, reproducir la animación de caminar
-        character.playAnimation("CharacterArmature|Walk");
-        character.decreaseSpeed();
-      } else {
-        // Si no se presiona ninguna tecla, reproducir la animación Idle
-        character.playAnimation("CharacterArmature|Idle");
-        character.decreaseSpeed();
-      }
-
       if (keys.SPACE) {
+        character.playAnimation("CharacterArmature|Jump");
         character.jump();
       }
 
-      character.update();
+      if (!character.isJumping) {
+        if (keys.SHIFT) {
+          character.increaseSpeed();
+          character.playAnimation("CharacterArmature|Run");
+        } else if (keys.W || keys.A || keys.S || keys.D) {
+          // Si se presiona alguna tecla de movimiento, reproducir la animación de caminar
+          character.playAnimation("CharacterArmature|Walk");
+          character.decreaseSpeed();
+        } else {
+          // Si no se presiona ninguna tecla, reproducir la animación Idle
+          character.playAnimation("CharacterArmature|Idle");
+          character.decreaseSpeed();
+        }
+      }
 
       try {
         socket.emit("moveCharacter", {
@@ -221,14 +226,16 @@ function initScene() {
 
         socket.emit("recuperarPersonajes", socket.id);
 
+        // Ajusta el radio de la esfera según las dimensiones de tu personaje
+        const sphereRadius = 0.5;
+
         character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
           character.mesh,
-          BABYLON.PhysicsImpostor.BoxImpostor,
-          { mass: 10, restitution: 0 },
+          BABYLON.PhysicsImpostor.SphereImpostor,
+          { mass: 10, radius: sphereRadius },
           scene
         );
-        //Quiero ver la physics impostor
-        character.mesh.showBoundingBox = true;
+        character.mesh.physicsImpostor.showBoundingSphere = true;
       }
     );
   });

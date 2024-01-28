@@ -236,21 +236,20 @@ export class Character {
 
   jump() {
     if (!this.isJumping) {
+      // Evitar que el personaje salte mientras ya está en el aire
       this.isJumping = true;
-      var jumpForce = new BABYLON.Vector3(0, 100, 0);
-      this.mesh.physicsImpostor.applyImpulse(jumpForce, this.mesh.getAbsolutePosition());
-    }
-  }
 
-  update() {
-    if (this.isJumping) {
-      this.mesh.position.y += this.jumpSpeed;
-      this.jumpSpeed -= 0.005; // Ajusta este valor según sea necesario
+      // Aplicar un impulso en el eje Y para simular el salto
+      var jumpImpulse = new CANNON.Vec3(0, 25, 0); // Ajusta este valor según sea necesario
+      this.mesh.physicsImpostor.physicsBody.applyImpulse(
+        jumpImpulse,
+        this.mesh.physicsImpostor.physicsBody.position
+      );
 
-      if (this.mesh.position.y <= 0) {
-        this.mesh.position.y = 0;
+      // Restablecer el estado del salto después de un tiempo (ajusta según la duración del salto)
+      setTimeout(() => {
         this.isJumping = false;
-      }
+      }, 500); // Restablecer después de 1 segundo (ajusta según sea necesario)
     }
   }
 }
