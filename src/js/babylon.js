@@ -5,7 +5,7 @@ import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
 window.CANNON = CANNON;
 
-const socket = io();
+const socket = io("http://localhost:5173/");
 
 function initScene() {
   // Obtener el canvas del documento
@@ -235,7 +235,6 @@ function initScene() {
           { mass: 10, radius: sphereRadius },
           scene
         );
-        character.mesh.physicsImpostor.showBoundingSphere = true;
       }
     );
   });
