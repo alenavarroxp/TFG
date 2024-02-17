@@ -9,16 +9,20 @@
     <link rel="stylesheet" href="/index.css" />
 
     <link rel="stylesheet" href="/output.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="./js/init.js"></script>
+    <script src="./js/home.js"></script>
 </head>
 
-<body>
-    <div class="h-screen w-full bg-black justify-center items-center flex">
-        <div>
-            <h1 class="text-5xl font-bold text-center text-white mt-8">INICIO</h1>
-            <div class="flex justify-center mt-8">
-                <a href="/babylon" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Ir a
-                    BABYLON</a>
-            </div>
+<body onload="init()">
+    <div class="min-h-screen bg-[#167563] flex justify-center items-center">
+        <div id="homeDiv" class="text-center w-full h-screen animate__animated flex items-center justify-center"></div>
+        <div id="optionDiv" class="text-center w-full h-screen animate__animated flex items-center justify-center">
         </div>
     </div>
 </body>
