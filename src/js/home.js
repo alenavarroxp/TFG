@@ -5,15 +5,34 @@ function Home() {
       $("#optionDiv").hide();
       $("#homeButton").click(function () {
         console.log("Home button click");
-        home.mostrarOption();
+        $("#homeDiv").removeClass("animate__slideInLeft");
+        $("#homeDiv").addClass("animate__animated animate__slideOutLeft");
+        setTimeout(() => {
+          home.mostrarOption();
+        }, 400);
       });
     });
   };
 
   this.mostrarOption = function () {
     console.log("mostrarOption");
-    $("#optionDiv").show();
     $("#homeDiv").hide();
-    $("#optionDiv").load("./html/option.html", function () {});
+
+    $("#optionDiv").load("./html/option.html", function () {
+      $("#optionDiv").show();
+      $("#optionDiv").addClass("animate__animated animate__slideInRight");
+      $("#backButton").click(function () {
+        console.log("Back button click");
+        $("#optionDiv").removeClass("animate__slideInRight");
+        $("#optionDiv").addClass("animate__slideOutRight");
+        setTimeout(() => {
+          $("#homeDiv").removeClass("animate__slideOutLeft");
+          $("#optionDiv").hide();
+          $("#homeDiv").show();
+          $("#homeDiv").addClass("animate__slideInLeft");
+          $("#optionDiv").removeClass("animate__slideOutRight");
+        }, 400);
+      });
+    });
   };
 }
