@@ -6,5 +6,74 @@
         <a class="text-white font-semibold">Volver</a>
     </button>
 
-    <h1>agoas</h1>
+    <h1 class="font-bold mt-16 text-xl">PREGUNTA</h1>
+    <div>
+        <div class="flex justify-evenly mt-6">
+            <div id="option1Div" class="animate__animated">
+                <input type="checkbox" id="option1" name="option" class="hidden" />
+                <label for="option1" class="relative cursor-pointer">
+                    <div
+                        class="w-24 h-24 flex bg-[#E1E1E1] items-center justify-center rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+                        <img src="../img/studentOption.png" alt="option1" class="w-20 h-20 mt-4" />
+                        <div
+                            class="absolute inset-0 rounded-full ring ring-yellow-400 opacity-0 transition-opacity duration-300 ease-in-out pointer-events-none">
+                        </div>
+                    </div>
+                </label>
+                <h1 class="mt-1 font-semibold">Estudiante</h1>
+            </div>
+
+            <div id="option2Div" class="animate__animated">
+                <input type="checkbox" id="option2" name="option" class="hidden" />
+                <label for="option2" class="relative cursor-pointer">
+                    <div
+                        class="w-24 h-24 flex bg-[#E1E1E1] items-center justify-center rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+                        <img src="../img/teacherOption.png" alt="option2" class="w-[72px] h-[72px] mt-2" />
+                        <div
+                            class="absolute inset-0 rounded-full ring ring-yellow-400 opacity-0 transition-opacity duration-300 ease-in-out pointer-events-none">
+                        </div>
+                    </div>
+                </label>
+
+                <h1 class="mt-1 font-semibold">Docente</h1>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-center mt-8">
+            <div class="flex items-start flex-col justify-center w-80 relative">
+                <label class="block text-sm font-semibold text-white">Nombre de usuario</label>
+                <input type="text" id="usernameInput" name="username"
+                    class="mt-1 p-2 pl-10 border rounded-full w-full text-black font-semibold focus:ring-yellow-400 focus:ring-2"></input>
+                <span class="material-icons absolute top-8 left-3 text-[#167563]">
+                    person
+                </span>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
 </div>
+<div class="flex-1 h-1/2 items-center flex justify-center">
+    <button id="loginButton"
+        class="disabled:pointer-events-none disabled:bg-gray-300 flex items-center justify-center bg-white text-lg lg:text-xl md:text-md font-bold rounded-full shadow-lg px-16 lg:px-20 py-3 lg:py-4 text-gray-800 transition-transform hover:scale-105 hover:shadow-xl relative"
+        disabled>
+        <i class="fas fa-lock right-5 absolute" style="transform: rotateY(0deg); transition: transform 0.3s;"></i>
+        Entrar
+        al mundo
+    </button>
+</div>
+
+
+
+<style>
+    #option1:checked+label>div>div {
+        opacity: 1;
+    }
+
+    #option2:checked+label>div>div {
+        opacity: 1;
+    }
+</style>
