@@ -9,12 +9,12 @@
     <h1 class="font-bold mt-16 text-xl">PREGUNTA</h1>
     <div>
         <div class="flex justify-evenly mt-6">
-            <div id="option1Div" class="animate__animated">
-                <input type="checkbox" id="option1" name="option" class="hidden" />
-                <label for="option1" class="relative cursor-pointer">
+            <div id="studentDiv" class="animate__animated">
+                <input type="checkbox" id="student" name="student" class="hidden" />
+                <label for="student" class="relative cursor-pointer">
                     <div
                         class="w-24 h-24 flex bg-[#E1E1E1] items-center justify-center rounded-full transition duration-300 ease-in-out transform hover:scale-105">
-                        <img src="../img/studentOption.png" alt="option1" class="w-20 h-20 mt-4" />
+                        <img src="../img/studentOption.png" alt="student" class="w-20 h-20 mt-4" />
                         <div
                             class="absolute inset-0 rounded-full ring ring-yellow-400 opacity-0 transition-opacity duration-300 ease-in-out pointer-events-none">
                         </div>
@@ -23,12 +23,12 @@
                 <h1 class="mt-1 font-semibold">Estudiante</h1>
             </div>
 
-            <div id="option2Div" class="animate__animated">
-                <input type="checkbox" id="option2" name="option" class="hidden" />
-                <label for="option2" class="relative cursor-pointer">
+            <div id="teacherDiv" class="animate__animated">
+                <input type="checkbox" id="teacher" name="teacher" class="hidden" />
+                <label for="teacher" class="relative cursor-pointer">
                     <div
                         class="w-24 h-24 flex bg-[#E1E1E1] items-center justify-center rounded-full transition duration-300 ease-in-out transform hover:scale-105">
-                        <img src="../img/teacherOption.png" alt="option2" class="w-[72px] h-[72px] mt-2" />
+                        <img src="../img/teacherOption.png" alt="teacher" class="w-[72px] h-[72px] mt-2" />
                         <div
                             class="absolute inset-0 rounded-full ring ring-yellow-400 opacity-0 transition-opacity duration-300 ease-in-out pointer-events-none">
                         </div>
@@ -69,11 +69,11 @@
 
 
 <style>
-    #option1:checked+label>div>div {
+    #student:checked+label>div>div {
         opacity: 1;
     }
 
-    #option2:checked+label>div>div {
+    #teacher:checked+label>div>div {
         opacity: 1;
     }
 </style>

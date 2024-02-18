@@ -36,34 +36,34 @@ function Home() {
         }, 700);
       });
 
-      $("#option1").change(function () {
-        console.log("Option1 change");
+      $("#student").change(function () {
+        console.log("student change");
         if ($(this).is(":checked")) {
-          $("#option2").prop("disabled", true);
-          $("#option2Div").addClass("opacity-50 pointer-events-none");
-          $("#option1Div").addClass("active");
+          $("#teacher").prop("disabled", true);
+          $("#teacherDiv").addClass("opacity-50 pointer-events-none");
+          $("#studentDiv").addClass("active");
         } else {
-          $("#option2").prop("disabled", false);
-          $("#option2Div").removeClass("opacity-50 pointer-events-none");
-          $("#option1Div").removeClass("active");
+          $("#teacher").prop("disabled", false);
+          $("#teacherDiv").removeClass("opacity-50 pointer-events-none");
+          $("#studentDiv").removeClass("active");
         }
       });
 
-      $("#option2").change(function () {
+      $("#teacher").change(function () {
         if ($(this).is(":checked")) {
-          $("#option1").prop("disabled", true);
-          $("#option1Div").addClass("opacity-50 pointer-events-none");
-          $("#option2Div").addClass("active");
+          $("#student").prop("disabled", true);
+          $("#studentDiv").addClass("opacity-50 pointer-events-none");
+          $("#teacherDiv").addClass("active");
         } else {
-          $("#option1").prop("disabled", false);
-          $("#option1Div").removeClass("opacity-50 pointer-events-none");
-          $("#option2Div").removeClass("active");
+          $("#student").prop("disabled", false);
+          $("#studentDiv").removeClass("opacity-50 pointer-events-none");
+          $("#teacherDiv").removeClass("active");
         }
       });
 
       // Evento de cambio para las opciones
-      $("#option1, #option2").change(function () {
-        if ($("#option1").is(":checked") || $("#option2").is(":checked")) {
+      $("#student, #teacher").change(function () {
+        if ($("#student").is(":checked") || $("#teacher").is(":checked")) {
           // Comprobar si se ha ingresado un nombre de usuario
           var username = $("#usernameInput").val();
           if (username.trim() !== "") {
@@ -83,12 +83,17 @@ function Home() {
         // Si se ha ingresado un nombre de usuario y una opción está seleccionada
         if (
           username.trim() !== "" &&
-          ($("#option1").is(":checked") || $("#option2").is(":checked"))
+          ($("#student").is(":checked") || $("#teacher").is(":checked"))
         ) {
           home.unlockLoginButton();
         } else {
           home.lockLoginButton();
         }
+      });
+
+      $("#loginButton").click(function () {
+        // IR A /babylon
+        window.location.href = "/babylon";
       });
     });
   };
