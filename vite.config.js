@@ -8,6 +8,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "src/index.html"),
         babylon: resolve(__dirname, "src/babylon.html"),
+        home: resolve(__dirname, "src/html/home.html"),
+        option: resolve(__dirname, "src/html/option.html"),
       },
     },
     outDir: "../dist",

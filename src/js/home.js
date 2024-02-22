@@ -1,6 +1,7 @@
 function Home() {
   this.init = function () {
-    $("#homeDiv").load("./html/home.html", function () {
+    console.log("Home init");
+    $("#homeDiv").load("../html/home.html", function () {
       $("#homeDiv").show();
       $("#optionDiv").hide();
       $("#homeButton").click(function () {
@@ -18,7 +19,7 @@ function Home() {
     console.log("mostrarOption");
     $("#homeDiv").hide();
 
-    $("#optionDiv").load("./html/option.html", function () {
+    $("#optionDiv").load("../html/option.html", function () {
       $("#optionDiv").show();
       $("#optionDiv").addClass("animate__animated animate__slideInRight");
 
@@ -122,3 +123,9 @@ function Home() {
     );
   };
 }
+
+var home;
+document.addEventListener("DOMContentLoaded", () => {
+  home = new Home();
+  home.init();
+});
