@@ -1,11 +1,9 @@
 function Home() {
   this.init = function () {
-    console.log("Home init");
     $("#homeDiv").load("../html/home.html", function () {
       $("#homeDiv").show();
       $("#optionDiv").hide();
       $("#homeButton").click(function () {
-        console.log("Home button click");
         $("#homeDiv").removeClass("animate__slideInLeft");
         $("#homeDiv").addClass("animate__animated animate__slideOutLeft");
         setTimeout(() => {
@@ -16,7 +14,6 @@ function Home() {
   };
 
   this.mostrarOption = function () {
-    console.log("mostrarOption");
     $("#homeDiv").hide();
 
     $("#optionDiv").load("../html/option.html", function () {
@@ -25,7 +22,6 @@ function Home() {
 
       //Back button
       $("#backButton").click(function () {
-        console.log("Back button click");
         $("#optionDiv").removeClass("animate__slideInRight");
         $("#optionDiv").addClass("animate__slideOutRight");
         setTimeout(() => {
@@ -38,7 +34,6 @@ function Home() {
       });
 
       $("#student").change(function () {
-        console.log("student change");
         if ($(this).is(":checked")) {
           $("#teacher").prop("disabled", true);
           $("#teacherDiv").addClass("opacity-50 pointer-events-none");
@@ -79,7 +74,6 @@ function Home() {
 
       // Evento de cambio para el campo de entrada del nombre de usuario
       $("#usernameInput").on("input", function () {
-        console.log("Username input change");
         var username = $(this).val();
         // Si se ha ingresado un nombre de usuario y una opción está seleccionada
         if (
@@ -93,8 +87,33 @@ function Home() {
       });
 
       $("#loginButton").click(function () {
-        // IR A /babylon
-        window.location.href = "/babylon";
+        if (
+          $("#usernameInput").val() == "" ||
+          ($("#student").is(":checked") || $("#teacher").is(":checked")) ==
+            false
+        ) {
+          return;
+        }
+
+        var userData = {
+          userName: $("#usernameInput").val(),
+          isProfessor: $("#teacher").is(":checked"),
+        };
+        console.log("userData", userData);
+
+        $.ajax({
+          type: "POST",
+          url: "/babylon",
+          data: JSON.stringify(userData),
+          contentType: "application/json",
+          success: function (response) {
+            console.log("Datos enviados exitosamente al servidor", response);
+            window.location.href = "/babylon";
+          },
+          error: function (error) {
+            console.error("Error al enviar datos al servidor:", error);
+          },
+        });
       });
     });
   };

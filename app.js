@@ -18,6 +18,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "dist")));
 // Configura cors para permitir solicitudes desde cualquier origen
 app.use(cors());
+app.use(express.json());
 
 // Ruta "/"
 app.get("/", (req, res) => {
@@ -25,7 +26,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/babylon", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "babylon.html"));
+  res.sendFile(path.join(__dirname, "dist", "babylon.html"), { userData });
+});
+
+let userData = {};
+app.post("/babylon", (req, res) => {
+  console.log("Datos recibidos", req.body);
+  userData = req.body;
+  console.log("userData", userData);
+  res.status(200).send("Datos recibidos exitosamente");
 });
 
 const io = new Server(httpServer);
