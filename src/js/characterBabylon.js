@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import "babylonjs-loaders";
 
 export class Character {
@@ -16,12 +17,13 @@ export class Character {
     this.jumpSpeed = 0;
 
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
+    
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
       "character.glb",
       scene,
-      (newMeshes, particleSystems, skeletons) => {
+      (newMeshes) => {
         // El modelo GLB contiene varios meshes, pero solo queremos el primero
         console.log("newMeshes", newMeshes);
         this.meshes = newMeshes;
@@ -55,10 +57,12 @@ export class Character {
         this.speed = this.SPEED_CHANGE;
 
         // Cambiar el color de las partes del personaje
+        // eslint-disable-next-line no-undef
         const characterMaterial = new BABYLON.StandardMaterial(
           "characterMaterial",
           scene
         );
+        // eslint-disable-next-line no-undef
         characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
           color
         );
@@ -78,6 +82,7 @@ export class Character {
         this.mesh.checkCollisions = true;
         this.mesh.applyGravity = true;
 
+        // eslint-disable-next-line no-undef
         this.mesh.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
 
         this.meshes.forEach((mesh) => {
@@ -109,6 +114,7 @@ export class Character {
 
   move(keys, characters, scene) {
     let computedRotation = this.mesh.rotation.z;
+    // eslint-disable-next-line no-undef
     let computedMovement = new BABYLON.Vector3();
 
     if (keys["A"]) {
@@ -133,11 +139,14 @@ export class Character {
       this.speed * Math.sin(this.mesh.rotation.z) * movementSpeedFactor;
 
     if (keys["W"]) {
+      // eslint-disable-next-line no-undef
       computedMovement = new BABYLON.Vector3(-xMovement, 0, -zMovement);
     } else if (keys["S"]) {
+      // eslint-disable-next-line no-undef
       computedMovement = new BABYLON.Vector3(xMovement, 0, zMovement);
     }
 
+    // eslint-disable-next-line no-undef
     this.mesh.position = new BABYLON.Vector3(
       this.mesh.position.x + computedMovement.x,
       this.mesh.position.y + computedMovement.y,
@@ -145,6 +154,7 @@ export class Character {
     );
   }
 
+  // eslint-disable-next-line no-unused-vars
   smoothRotate(targetRotation, scene) {
     this.meshes.forEach((mesh) => {
       const currentRotation = mesh.rotation.z;
@@ -203,11 +213,12 @@ export class Character {
     return false; // No hay colisiones
   }
 
-  moveCamera(camera, scene) {
+  moveCamera(camera) {
     const lerpFactor = 0.5;
     const distanceFromPlayer = 1.2; // Ajusta esto para cambiar la distancia de la cámara al jugador
 
     // Calcula la posición deseada de la cámara
+    // eslint-disable-next-line no-undef
     const cameraOffset = new BABYLON.Vector3(
       -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
       0.75,
@@ -216,6 +227,7 @@ export class Character {
     const targetPosition = this.mesh.position.add(cameraOffset);
 
     // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
+    // eslint-disable-next-line no-undef
     camera.position = BABYLON.Vector3.Lerp(
       camera.position,
       targetPosition,
@@ -240,6 +252,7 @@ export class Character {
       this.isJumping = true;
 
       // Aplicar un impulso en el eje Y para simular el salto
+      // eslint-disable-next-line no-undef
       var jumpImpulse = new CANNON.Vec3(0, 25, 0); // Ajusta este valor según sea necesario
       this.mesh.physicsImpostor.physicsBody.applyImpulse(
         jumpImpulse,

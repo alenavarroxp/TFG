@@ -39,6 +39,7 @@ function initScene() {
   const cameraInitialPosition = camera.position.clone();
 
   // Crear una luz
+  // eslint-disable-next-line no-unused-vars
   const light = new BABYLON.HemisphericLight(
     "light",
     new BABYLON.Vector3(0, 1, 0),
@@ -99,7 +100,7 @@ function initScene() {
       // No es necesario convertir a mayúsculas
       keys.SPACE = true;
     }
-    if (keys.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(keys, key)) {
       keys[key] = true;
     }
   }
@@ -110,7 +111,7 @@ function initScene() {
       // No es necesario convertir a mayúsculas
       keys.SPACE = false;
     }
-    if (keys.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(keys, key)) {
       keys[key] = false;
     }
   }
@@ -174,11 +175,13 @@ function initScene() {
           rotation: character.mesh.rotation,
           animation: character.animationName,
         });
-      } catch (err) {}
+      } catch (err) {
+        console.log(err)
+      }
     }
 
     if (cameraMode === "followPlayer") {
-      character.moveCamera(camera, scene);
+      character.moveCamera(camera);
     }
 
     scene.render();
@@ -268,11 +271,13 @@ function initScene() {
           mesh.rotation.copyFrom(obj.rotation);
         });
         character.playAnimation(obj.animation);
-      } catch (err) {}
+      } catch (err) {
+        console.log(err)
+      }
     }
   });
 
-  socket.on("recuperarPersonajes", (id) => {
+  socket.on("recuperarPersonajes", () => {
     console.log("Recuperando personajes...");
     for (const character of characters) {
       try {
@@ -282,7 +287,9 @@ function initScene() {
           rotation: character.mesh.rotation,
           color: "#00ff00",
         });
-      } catch (err) {}
+      } catch (err) {
+        console.log(err)
+      }
     }
   });
 }

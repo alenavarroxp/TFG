@@ -7,19 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vite App</title>
 
-  <link rel="stylesheet" href="/index.css" />
-
   <link rel="stylesheet" href="/output.css" />
-  <script type="module" src="./js/babylon.js"></script>
+  <script type="module" src="./src/js/babylon.js"></script>
 
 
 </head>
 
 <body>
-  <script>
-    var userData = '<%= JSON.stringify(userData) %>';
-    console.log("userData:", userData);
-  </script>
+  
   <div id="GUI" class="absolute right-2 top-2 flex flex-col items-end">
     <a id="volver" href="/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2">Volver al
       inicio</a>

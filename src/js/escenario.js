@@ -14,12 +14,13 @@ export class Escenario {
     console.log("NUMBER", number);
     let fileName = "escenario" + number + (number == 1 ? ".gltf" : ".glb");
 
+    // eslint-disable-next-line no-undef
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
       fileName,
       this.scene,
-      (newMeshes, particleSystems, skeletons) => {
+      (newMeshes) => {
         this.meshes = newMeshes;
         this.map = newMeshes[0];
         this.map.position.set(0, 0, 0);

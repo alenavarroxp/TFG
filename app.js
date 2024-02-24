@@ -22,19 +22,11 @@ app.use(express.json());
 
 // Ruta "/"
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "inicio.html"));
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 app.get("/babylon", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "babylon.html"), { userData });
-});
-
-let userData = {};
-app.post("/babylon", (req, res) => {
-  console.log("Datos recibidos", req.body);
-  userData = req.body;
-  console.log("userData", userData);
-  res.status(200).send("Datos recibidos exitosamente");
+  res.sendFile(path.join(__dirname, "dist", "babylon.html"));
 });
 
 const io = new Server(httpServer);
