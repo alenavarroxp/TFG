@@ -1,13 +1,11 @@
-import HomeSlide from "./slides/homeSlide";
-import LoginSlide from "./slides/loginSlide";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes/routes";
 
 function App() {
   return (
     <>
-      <div className="carousel w-full h-screen">
-        <HomeSlide />
-        <LoginSlide />
-      </div>
+     <RouterProvider router={router}/>
+     
     </>
   );
 }

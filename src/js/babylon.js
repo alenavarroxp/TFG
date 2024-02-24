@@ -1,13 +1,14 @@
+import io from "socket.io-client";
 import * as BABYLON from "babylonjs";
 import { Character } from "./characterBabylon.js";
-import { io } from "socket.io-client";
 import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
-window.CANNON = CANNON;
 
-const socket = io("http://localhost:5173/");
 
-function initScene() {
+export function initScene() {
+  
+  const socket = io("http://localhost:5173/");
+  window.CANNON = CANNON;
   // Obtener el canvas del documento
   const canvas = document.getElementById("renderCanvas");
   // Crear el motor de Babylon.js
