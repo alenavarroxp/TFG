@@ -17,7 +17,12 @@ const ws = new WebSocketServer();
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "dist")));
 // Configura cors para permitir solicitudes desde cualquier origen
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5172", "http://localhost:5173"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Ruta "/"
@@ -25,11 +30,17 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-app.get("/babylon", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "babylon.html"));
-});
+// app.get("/babylon", (req, res) => {
+//   res.sendFile(path.join(__dirname, "dist", "babylon.html"));
+// });
 
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: ["http://localhost:5172", "http://localhost:5173"],
+    methods: ["GET", "POST"],
+    credentials: false,
+  },
+});
 // io.listen(httpServer);
 
 ws.start(io);

@@ -7,11 +7,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    port: 5172,
+  },
   build: {
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        babylon: resolve(__dirname, "babylon.html"),
       },
     },
   },

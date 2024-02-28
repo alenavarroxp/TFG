@@ -215,13 +215,13 @@ export class Character {
 
   moveCamera(camera) {
     const lerpFactor = 0.5;
-    const distanceFromPlayer = 1.2; // Ajusta esto para cambiar la distancia de la cámara al jugador
+    const distanceFromPlayer = 0.5; // Ajusta esto para cambiar la distancia de la cámara al jugador
 
     // Calcula la posición deseada de la cámara
     // eslint-disable-next-line no-undef
     const cameraOffset = new BABYLON.Vector3(
       -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
-      0.75,
+      0.4,
       -distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
     );
     const targetPosition = this.mesh.position.add(cameraOffset);

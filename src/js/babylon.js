@@ -4,18 +4,16 @@ import { Character } from "./characterBabylon.js";
 import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
 
-
-export function initScene() {
-  
+export function initScene(canvas) {
+  console.log("inicializando escena...")
   const socket = io("http://localhost:5173/");
   window.CANNON = CANNON;
-  // Obtener el canvas del documento
-  const canvas = document.getElementById("renderCanvas");
   // Crear el motor de Babylon.js
   const engine = new BABYLON.Engine(canvas, true);
 
   // Crear una escena
   const scene = new BABYLON.Scene(engine);
+  // scene.debugLayer.show();
   scene.collisionsEnabled = true;
 
   const gravityVector = new BABYLON.Vector3(0, -9.81, 0);
@@ -143,6 +141,11 @@ export function initScene() {
   // Iniciar la renderización de la escena
   engine.runRenderLoop(() => {
     // Mover el personaje según las teclas presionadas
+    if(!scene){
+      console.error("La escena no está definida correctamente.")
+      return
+    }
+
     if (keys.W) character.move(keys, characters, scene);
     if (keys.A) character.move(keys, characters, scene);
     if (keys.S) character.move(keys, characters, scene);
@@ -177,7 +180,7 @@ export function initScene() {
           animation: character.animationName,
         });
       } catch (err) {
-        console.log(err)
+        // console.log(err);
       }
     }
 
@@ -191,11 +194,6 @@ export function initScene() {
   // Redimensionar la escena cuando se cambie el tamaño de la ventana
   window.addEventListener("resize", () => {
     engine.resize();
-  });
-
-  document.getElementById("escenarios").addEventListener("change", function () {
-    console.log("El valor seleccionado es: " + this.value);
-    escenario.changeMap(this.value);
   });
 
   function eliminarPersonaje(id) {
@@ -273,7 +271,7 @@ export function initScene() {
         });
         character.playAnimation(obj.animation);
       } catch (err) {
-        console.log(err)
+        // console.log(err);
       }
     }
   });
@@ -289,13 +287,8 @@ export function initScene() {
           color: "#00ff00",
         });
       } catch (err) {
-        console.log(err)
+        // console.log(err);
       }
     }
   });
 }
-
-// Inicializar la escena cuando se cargue el documento
-document.addEventListener("DOMContentLoaded", () => {
-  initScene();
-});

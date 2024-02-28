@@ -1,3 +1,5 @@
+
+import * as BABYLON from "babylonjs";
 export class Escenario {
   constructor() {
     this.scene = null;
@@ -14,7 +16,12 @@ export class Escenario {
     console.log("NUMBER", number);
     let fileName = "escenario" + number + (number == 1 ? ".gltf" : ".glb");
 
-    // eslint-disable-next-line no-undef
+    // Limpiar cualquier escenario anterior
+    if (this.map) {
+      this.map.dispose();
+    }
+
+    // Cargar nuevo escenario
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
@@ -41,9 +48,5 @@ export class Escenario {
       }
     );
   }
-
-  changeMap(number) {
-    this.map.dispose();
-    this.map = this.createMap(number);
-  }
+  
 }
