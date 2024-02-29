@@ -1,12 +1,12 @@
-import io from "socket.io-client";
+import { socket } from "../utils/socket.js";
 import * as BABYLON from "babylonjs";
 import { Character } from "./characterBabylon.js";
 import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
 
 export function initScene(canvas) {
-  console.log("inicializando escena...")
-  const socket = io("http://localhost:5173/");
+  console.log("inicializando escena...");
+  socket.emit("init");
   window.CANNON = CANNON;
   // Crear el motor de Babylon.js
   const engine = new BABYLON.Engine(canvas, true);
@@ -141,9 +141,9 @@ export function initScene(canvas) {
   // Iniciar la renderización de la escena
   engine.runRenderLoop(() => {
     // Mover el personaje según las teclas presionadas
-    if(!scene){
-      console.error("La escena no está definida correctamente.")
-      return
+    if (!scene) {
+      console.error("La escena no está definida correctamente.");
+      return;
     }
 
     if (keys.W) character.move(keys, characters, scene);
@@ -205,7 +205,7 @@ export function initScene(canvas) {
     }
   }
 
-  socket.on("connect", () => {
+  socket.on("init", () => {
     console.log("Conectado al servidor", socket.id);
     character = new Character(
       socket.id,
