@@ -6,6 +6,7 @@ import PersonInput from "../inputs/personInput";
 import { HiLockClosed, HiLockOpen } from "react-icons/hi2";
 import { useSetAtom } from "jotai";
 import { userAtom } from "../context/atoms/userAtom";
+import { socket } from "../utils/socket";
 
 const LoginSlide = () => {
   const [activeOption, setActiveOption] = useState(null);
@@ -30,6 +31,7 @@ const LoginSlide = () => {
 
   const handleLoginClick = () => {
     setUser({ userName, isProfessor });
+    socket.emit("newUserWorld", { userName, isProfessor })
     navigation("/babylon");
   };
 

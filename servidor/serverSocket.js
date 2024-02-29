@@ -32,6 +32,18 @@ export default function WebSocketServer() {
         console.log("Recuperando personajes...");
         socket.broadcast.emit("recuperarPersonajes", id);
       });
+
+      socket.on("newUserWorld", (obj) => {
+        this.users[socket.id] = {
+          userName: obj.userName,
+          isProfessor: obj.isProfessor,
+        };
+        console.log("USERS ACTUALIZADOS", this.users);
+      });
+
+      socket.on("getUsers", () => {
+        socket.emit("getUsers", this.users);
+      });
     });
   };
 }
