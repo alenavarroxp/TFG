@@ -1,5 +1,6 @@
 export default function WebSocketServer() {
   this.users = {};
+  this.usersWorld = {};
   this.start = function (io) {
     io.on("connection", (socket) => {
       console.log("Se ha conectado el usuario: " + socket.id);
@@ -14,7 +15,11 @@ export default function WebSocketServer() {
       socket.on("disconnect", () => {
         console.log("Se ha desconectado el usuario", socket.id);
         delete this.users[socket.id];
-        console.log("USERS", this.users);
+
+        if (this.usersWorld[socket.id]) {
+          delete this.usersWorld[socket.id];
+        }
+
         socket.broadcast.emit("disconnected", socket.id);
       });
 
@@ -34,15 +39,15 @@ export default function WebSocketServer() {
       });
 
       socket.on("newUserWorld", (obj) => {
-        this.users[socket.id] = {
+        this.usersWorld[socket.id] = {
           userName: obj.userName,
           isProfessor: obj.isProfessor,
         };
-        console.log("USERS ACTUALIZADOS", this.users);
+        console.log("USERS ACTUALIZADOS", this.usersWorld);
       });
 
       socket.on("getUsers", () => {
-        socket.emit("getUsers", this.users);
+        socket.emit("getUsers", this.usersWorld);
       });
     });
   };
