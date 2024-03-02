@@ -10,9 +10,11 @@ export function initScene(canvas) {
   window.CANNON = CANNON;
   // Crear el motor de Babylon.js
   const engine = new BABYLON.Engine(canvas, true);
+  engine.displayLoadingUI();
 
   // Crear una escena
   const scene = new BABYLON.Scene(engine);
+  
   // scene.debugLayer.show();
   scene.collisionsEnabled = true;
 
@@ -38,7 +40,7 @@ export function initScene(canvas) {
 
   camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
   const cameraInitialPosition = camera.position.clone();
-
+  
   // Crear una luz
   // eslint-disable-next-line no-unused-vars
   const light = new BABYLON.HemisphericLight(
@@ -46,8 +48,6 @@ export function initScene(canvas) {
     new BABYLON.Vector3(0, 1, 0),
     scene
   );
-
-  // ...
 
   const escenario = new Escenario();
   escenario.initMap(scene, 1);
@@ -185,7 +185,7 @@ export function initScene(canvas) {
     }
 
     if (cameraMode === "followPlayer") {
-      character.moveCamera(camera,keys);
+      character.moveCamera(camera, keys);
     }
 
     scene.render();
@@ -237,6 +237,7 @@ export function initScene(canvas) {
           { mass: 10, radius: sphereRadius },
           scene
         );
+        engine.hideLoadingUI();
       }
     );
   });
