@@ -31,6 +31,8 @@ export function initScene(canvas) {
   );
   camera.minZ = 0.1;
   camera.maxZ = 100;
+  camera.lowerRadiusLimit = 1;
+  camera.upperRadiusLimit = 22.5;
   camera.attachControl(canvas, true);
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
@@ -49,8 +51,6 @@ export function initScene(canvas) {
 
   const escenario = new Escenario();
   escenario.initMap(scene, 1);
-
-  // Assuming you have a Babylon.js scene created (variable: scene)
 
   // Create a ground mesh
   var ground = BABYLON.MeshBuilder.CreateBox(

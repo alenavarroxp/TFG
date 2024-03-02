@@ -18,6 +18,7 @@ export class Character {
 
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
     
+    
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
@@ -94,6 +95,9 @@ export class Character {
         }
       }
     );
+    
+   
+    
   }
 
   playAnimation(animationName) {
@@ -214,14 +218,14 @@ export class Character {
   }
 
   moveCamera(camera) {
-    const lerpFactor = 0.5;
-    const distanceFromPlayer = 0.5; // Ajusta esto para cambiar la distancia de la cámara al jugador
+    const lerpFactor = 0.3;
+    const distanceFromPlayer = 0.35; // Ajusta esto para cambiar la distancia de la cámara al jugador
 
     // Calcula la posición deseada de la cámara
     // eslint-disable-next-line no-undef
     const cameraOffset = new BABYLON.Vector3(
       -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
-      0.4,
+      0.175,
       -distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
     );
     const targetPosition = this.mesh.position.add(cameraOffset);
