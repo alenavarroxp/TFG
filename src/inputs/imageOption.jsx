@@ -22,7 +22,7 @@ const ImageOption = ({ htmlFor, alt, imageUrl, label, isActive, onClick }) => {
           <div className="absolute inset-0 rounded-full ring ring-yellow-400 opacity-0 transition-opacity duration-300 ease-in-out pointer-events-none"></div>
         </div>
       </label>
-      <h1 className={`mt-1 text-lg font-semibold ${isActive ? 'opacity-100' : 'opacity-50'}`}>{label}</h1>
+      <h1 className={`mt-1 lg:text-lg  font-semibold ${isActive ? 'opacity-100' : 'opacity-50'}`}>{label}</h1>
     </div>
   );
 }

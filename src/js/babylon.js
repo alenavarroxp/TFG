@@ -185,7 +185,7 @@ export function initScene(canvas) {
     }
 
     if (cameraMode === "followPlayer") {
-      character.moveCamera(camera);
+      character.moveCamera(camera,keys);
     }
 
     scene.render();

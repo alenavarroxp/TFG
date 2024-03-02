@@ -217,28 +217,33 @@ export class Character {
     return false; // No hay colisiones
   }
 
-  moveCamera(camera) {
+  moveCamera(camera,keys) {
     const lerpFactor = 0.3;
     const distanceFromPlayer = 0.35; // Ajusta esto para cambiar la distancia de la cámara al jugador
 
-    // Calcula la posición deseada de la cámara
-    // eslint-disable-next-line no-undef
-    const cameraOffset = new BABYLON.Vector3(
-      -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
-      0.175,
-      -distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
-    );
-    const targetPosition = this.mesh.position.add(cameraOffset);
-
-    // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
-    // eslint-disable-next-line no-undef
+    if(keys["W"] || keys["A"] || keys["S"] || keys["D"]){
+      const cameraOffset = new BABYLON.Vector3(
+        -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
+        0.175,
+        -distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
+      );
+      const targetPosition = this.mesh.position.add(cameraOffset);
+  
+      // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
+      // eslint-disable-next-line no-undef
+      camera.position = BABYLON.Vector3.Lerp(
+        camera.position,
+        targetPosition,
+        lerpFactor
+      );
+      
+    }
+    // Mira al jugador
     camera.position = BABYLON.Vector3.Lerp(
       camera.position,
-      targetPosition,
+      this.mesh.position,
       lerpFactor
     );
-
-    // Mira al jugador
     camera.setTarget(this.mesh.position);
   }
 

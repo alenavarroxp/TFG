@@ -50,8 +50,8 @@ const LoginSlide = () => {
       className="carousel-item relative h-screen w-screen bg-[#167563]"
     >
       <div className="flex justify-start flex-col items-center w-full text-white">
-        <div className="items-center justify-center flex flex-col mt-24">
-          <p className="font-bold mt-16 text-2xl">
+        <div className="items-center justify-center flex flex-col lg:mt-14 mt-10">
+          <p className="font-bold mt-16 lg:text-2xl md:text-xl sm:text-lg px-4 text-center">
             Antes de comenzar, ¿qué{" "}
             <span className="text-white underline">rol</span> te gustaría
             seleccionar para acceder al mundo?
@@ -76,14 +76,14 @@ const LoginSlide = () => {
               />
             </div>
 
-            <h1 className="font-bold mt-6 text-2xl">
+            <h1 className="font-bold mt-6 lg:text-2xl md:text-xl sm:text-lg px-4 text-center">
               ¿Cuál es el{" "}
               <span className="text-white underline">nombre de usuario</span>{" "}
               que deseas utilizar?
             </h1>
             <div>
-              <div className="flex items-center justify-center mt-4 w-full">
-                <div className="flex items-center justify-center w-full relative ">
+              <div className="flex items-center justify-center mt-4">
+                <div>
                   <PersonInput
                     label="Nombre de usuario"
                     id="usernameInput"
@@ -97,7 +97,7 @@ const LoginSlide = () => {
               </div>
             </div>
 
-            <div className="absolute flex justify-center bottom-16 left-0 right-0 ">
+            <div className="absolute flex justify-center bottom-16 left-0 right-0 px-4">
               <button
                 id="loginButton"
                 className="disabled:pointer-events-none disabled:bg-gray-400 flex items-center justify-center bg-white text-lg lg:text-xl md:text-md font-bold rounded-full shadow-lg px-16 lg:px-20 py-3 lg:py-4 text-gray-800 transition-transform hover:scale-105 hover:shadow-xl relative"
