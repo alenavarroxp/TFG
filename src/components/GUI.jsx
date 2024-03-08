@@ -2,14 +2,11 @@ import { useState } from "react";
 import { UserModal } from "./UserModal";
 import { HiVideoCamera } from "react-icons/hi2";
 import { FaUsers } from "react-icons/fa";
+import { handleKeyDown } from "../utils/handleKeyDown";
 
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
-  
-  const handleKeyDown = (event) => {
-    event.preventDefault();
-  }
 
   return (
     <>

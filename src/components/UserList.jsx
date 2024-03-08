@@ -3,6 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Importa los estilos de react-toastify
 import { socket } from "../utils/socket";
 import { useState } from "react";
+import { handleKeyDown } from "../utils/handleKeyDown";
 
 export const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -42,10 +43,10 @@ export const UserList = () => {
               <p className="font-semibold">{user.name}</p>
               <p className="text-sm">{user.role}</p>
             </div>
-            <button className="btn btn-sm btn-circle ml-auto" onClick={notify}>
+            <button className="btn btn-sm btn-circle ml-auto focus:outline-none" onClick={notify} onKeyDown={handleKeyDown} >
               <BsChatLeft color="black" />
             </button>
-            <button className="btn btn-sm btn-circle ml-3" onClick={notify}>
+            <button className="btn btn-sm btn-circle ml-3 focus:outline-none" onClick={notify} onKeyDown={handleKeyDown}>
               <BsThreeDots color="black" />
             </button>
           </li>

@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import "babylonjs-loaders";
-
 export class Character {
   constructor(id, position, rotation, color, scene, callback) {
     this.id = id;
@@ -26,11 +25,8 @@ export class Character {
       scene,
       (newMeshes) => {
         // El modelo GLB contiene varios meshes, pero solo queremos el primero
-        console.log("newMeshes", newMeshes);
         this.meshes = newMeshes;
         this.mesh = newMeshes[0];
-        console.log("this.mesh", this.mesh);
-        console.log("scene", scene);
 
         scene.animationGroups.forEach((animation) => {
           this.animations[animation.name] = animation;
@@ -82,9 +78,6 @@ export class Character {
         });
         this.mesh.checkCollisions = true;
         this.mesh.applyGravity = true;
-
-        // eslint-disable-next-line no-undef
-        this.mesh.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
 
         this.meshes.forEach((mesh) => {
           mesh.checkCollisions = true;
