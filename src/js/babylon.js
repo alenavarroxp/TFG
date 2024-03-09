@@ -46,7 +46,7 @@ export function initScene(canvas) {
   // eslint-disable-next-line no-unused-vars
   const light = new BABYLON.HemisphericLight(
     "light",
-    new BABYLON.Vector3(0, 1, 0),
+    new BABYLON.Vector3(0, 10, 0),
     scene
   );
 
@@ -147,10 +147,10 @@ export function initScene(canvas) {
       return;
     }
 
-    if (keys.W) character.move(keys, characters, scene);
-    if (keys.A) character.move(keys, characters, scene);
-    if (keys.S) character.move(keys, characters, scene);
-    if (keys.D) character.move(keys, characters, scene);
+    if (keys.W) character.move(keys, characters, escenario, scene);
+    if (keys.A) character.move(keys, characters, escenario, scene);
+    if (keys.S) character.move(keys, characters, escenario, scene);
+    if (keys.D) character.move(keys, characters, escenario, scene);
 
     if (character) {
       if (keys.SPACE) {

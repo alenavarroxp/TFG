@@ -5,7 +5,7 @@ export class Character {
     this.id = id;
     this.mesh = null;
     this.meshes = null;
-    this.ellipsoid = null;
+    this.capsule = null;
     this.animations = {}; // Diccionario para almacenar animaciones
     this.mixer = null;
     this.isMoving = false;
@@ -15,7 +15,6 @@ export class Character {
     this.SPEED_CHANGE = 0.025;
     this.isJumping = false;
     this.jumpSpeed = 0;
-
 
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
 
@@ -87,7 +86,7 @@ export class Character {
 
         console.log("MESH", this.mesh);
 
-        this.showBoundingBox(scene, this.mesh);
+        this.showBoundingCapsule(scene, this.mesh);
 
         if (callback) {
           callback(this);
@@ -96,9 +95,9 @@ export class Character {
     );
   }
 
-  showBoundingBox(scene, mesh) {
+  showBoundingCapsule(scene, mesh) {
     //Construir una capsula alrededor del personaje
-    this.ellipsoid = new BABYLON.MeshBuilder.CreateCapsule(
+    this.capsule = new BABYLON.MeshBuilder.CreateCapsule(
       "ellipsoid",
       {
         capSubdivisions: 5,
@@ -113,16 +112,10 @@ export class Character {
       scene
     );
     ellipsoidMaterial.wireframe = true;
-    this.ellipsoid.material = ellipsoidMaterial;
-
-    this.ellipsoid.position = new BABYLON.Vector3(
-      mesh.position.x,
-      mesh.position.y,
-      mesh.position.z
-    );
+    this.capsule.material = ellipsoidMaterial;
 
     scene.registerBeforeRender(() => {
-      this.ellipsoid.position = new BABYLON.Vector3(
+      this.capsule.position = new BABYLON.Vector3(
         mesh.position.x,
         mesh.position.y + 0.075,
         mesh.position.z
@@ -146,7 +139,7 @@ export class Character {
     }
   }
 
-  move(keys, characters, scene) {
+  move(keys, characters, escenario, scene) {
     let computedRotation = this.mesh.rotation.z;
     // eslint-disable-next-line no-undef
     let computedMovement = new BABYLON.Vector3();
@@ -180,12 +173,9 @@ export class Character {
       computedMovement = new BABYLON.Vector3(xMovement, 0, zMovement);
     }
 
-    // eslint-disable-next-line no-undef
-    this.mesh.position = new BABYLON.Vector3(
-      this.mesh.position.x + computedMovement.x,
-      this.mesh.position.y + computedMovement.y,
-      this.mesh.position.z + computedMovement.z
-    );
+    const newPosition = this.mesh.position.add(computedMovement);
+    if (!this.checkCollisions(newPosition, characters, escenario))
+      this.mesh.position = newPosition;
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -225,24 +215,24 @@ export class Character {
     return a + t * (b - a);
   }
 
-  checkCollisions(newPosition, characters) {
-    // Verificar colisiones con el plano
-    if (newPosition.y < 0) {
-      return true; // Colisión con el suelo, no permitir mover más abajo
-    }
-
-    // Verificar colisiones con otros personajes
+  checkCollisions(newPosition, characters, escenario) {
+    // Verificar colisiones con otras cápsulas de personajes
     for (const character of characters) {
       if (character.id !== this.id) {
-        const distanceVector = newPosition.subtract(character.mesh.position);
+        const distanceVector = newPosition.subtract(character.capsule.position);
         const distance = distanceVector.length();
-
         // Detener el movimiento si hay colisión con otro personaje
-        if (distance < 1.5) {
+        if (distance < 0.12) {
           return true;
         }
       }
     }
+
+    // for (const mesh of escenario.meshes) {
+    //   if (mesh.intersectsMesh(this.capsule, true)) {
+    //     return true;
+    //   }
+    // }
 
     return false; // No hay colisiones
   }
@@ -289,8 +279,6 @@ export class Character {
       // Evitar que el personaje salte mientras ya está en el aire
       this.isJumping = true;
 
-      // Aplicar un impulso en el eje Y para simular el salto
-      // eslint-disable-next-line no-undef
       var jumpImpulse = new CANNON.Vec3(0, 25, 0); // Ajusta este valor según sea necesario
       this.mesh.physicsImpostor.physicsBody.applyImpulse(
         jumpImpulse,
@@ -308,7 +296,6 @@ export class Character {
     this.meshes.forEach((mesh) => {
       mesh.dispose();
     });
-    this.ellipsoid.dispose();
+    this.capsule.dispose();
   }
-
 }
