@@ -5,6 +5,7 @@ export class Character {
     this.id = id;
     this.mesh = null;
     this.meshes = null;
+    this.ellipsoid = null;
     this.animations = {}; // Diccionario para almacenar animaciones
     this.mixer = null;
     this.isMoving = false;
@@ -15,9 +16,9 @@ export class Character {
     this.isJumping = false;
     this.jumpSpeed = 0;
 
+
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
-    
-    
+
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
@@ -47,6 +48,7 @@ export class Character {
             false
           );
         // Posición y rotación
+        console.log("POSITION CAHRATCTER", position, rotation);
         this.mesh.position.set(position.x, position.y, position.z);
         this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
         this.mesh.scaling.set(0.05, 0.05, 0.05);
@@ -83,14 +85,49 @@ export class Character {
           mesh.checkCollisions = true;
         });
 
+        console.log("MESH", this.mesh);
+
+        this.showBoundingBox(scene, this.mesh);
+
         if (callback) {
           callback(this);
         }
       }
     );
-    
-   
-    
+  }
+
+  showBoundingBox(scene, mesh) {
+    //Construir una capsula alrededor del personaje
+    this.ellipsoid = new BABYLON.MeshBuilder.CreateCapsule(
+      "ellipsoid",
+      {
+        capSubdivisions: 5,
+        subdivisions: 5,
+        radius: 0.05,
+        height: 0.15,
+      },
+      scene
+    );
+    var ellipsoidMaterial = new BABYLON.StandardMaterial(
+      "ellipsoidMaterial",
+      scene
+    );
+    ellipsoidMaterial.wireframe = true;
+    this.ellipsoid.material = ellipsoidMaterial;
+
+    this.ellipsoid.position = new BABYLON.Vector3(
+      mesh.position.x,
+      mesh.position.y,
+      mesh.position.z
+    );
+
+    scene.registerBeforeRender(() => {
+      this.ellipsoid.position = new BABYLON.Vector3(
+        mesh.position.x,
+        mesh.position.y + 0.075,
+        mesh.position.z
+      );
+    });
   }
 
   playAnimation(animationName) {
@@ -210,18 +247,18 @@ export class Character {
     return false; // No hay colisiones
   }
 
-  moveCamera(camera,keys) {
+  moveCamera(camera, keys) {
     const lerpFactor = 0.3;
     const distanceFromPlayer = 0.35; // Ajusta esto para cambiar la distancia de la cámara al jugador
 
-    if(keys["W"] || keys["A"] || keys["S"] || keys["D"]){
+    if (keys["W"] || keys["A"] || keys["S"] || keys["D"]) {
       const cameraOffset = new BABYLON.Vector3(
         -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
         0.175,
         -distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
       );
       const targetPosition = this.mesh.position.add(cameraOffset);
-  
+
       // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
       // eslint-disable-next-line no-undef
       camera.position = BABYLON.Vector3.Lerp(
@@ -229,7 +266,6 @@ export class Character {
         targetPosition,
         lerpFactor
       );
-      
     }
     // Mira al jugador
     camera.position = BABYLON.Vector3.Lerp(
@@ -267,4 +303,12 @@ export class Character {
       }, 500); // Restablecer después de 1 segundo (ajusta según sea necesario)
     }
   }
+
+  eliminarMeshes() {
+    this.meshes.forEach((mesh) => {
+      mesh.dispose();
+    });
+    this.ellipsoid.dispose();
+  }
+
 }

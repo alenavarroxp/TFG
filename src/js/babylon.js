@@ -35,6 +35,7 @@ export function initScene(canvas) {
   camera.maxZ = 100;
   camera.lowerRadiusLimit = 1;
   camera.upperRadiusLimit = 22.5;
+  camera.inputs.attached.keyboard.detachControl();
   camera.attachControl(canvas, true);
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
@@ -199,7 +200,7 @@ export function initScene(canvas) {
   function eliminarPersonaje(id) {
     const character = characters.find((character) => character.id === id);
     if (character) {
-      character.mesh.dispose();
+      character.eliminarMeshes();
       const index = characters.indexOf(character);
       characters.splice(index, 1);
     }
@@ -210,9 +211,9 @@ export function initScene(canvas) {
     character = new Character(
       socket.id,
       new BABYLON.Vector3(
-        Math.random() * (10 - -10) + -10,
+        Math.random() * (0.25-(-0.25)) + (-0.25),
         10,
-        Math.random() * (10 - -10) + -10
+        Math.random() * (0.25-(-0.25)) + (-0.25)
       ),
       new BABYLON.Vector3(0, 0, 0),
       "#ff0000",

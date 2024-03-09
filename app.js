@@ -1,5 +1,5 @@
 import http from "http";
-import "dotenv/config";
+
 import express from "express";
 import WebSocketServer from "./servidor/serverSocket.js";
 import { fileURLToPath } from "url";
@@ -31,6 +31,11 @@ app.use(express.json());
 // Ruta "/"
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
+//Ruta para cualquier otro GET que no sea las rutas definidas (APP)
+app.use(function (request, response) {
+  response.sendFile(path.join(__dirname, "/dist/index.html"));
 });
 
 // app.get("/babylon", (req, res) => {
