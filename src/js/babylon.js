@@ -217,7 +217,6 @@ export function initScene(canvas, user) {
         Math.random() * (0.25 - -0.25) + -0.25
       ),
       new BABYLON.Vector3(0, 0, 0),
-      "#7FFF00",
       user,
       scene,
       (character) => {
@@ -226,7 +225,6 @@ export function initScene(canvas, user) {
           id: socket.id,
           position: character.mesh.position,
           rotation: character.mesh.rotation,
-          color: "#00ff00",
           user: user,
         });
 
@@ -259,7 +257,6 @@ export function initScene(canvas, user) {
         obj.id,
         obj.position,
         obj.rotation,
-        obj.color,
         obj.user,
         scene
       );
@@ -291,7 +288,6 @@ export function initScene(canvas, user) {
           id: character.id,
           position: character.mesh.position,
           rotation: character.mesh.rotation,
-          color: "#00ff00",
           user: character.user
         });
       } catch (err) {

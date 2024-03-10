@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import "babylonjs-loaders";
 export class Character {
-  constructor(id, position, rotation, color, user, scene, callback) {
+  constructor(id, position, rotation, user, scene, callback) {
     this.id = id;
     this.user = user;
     this.mesh = null;
@@ -65,7 +65,7 @@ export class Character {
         );
         // eslint-disable-next-line no-undef
         characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
-          color
+          this.user.isProfessor ? "#148A1A" : "#1481BA"
         );
 
         const partsToColor = [
