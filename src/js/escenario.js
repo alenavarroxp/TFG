@@ -36,7 +36,7 @@ export class Escenario {
         this.debugMeshes(this.meshes);
 
         this.meshes.forEach((mesh) => {
-          mesh.showBoundingBox = true;
+          // mesh.showBoundingBox = true;
           mesh.checkCollisions = true;
           
         });

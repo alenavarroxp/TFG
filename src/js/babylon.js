@@ -14,7 +14,7 @@ export function initScene(canvas) {
 
   // Crear una escena
   const scene = new BABYLON.Scene(engine);
-  
+
   // scene.debugLayer.show();
   scene.collisionsEnabled = true;
 
@@ -41,7 +41,7 @@ export function initScene(canvas) {
 
   camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
   const cameraInitialPosition = camera.position.clone();
-  
+
   // Crear una luz
   // eslint-disable-next-line no-unused-vars
   const light = new BABYLON.HemisphericLight(
@@ -211,9 +211,9 @@ export function initScene(canvas) {
     character = new Character(
       socket.id,
       new BABYLON.Vector3(
-        Math.random() * (0.25-(-0.25)) + (-0.25),
+        Math.random() * (0.25 - -0.25) + -0.25,
         10,
-        Math.random() * (0.25-(-0.25)) + (-0.25)
+        Math.random() * (0.25 - -0.25) + -0.25
       ),
       new BABYLON.Vector3(0, 0, 0),
       "#ff0000",
