@@ -17,9 +17,9 @@ export const World = () => {
     }
     const canvas = reactCanvas.current;
     if (canvas) {
-      initScene(canvas);
+      initScene(canvas,user);
     }
-  }, [user.userName, navigate]);
+  }, [user, navigate]);
 
   return (
     <>

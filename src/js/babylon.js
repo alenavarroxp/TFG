@@ -4,11 +4,12 @@ import { Character } from "./characterBabylon.js";
 import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
 
-export function initScene(canvas) {
+export function initScene(canvas, user) {
   console.log("inicializando escena...");
   socket.emit("init");
   window.CANNON = CANNON;
   // Crear el motor de Babylon.js
+  let move = false;
   const engine = new BABYLON.Engine(canvas, true);
   engine.displayLoadingUI();
 
@@ -87,11 +88,11 @@ export function initScene(canvas) {
   };
 
   document.addEventListener("keydown", (event) => {
-    handleKeyDown(event);
+    if (move) handleKeyDown(event);
   });
 
   document.addEventListener("keyup", (event) => {
-    handleKeyUp(event);
+    if (move) handleKeyUp(event);
   });
 
   function handleKeyDown(event) {
@@ -216,7 +217,8 @@ export function initScene(canvas) {
         Math.random() * (0.25 - -0.25) + -0.25
       ),
       new BABYLON.Vector3(0, 0, 0),
-      "#ff0000",
+      "#7FFF00",
+      user,
       scene,
       (character) => {
         characters.push(character);
@@ -225,6 +227,7 @@ export function initScene(canvas) {
           position: character.mesh.position,
           rotation: character.mesh.rotation,
           color: "#00ff00",
+          user: user,
         });
 
         socket.emit("recuperarPersonajes", socket.id);
@@ -239,6 +242,7 @@ export function initScene(canvas) {
           scene
         );
         engine.hideLoadingUI();
+        move = true;
       }
     );
   });
@@ -256,6 +260,7 @@ export function initScene(canvas) {
         obj.position,
         obj.rotation,
         obj.color,
+        obj.user,
         scene
       );
       console.log("Se ha creado el personaje: ", character);
@@ -287,6 +292,7 @@ export function initScene(canvas) {
           position: character.mesh.position,
           rotation: character.mesh.rotation,
           color: "#00ff00",
+          user: character.user
         });
       } catch (err) {
         // console.log(err);

@@ -1,11 +1,13 @@
 /* eslint-disable no-undef */
 import "babylonjs-loaders";
 export class Character {
-  constructor(id, position, rotation, color, scene, callback) {
+  constructor(id, position, rotation, color, user, scene, callback) {
     this.id = id;
+    this.user = user;
     this.mesh = null;
     this.meshes = null;
     this.capsule = null;
+    this.displayName = null;
     this.animations = {}; // Diccionario para almacenar animaciones
     this.mixer = null;
     this.isMoving = false;
@@ -16,6 +18,7 @@ export class Character {
     this.isJumping = false;
     this.jumpSpeed = 0;
 
+    console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
 
     BABYLON.SceneLoader.ImportMesh(
@@ -98,14 +101,14 @@ export class Character {
   }
 
   createDisplayName(scene, mesh) {
-    //Crear un plano para mostrar el nombre del personaje
-    const plane = BABYLON.MeshBuilder.CreatePlane(
+    // Crear un plano para mostrar el nombre del personaje
+    this.displayName = BABYLON.MeshBuilder.CreatePlane(
       "plane",
       { size: 0.2 },
       scene
     );
-
-    // Crea una textura dinámica
+  
+    // Crear una textura dinámica
     var dynamicTexture = new BABYLON.DynamicTexture(
       "dynamic texture",
       512,
@@ -113,44 +116,62 @@ export class Character {
       true
     );
     dynamicTexture.hasAlpha = true;
-
-    // Crea un contexto 2D a partir de la textura dinámica
+  
+    // Crear un contexto 2D a partir de la textura dinámica
     var ctx = dynamicTexture.getContext();
-
+  
     // Limpia el contexto
     ctx.clearRect(0, 0, 512, 512);
-
-    // Configura el estilo del texto
-    ctx.font = "bold 44px monospace";
+  
+    // Configurar el estilo del texto
+    ctx.font = "bold 50px Verdana"; // Reducir el tamaño del texto del nombre
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-
-    // Dibuja el texto en el contexto
-    ctx.fillText("Hello, world!", 256, 256);
-
-    // Actualiza la textura
+  
+    // Dibujar el texto del nombre en el contexto
+    ctx.fillText(this.user.userName, 256, 240); // Ajustar la posición del texto del nombre
+  
+    // Configurar el estilo del texto del rol
+    ctx.font = "italic 36px Arial";
+    ctx.fillStyle = "white";
+  
+    // Dibujar el texto del rol en el contexto
+    var role = this.user.isProfessor ? "Profesor" : "Estudiante";
+    ctx.fillText(role, 256, 285); // Ajustar la posición del texto del rol
+  
+    // Actualizar la textura
     dynamicTexture.update();
-
-    // Crea un material a partir de la textura
+  
+    // Crear un material a partir de la textura
     var planeMaterial = new BABYLON.StandardMaterial("plane material", scene);
     planeMaterial.diffuseTexture = dynamicTexture;
     planeMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     planeMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);
     planeMaterial.backFaceCulling = false;
     planeMaterial.diffuseTexture.hasAlpha = true;
-
-    // Aplica el material al plano
-    plane.material = planeMaterial;
-
+  
+    // Aplicar el material al plano
+    this.displayName.material = planeMaterial;
+  
+    // Mantener el plano enfocado hacia la cámara
     scene.registerBeforeRender(() => {
-      plane.position = new BABYLON.Vector3(
+      this.displayName.position = new BABYLON.Vector3(
         mesh.position.x,
-        mesh.position.y + 0.3,
+        mesh.position.y + 0.2,
         mesh.position.z
       );
+  
+      var camera = scene.activeCamera;
+      if (camera) {
+        this.displayName.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+        this.displayName.rotation.y = camera.rotation.y;
+        this.displayName.rotation.x = camera.rotation.x;
+        this.displayName.rotation.z = camera.rotation.z;
+      }
     });
   }
+  
 
   showBoundingCapsule(scene, mesh) {
     //Construir una capsula alrededor del personaje
@@ -354,5 +375,6 @@ export class Character {
       mesh.dispose();
     });
     this.capsule.dispose();
+    this.displayName.dispose();
   }
 }

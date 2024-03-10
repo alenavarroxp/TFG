@@ -23,7 +23,7 @@ export const UserList = () => {
     const userList = Object.keys(users).map((userId) => ({
       id: userId,
       name: users[userId].userName,
-      role: users[userId].isProfessor ? "Professor" : "Student",
+      role: users[userId].isProfessor ? "Profesor" : "Estudiante",
     }));
     setUsers(userList);
   });
