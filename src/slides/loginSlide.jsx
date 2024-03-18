@@ -26,7 +26,7 @@ const LoginSlide = () => {
   };
 
   const handleUserNameChange = (event) => {
-    setUserName(event.target.value);
+    setUserName(event.target.value);  
   };
 
   const handleLoginClick = () => {
@@ -39,7 +39,6 @@ const LoginSlide = () => {
     setActiveOption(null);
     setUserName("");
     setIsProfessor(false);
-    console.log("tres variables limpias",  activeOption, userName, isProfessor)
   };
 
   const isButtonDisabled = !userName || !activeOption;

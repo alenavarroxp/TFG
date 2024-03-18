@@ -17,6 +17,8 @@ export class Character {
     this.SPEED_CHANGE = 0.025;
     this.isJumping = false;
     this.jumpSpeed = 0;
+    this.isColliding = false;
+    this.oldPosition = new BABYLON.Vector3();
 
     console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
@@ -50,7 +52,6 @@ export class Character {
             false
           );
         // Posición y rotación
-        console.log("POSITION CAHRATCTER", position, rotation);
         this.mesh.position.set(position.x, position.y, position.z);
         this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
         this.mesh.scaling.set(0.05, 0.05, 0.05);
@@ -80,14 +81,8 @@ export class Character {
             object.material = characterMaterial;
           }
         });
-        this.mesh.checkCollisions = true;
+        // this.mesh.checkCollisions = true;
         this.mesh.applyGravity = true;
-
-        this.meshes.forEach((mesh) => {
-          mesh.checkCollisions = true;
-        });
-
-        console.log("MESH", this.mesh);
 
         this.showBoundingCapsule(scene, this.mesh);
 
@@ -107,7 +102,7 @@ export class Character {
       { size: 0.2 },
       scene
     );
-  
+
     // Crear una textura dinámica
     var dynamicTexture = new BABYLON.DynamicTexture(
       "dynamic texture",
@@ -116,33 +111,33 @@ export class Character {
       true
     );
     dynamicTexture.hasAlpha = true;
-  
+
     // Crear un contexto 2D a partir de la textura dinámica
     var ctx = dynamicTexture.getContext();
-  
+
     // Limpia el contexto
     ctx.clearRect(0, 0, 512, 512);
-  
+
     // Configurar el estilo del texto
     ctx.font = "bold 50px Verdana"; // Reducir el tamaño del texto del nombre
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-  
+
     // Dibujar el texto del nombre en el contexto
     ctx.fillText(this.user.userName, 256, 240); // Ajustar la posición del texto del nombre
-  
+
     // Configurar el estilo del texto del rol
     ctx.font = "italic 36px Arial";
     ctx.fillStyle = "white";
-  
+
     // Dibujar el texto del rol en el contexto
     var role = this.user.isProfessor ? "Profesor" : "Estudiante";
     ctx.fillText(role, 256, 285); // Ajustar la posición del texto del rol
-  
+
     // Actualizar la textura
     dynamicTexture.update();
-  
+
     // Crear un material a partir de la textura
     var planeMaterial = new BABYLON.StandardMaterial("plane material", scene);
     planeMaterial.diffuseTexture = dynamicTexture;
@@ -150,10 +145,10 @@ export class Character {
     planeMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);
     planeMaterial.backFaceCulling = false;
     planeMaterial.diffuseTexture.hasAlpha = true;
-  
+
     // Aplicar el material al plano
     this.displayName.material = planeMaterial;
-  
+
     // Mantener el plano enfocado hacia la cámara
     scene.registerBeforeRender(() => {
       this.displayName.position = new BABYLON.Vector3(
@@ -161,7 +156,7 @@ export class Character {
         mesh.position.y + 0.2,
         mesh.position.z
       );
-  
+
       var camera = scene.activeCamera;
       if (camera) {
         this.displayName.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
@@ -171,7 +166,6 @@ export class Character {
       }
     });
   }
-  
 
   showBoundingCapsule(scene, mesh) {
     //Construir una capsula alrededor del personaje
@@ -180,7 +174,7 @@ export class Character {
       {
         capSubdivisions: 5,
         subdivisions: 5,
-        radius: 0.05,
+        radius: 0.06,
         height: 0.15,
       },
       scene
@@ -191,6 +185,7 @@ export class Character {
     );
     ellipsoidMaterial.wireframe = true;
     this.capsule.material = ellipsoidMaterial;
+    this.capsule.checkCollisions = true;
 
     scene.registerBeforeRender(() => {
       this.capsule.position = new BABYLON.Vector3(
@@ -251,9 +246,25 @@ export class Character {
       computedMovement = new BABYLON.Vector3(xMovement, 0, zMovement);
     }
 
+    this.oldPosition = new BABYLON.Vector3(
+      this.mesh.position.x,
+      this.mesh.position.y,
+      this.mesh.position.z
+    );
     const newPosition = this.mesh.position.add(computedMovement);
-    if (!this.checkCollisions(newPosition, characters))
+    const collisionResult = this.checkCollisions(
+      scene,
+      newPosition,
+      this.oldPosition,
+      characters,
+      escenario
+    );
+
+    if (!collisionResult) {
       this.mesh.position = newPosition;
+    } else if (collisionResult === "scenary_collision") {
+      console.log("Colisión con el escenario");
+    }
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -293,7 +304,7 @@ export class Character {
     return a + t * (b - a);
   }
 
-  checkCollisions(newPosition, characters) {
+  checkCollisions(scene, newPosition, oldPosition, characters, escenario) {
     // Verificar colisiones con otras cápsulas de personajes
     for (const character of characters) {
       if (character.id !== this.id) {
@@ -306,12 +317,12 @@ export class Character {
       }
     }
 
-    // for (const mesh of escenario.meshes) {
-    //   if (mesh.intersectsMesh(this.capsule, true)) {
-    //     return true;
-    //   }
-    // }
-
+    // Verificar colisiones con el escenario pero solo si el personaje se está moviendo. No quiero que me lo deje atrapado en el intersectsMesh
+    for (const mesh of escenario.elements) {
+      if (mesh.intersectsMesh(this.capsule, true)) {
+        return "scenary_collision";
+      }
+    }
     return false; // No hay colisiones
   }
 

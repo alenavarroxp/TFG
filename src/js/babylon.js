@@ -5,7 +5,7 @@ import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
 
 export function initScene(canvas, user) {
-  console.log("inicializando escena...");
+  console.log("Iniciando escena...");
   socket.emit("init");
   window.CANNON = CANNON;
   // Crear el motor de Babylon.js
@@ -42,6 +42,9 @@ export function initScene(canvas, user) {
 
   camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
   const cameraInitialPosition = camera.position.clone();
+  // camera.applyGravity = true;
+  // camera.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
+  // camera.checkCollisions = true;
 
   // Crear una luz
   // eslint-disable-next-line no-unused-vars
@@ -52,12 +55,26 @@ export function initScene(canvas, user) {
   );
 
   const escenario = new Escenario();
-  escenario.initMap(scene, 1);
+  // engine.hideLoadingUI();
+  escenario.initMap(scene, camera, function () {
+    console.log("Escenario cargado");
+    engine.hideLoadingUI();
+  });
+
+  scene.onPointerObservable.add((eventData) => {
+    if (eventData.type === BABYLON.PointerEventTypes.POINTERDOWN) {
+      const pickResult = scene.pick(scene.pointerX, scene.pointerY);
+      if (pickResult && pickResult.pickedPoint) {
+        console.log("Objeto seleccionado: ", pickResult.pickedMesh.name);
+        console.log("Posición en el mundo: ", pickResult.pickedPoint);
+      }
+    }
+  });
 
   // Create a ground mesh
   var ground = BABYLON.MeshBuilder.CreateBox(
     "ground",
-    { width: 20, height: 20, depth: 1 },
+    { width: 30, height: 30, depth: 1 },
     scene
   );
   ground.position.y = -0.5;
@@ -73,6 +90,16 @@ export function initScene(canvas, user) {
     { mass: 0, restitution: 0 },
     scene
   );
+  //Crear caja en -5,0,-5 con colisiones
+  // Crear la caja
+  // var box = BABYLON.MeshBuilder.CreateBox("box", {size: 2}, scene);
+  // box.position = new BABYLON.Vector3(-2, 0, -2);
+  // box.checkCollisions = true;
+
+  // // Aplicar un material a la caja
+  // var material = new BABYLON.StandardMaterial("material", scene);
+  // material.diffuseColor = new BABYLON.Color3(1, 0, 0); // Color rojo
+  // box.material = material;
 
   const characters = [];
   let character;
@@ -120,16 +147,30 @@ export function initScene(canvas, user) {
   let cameraMode = "default"; // Modo de la cámara por defecto
 
   // Función para cambiar el modo de la cámara
+  function animateCameraProperty(propertyName, endValue) {
+    BABYLON.Animation.CreateAndStartAnimation(
+      "camera" + propertyName + "Animation",
+      camera,
+      propertyName,
+      60,
+      60,
+      camera[propertyName],
+      endValue,
+      BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+    );
+  }
+
   function changeCameraMode() {
     if (cameraMode === "default") {
       cameraMode = "followPlayer";
     } else {
       cameraMode = "default";
-      // Ajustar las propiedades de la cámara para volver a la posición inicial
-      camera.position = cameraInitialPosition;
-      camera.radius = 7;
-      camera.alpha = -Math.PI / 2;
-      camera.beta = Math.PI / 4;
+
+      // Llamar a animateCameraProperty para cada propiedad que quieres animar
+      animateCameraProperty("position", cameraInitialPosition);
+      animateCameraProperty("radius", 7);
+      animateCameraProperty("alpha", -Math.PI / 2);
+      animateCameraProperty("beta", Math.PI / 4);
 
       // Mira hacia el objetivo (ajusta según sea necesario)
       camera.setTarget(BABYLON.Vector3.Zero());
@@ -208,7 +249,7 @@ export function initScene(canvas, user) {
   }
 
   socket.on("init", () => {
-    console.log("Conectado al servidor", socket.id);
+    console.log("Conectado al servidor con ID: ", socket.id);
     character = new Character(
       socket.id,
       new BABYLON.Vector3(
@@ -239,7 +280,7 @@ export function initScene(canvas, user) {
           { mass: 10, radius: sphereRadius },
           scene
         );
-        engine.hideLoadingUI();
+
         move = true;
       }
     );
@@ -288,7 +329,7 @@ export function initScene(canvas, user) {
           id: character.id,
           position: character.mesh.position,
           rotation: character.mesh.rotation,
-          user: character.user
+          user: character.user,
         });
       } catch (err) {
         // console.log(err);
