@@ -16,7 +16,7 @@ export const NumberInput = ({ numQuestion }) => {
   return (
     <input
       type="text"
-      value={question.score !== undefined ? question.score : ""}
+      value={question.score !== undefined ? question.score : 0}
       onChange={handleChange}
       maxLength={4}
       max={10}
