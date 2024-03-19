@@ -117,7 +117,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
             {optionActivity === "Test" && (
               <TestForm
                 numQuestion={calculateNumQuestions()}
-                questions={questions}
               />
             )}
           </div>

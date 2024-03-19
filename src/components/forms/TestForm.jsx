@@ -6,7 +6,7 @@ import { NumberInput } from "../../inputs/numberInput";
 import { useAtom } from "jotai";
 import { questionAtom } from "../..//context/atoms/questionAtom";
 
-export const TestForm = ({ numQuestion, questions }) => {
+export const TestForm = ({ numQuestion }) => {
   const [question, setQuestion] = useAtom(questionAtom); // Usa el átomo questionAtom
 
   const handleAnswerChange = (index, updatedAnswer) => {
@@ -25,7 +25,7 @@ export const TestForm = ({ numQuestion, questions }) => {
       correct: [...question.correct, false],
     });
   };
-
+  
   const handleQuestionTextChange = (text) => {
     setQuestion({ ...question, id: numQuestion, questionText: text });
   };
@@ -75,7 +75,7 @@ export const TestForm = ({ numQuestion, questions }) => {
           <p className="text-md border-b-2 font-semibold">Puntuación</p>
           <LuAsterisk className="mt-1" size={12} />
         </div>
-        <NumberInput />
+        <NumberInput numQuestion={numQuestion}/>
       </div>
     </div>
   );
