@@ -1,13 +1,16 @@
+/* eslint-disable react/prop-types */
 import { IoCheckmarkCircle } from "react-icons/io5";
-import { useState } from "react";
 
-// eslint-disable-next-line react/prop-types
-export const AnswerInput = ({ index }) => {
+export const AnswerInput = ({ index, answer, setAnswer }) => {
   const optionId = `option${index}`;
-  const [isChecked, setIsChecked] = useState(false);
+  const { answerText, isCorrect } = answer;
 
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
+    setAnswer({ ...answer, isCorrect: !isCorrect });
+  };
+
+  const handleAnswerTextChange = (text) => {
+    setAnswer({ ...answer, answerText: text });
   };
 
   return (
@@ -23,6 +26,8 @@ export const AnswerInput = ({ index }) => {
             paddingRight: "2rem",
             resize: "none",
           }}
+          value={answerText}
+          onChange={(e) => handleAnswerTextChange(e.target.value)}
         />
         <div className="mr-4 flex items-center">
           <input
@@ -30,7 +35,7 @@ export const AnswerInput = ({ index }) => {
             id={optionId}
             name={optionId}
             className="peer sr-only hidden"
-            checked={isChecked}
+            checked={isCorrect}
             onChange={handleCheckboxChange}
           />
           <label
@@ -38,9 +43,7 @@ export const AnswerInput = ({ index }) => {
             className="cursor-pointer relative inline-flex items-center justify-center w-4 h-4 border border-gray-400 rounded-full transition-all duration-300 bg-white"
           >
             <IoCheckmarkCircle
-              className={`text-[#24B817] ${
-                isChecked ? "opacity-100" : "opacity-0"
-              } absolute transition-all duration-300 ease-out`}
+              className={`text-[#24B817] ${isCorrect ? "opacity-100" : "opacity-0"} absolute transition-all duration-300 ease-out`}
               size={20}
             />
           </label>
