@@ -4,5 +4,6 @@ export const questionAtom = atom ({
     id: "",
     questionText: "",
     answers: [],
-    correct: []
+    correct: [],
+    score: 0
 })

@@ -6,12 +6,14 @@ import { TestForm } from "./forms/TestForm";
 import SelectInput from "../inputs/selectInput";
 import { GridQuestions } from "./GridQuestions";
 import { questionAtom } from "../context/atoms/questionAtom";
+import { errorsQuestionAtom } from "../context/atoms/errorsQuestionAtom";
 
 // eslint-disable-next-line react/prop-types
 export const CrearActividad = ({ setCrearScreen }) => {
   const [optionActivity, setOptionActivity] = useState("Test");
   const [question, setQuestion] = useAtom(questionAtom); // Utilizar el átomo questionAtom
   const [questions, setQuestions] = useState([]);
+  const [errors, setErrors] = useAtom(errorsQuestionAtom);
 
   const questionIsCreated = useMemo(() => {
     return questions.some((q) => q.id === question.id);
@@ -27,10 +29,20 @@ export const CrearActividad = ({ setCrearScreen }) => {
       questionText: "",
       answers: [],
       correct: [],
+      score: 0,
+    });
+
+    setErrors({
+      questionText: false,
+      answers: false,
+      correct: false,
+      score: false,
     });
   };
 
   const handleUpdateQuestion = () => {
+    if (!validateFields()) return;
+
     setQuestions((ques) => {
       const newQuestions = [...ques];
       const indexQuestion = newQuestions.findIndex((q) => q.id === question.id);
@@ -44,14 +56,58 @@ export const CrearActividad = ({ setCrearScreen }) => {
   };
 
   const handleAddQuestion = () => {
+    if (!validateFields()) return;
+
     setQuestions([...questions, question]);
     handleNewQuestion();
   };
 
+  const validateFields = () => {
+    const errorsCopy = { ...errors };
+    let isValid = true;
+
+    // Validar questionText
+    if (question.questionText.trim() === "") {
+      errorsCopy.questionText = true;
+      isValid = false;
+    } else {
+      errorsCopy.questionText = false;
+    }
+
+    // Validar answers
+    if (question.answers.length === 0) {
+      errorsCopy.answers = true;
+      isValid = false;
+    } else {
+      errorsCopy.answers = false;
+    }
+
+    // Validar correct
+    if (question.correct.length === 0) {
+      errorsCopy.correct = true;
+      isValid = false;
+    } else {
+      errorsCopy.correct = false;
+    }
+
+    // Validar score
+    if (question.score === 0) {
+      errorsCopy.score = true;
+      isValid = false;
+    } else {
+      errorsCopy.score = false;
+    }
+
+    setErrors(errorsCopy);
+    console.log("errorsvlaidate", errorsCopy);
+    return isValid;
+  };
+
   const calculateNumQuestions = () => {
     if (questions.length > 0) {
-      console.log("questions", questions)
-      if(questionIsCreated) return questions.findIndex((q) => q.id === question.id) + 1;
+      console.log("questions", questions);
+      if (questionIsCreated)
+        return questions.findIndex((q) => q.id === question.id) + 1;
       return questions.length + 1;
     } else {
       return questions.length + 1;
@@ -115,9 +171,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
             className="border-2 w-full min-h-96 rounded-lg m-5"
           >
             {optionActivity === "Test" && (
-              <TestForm
-                numQuestion={calculateNumQuestions()}
-              />
+              <TestForm numQuestion={calculateNumQuestions()} />
             )}
           </div>
 
