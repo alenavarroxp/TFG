@@ -1,66 +1,38 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
 import { LuAsterisk } from "react-icons/lu";
 import { PlusInput } from "../../inputs/plusInput";
 import { AnswerInput } from "../../inputs/answerInput";
 import { NumberInput } from "../../inputs/numberInput";
+import { useAtom } from "jotai";
+import { questionAtom } from "../..//context/atoms/questionAtom";
 
-export const TestForm = ({
-  numQuestion,
-  question,
-  setQuestion,
-  setQuestions,
-}) => {
-  const [numAnswers, setNumAnswers] = useState(0);
-  const [answers, setAnswers] = useState([]);
-  const [correct, setCorrect] = useState([]);
+export const TestForm = ({ numQuestion, questions }) => {
+  const [question, setQuestion] = useAtom(questionAtom); // Usa el átomo questionAtom
+
+  
 
   const handleAnswerChange = (index, updatedAnswer) => {
-    const updatedAnswers = [...answers];
-    updatedAnswers[index] = updatedAnswer;
-  
-    setAnswers(updatedAnswers);
-  
-    const updatedCorrect = updatedAnswers
-      .map((answer, i) => answer.isCorrect ? i : null)
-      .filter(i => i !== null);
-  
-    setCorrect(updatedCorrect);
-  
-    const updatedQuestion = {
-      ...question,
-      answers: updatedAnswers,
-      correct: updatedCorrect,
-    };
-  
-    setQuestion(updatedQuestion);
-    setQuestions((prevQuestions) =>
-      prevQuestions.map((q) => (q === question ? updatedQuestion : q))
-    );
+
+    const newAnswers = question.answers.map((answer, i) => {
+      if (i === index) return updatedAnswer;
+      return answer;
+    });
+
+    setQuestion({ ...question, answers: newAnswers });
   };
 
   const handleClick = () => {
-    setNumAnswers(numAnswers + 1);
-    setAnswers([...answers, { answerText: "", isCorrect: false }]);
-    setCorrect([...correct, false]);
+    setQuestion({
+      ...question,
+      answers: [...question.answers, { answerText: "", isCorrect: false }],
+      correct: [...question.correct, false],
+    });
   };
 
   const handleQuestionTextChange = (text) => {
-    const updatedQuestion = { ...question, questionText: text };
-    setQuestion(updatedQuestion);
-    setQuestions((prevQuestions) =>
-      prevQuestions.map((q) => (q === question ? updatedQuestion : q))
-    );
+    setQuestion({ ...question, id: questions.length + 1, questionText: text });
   };
 
-  useEffect(() => {
-    console.log("USETESTFORM", question);
-    setAnswers(question.answers || []);
-    setCorrect(question.correct || []);
-    setNumAnswers(question.answers?.length || 0);
-  }, [question]);
-
-  
   return (
     <div className="relative">
       <div id="question" className="flex flex-col px-3">
@@ -89,11 +61,11 @@ export const TestForm = ({
           <p className="text-lg border-b-2 font-semibold">Respuestas</p>
           <LuAsterisk className="mt-1" size={12} />
         </div>
-        {Array.from({ length: numAnswers }, (_, i) => (
+        {question.answers.map((answer, i) => (
           <AnswerInput
             key={i}
             index={i}
-            answer={answers[i] || { answerText: "", isCorrect: false }}
+            answer={answer}
             setAnswer={(updatedAnswer) => handleAnswerChange(i, updatedAnswer)}
           />
         ))}

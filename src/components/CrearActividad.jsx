@@ -1,31 +1,52 @@
 import { IoCloseOutline } from "react-icons/io5";
 import { AiFillInfoCircle } from "react-icons/ai";
-
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useAtom } from "jotai"; // Importar useAtom desde jotai
 import { TestForm } from "./forms/TestForm";
 import SelectInput from "../inputs/selectInput";
 import { GridQuestions } from "./GridQuestions";
+import { questionAtom } from "../context/atoms/questionAtom";
 
 // eslint-disable-next-line react/prop-types
 export const CrearActividad = ({ setCrearScreen }) => {
   const [optionActivity, setOptionActivity] = useState("Test");
+  const [question, setQuestion] = useAtom(questionAtom); // Utilizar el átomo questionAtom
   const [questions, setQuestions] = useState([]);
-  const [question, setQuestion] = useState({});
+
+  const questionIsCreated = useMemo(() => {
+    return questions.some((q) => q.id === question.id);
+  }, [questions, question]);
+  
 
   const handleClickCerrar = () => {
     setCrearScreen(false);
   };
 
-  const handleAddQuestion = () => {
-    console.log("question", question);
-    console.log("questions", questions);
-    setQuestions([...questions, question]);
-    setQuestion({});
+  const handleNewQuestion = () => {
+    setQuestion({
+      id: "",
+      questionText: "",
+      answers: [],
+      correct: [],
+    });
   };
 
-  const handleNewQuestion = () => {
-    console.log("question", question);
-    setQuestion({});
+  const handleUpdateQuestion = () => {
+    setQuestions((ques) => {
+      const newQuestions = [ ...ques ];
+      const indexQuestion = newQuestions.findIndex((q) => q.id === question.id);
+      if (indexQuestion === -1) return ques;
+
+      newQuestions[indexQuestion] = question;
+
+      return newQuestions;
+    });
+    handleNewQuestion();
+  };
+
+  const handleAddQuestion = () => {
+    setQuestions([...questions, question]);
+    handleNewQuestion();
   };
 
   const calculateNumQuestions = () => {
@@ -36,7 +57,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
             (q) => JSON.stringify(q) === JSON.stringify(question)
           ) + 1
         );
-        return questions.length + 1;
+      return questions.length + 1;
     } else {
       return questions.length + 1;
     }
@@ -44,10 +65,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
   return (
     <div className="h-screen w-full absolute bg-[#167563] text-white ">
-      {" "}
       <div className="absolute top-2 right-3">
         <button onClick={handleClickCerrar}>
-          {" "}
           <IoCloseOutline size={24} />
         </button>
       </div>
@@ -87,7 +106,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
               name="Tipo de actividad"
               list={["Test", "Redacción"]}
               onChange={(e) => {
-                console.log("e.target.value", e.target.value);
                 setOptionActivity(e.target.value);
               }}
             />
@@ -104,9 +122,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
             {optionActivity === "Test" && (
               <TestForm
                 numQuestion={calculateNumQuestions()}
-                question={question}
-                setQuestion={setQuestion}
-                setQuestions={setQuestions}
+                questions={questions}
               />
             )}
           </div>
@@ -119,13 +135,12 @@ export const CrearActividad = ({ setCrearScreen }) => {
             >
               Nueva
             </button>
-
             <button
               id="addQuestionBtn"
               className="bg-white px-6 py-2 text-[#167563] font-semibold rounded-2xl"
-              onClick={handleAddQuestion}
+              onClick={questionIsCreated ? handleUpdateQuestion : handleAddQuestion}
             >
-              Añadir
+              {questionIsCreated ? "Actualizar" : "Añadir"}
             </button>
           </div>
         </div>
