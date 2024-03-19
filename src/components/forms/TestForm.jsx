@@ -9,16 +9,13 @@ import { questionAtom } from "../..//context/atoms/questionAtom";
 export const TestForm = ({ numQuestion, questions }) => {
   const [question, setQuestion] = useAtom(questionAtom); // Usa el átomo questionAtom
 
-  
-
   const handleAnswerChange = (index, updatedAnswer) => {
-
     const newAnswers = question.answers.map((answer, i) => {
       if (i === index) return updatedAnswer;
       return answer;
     });
 
-    setQuestion({ ...question, answers: newAnswers });
+    setQuestion({ ...question, id: numQuestion, answers: newAnswers });
   };
 
   const handleClick = () => {
@@ -30,7 +27,7 @@ export const TestForm = ({ numQuestion, questions }) => {
   };
 
   const handleQuestionTextChange = (text) => {
-    setQuestion({ ...question, id: questions.length + 1, questionText: text });
+    setQuestion({ ...question, id: numQuestion, questionText: text });
   };
 
   return (

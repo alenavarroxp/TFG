@@ -16,7 +16,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
   const questionIsCreated = useMemo(() => {
     return questions.some((q) => q.id === question.id);
   }, [questions, question]);
-  
 
   const handleClickCerrar = () => {
     setCrearScreen(false);
@@ -33,7 +32,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
   const handleUpdateQuestion = () => {
     setQuestions((ques) => {
-      const newQuestions = [ ...ques ];
+      const newQuestions = [...ques];
       const indexQuestion = newQuestions.findIndex((q) => q.id === question.id);
       if (indexQuestion === -1) return ques;
 
@@ -51,12 +50,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
   const calculateNumQuestions = () => {
     if (questions.length > 0) {
-      if (Object.keys(question).length > 0)
-        return (
-          questions.findIndex(
-            (q) => JSON.stringify(q) === JSON.stringify(question)
-          ) + 1
-        );
+      console.log("questions", questions)
+      if(questionIsCreated) return questions.findIndex((q) => q.id === question.id) + 1;
       return questions.length + 1;
     } else {
       return questions.length + 1;
@@ -138,7 +133,9 @@ export const CrearActividad = ({ setCrearScreen }) => {
             <button
               id="addQuestionBtn"
               className="bg-white px-6 py-2 text-[#167563] font-semibold rounded-2xl"
-              onClick={questionIsCreated ? handleUpdateQuestion : handleAddQuestion}
+              onClick={
+                questionIsCreated ? handleUpdateQuestion : handleAddQuestion
+              }
             >
               {questionIsCreated ? "Actualizar" : "Añadir"}
             </button>
