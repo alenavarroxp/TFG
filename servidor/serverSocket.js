@@ -56,7 +56,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("getCurrentLocation", (position) => {
-        socket.emit("returnLocation", position);
+        socket.emit("returnLocation", {position:position, option:1});
       });
 
       socket.on("chooseLocation", () => {
@@ -64,7 +64,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("returnChooseLocation", (position) => {
-        socket.emit("returnLocation", position);
+        socket.emit("returnLocation", {position:position, option:2});
       });
 
       socket.on("clearPointer", () => {

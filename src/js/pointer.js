@@ -15,7 +15,6 @@ export class Pointer {
       (newMeshes) => {
         this.meshes = newMeshes;
         this.pointer = newMeshes[0];
-        console.log("PSITION", position);
         this.pointer.position = new BABYLON.Vector3(
           position._x,
           position._y,
