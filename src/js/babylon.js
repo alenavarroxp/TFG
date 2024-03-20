@@ -3,6 +3,7 @@ import * as BABYLON from "babylonjs";
 import { Character } from "./characterBabylon.js";
 import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
+import { Pointer } from "./pointer.js";
 
 export function initScene(canvas, user) {
   console.log("Iniciando escena...");
@@ -59,16 +60,6 @@ export function initScene(canvas, user) {
   escenario.initMap(scene, camera, function () {
     console.log("Escenario cargado");
     engine.hideLoadingUI();
-  });
-
-  scene.onPointerObservable.add((eventData) => {
-    if (eventData.type === BABYLON.PointerEventTypes.POINTERDOWN) {
-      const pickResult = scene.pick(scene.pointerX, scene.pointerY);
-      if (pickResult && pickResult.pickedPoint) {
-        console.log("Objeto seleccionado: ", pickResult.pickedMesh.name);
-        console.log("Posición en el mundo: ", pickResult.pickedPoint);
-      }
-    }
   });
 
   // Create a ground mesh
@@ -342,5 +333,39 @@ export function initScene(canvas, user) {
     if (character) {
       socket.emit("getCurrentLocation", character.mesh.position);
     }
+  });
+
+  let pointer = null;
+  const pointerDownListener = (eventData) => {
+    if (eventData.type === BABYLON.PointerEventTypes.POINTERDOWN) {
+      const pickResult = scene.pick(scene.pointerX, scene.pointerY);
+      if (pickResult && pickResult.pickedPoint) {
+        if (pointer) {
+          pointer.dispose();
+          pointer = null;
+        }
+        pointer = new Pointer(scene);
+        pointer.createPointer(pickResult.pickedPoint);
+        console.log("pointer", pointer);
+        console.log("Objeto seleccionado: ", pickResult.pickedMesh.name);
+        console.log("Posición en el mundo: ", pickResult.pickedPoint);
+        socket.emit("returnChooseLocation", pickResult.pickedPoint);
+      }
+    }
+  };
+
+  socket.on("chooseLocation", () => {
+    scene.onPointerObservable.add(pointerDownListener);
+  });
+
+  socket.on("clearPointer", () => {
+    if (pointer) {
+      pointer.dispose();
+      pointer = null;
+    }
+    console.log("scene.onPointerObservable", scene.onPointerObservable);
+    scene.onPointerObservable.removeCallback(pointerDownListener);
+
+    console.log("scene", scene.onPointerObservable);
   });
 }

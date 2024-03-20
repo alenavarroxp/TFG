@@ -1,5 +1,7 @@
 import { IoCloseOutline } from "react-icons/io5";
 import { AiFillInfoCircle } from "react-icons/ai";
+import { MdLocationPin } from "react-icons/md";
+import { IoArrowBack } from "react-icons/io5";
 import { useMemo, useState } from "react";
 import { useAtom } from "jotai"; // Importar useAtom desde jotai
 import { TestForm } from "./forms/TestForm";
@@ -10,6 +12,8 @@ import { errorsQuestionAtom } from "../context/atoms/errorsQuestionAtom";
 import { LocationPicker } from "./LocationPicker";
 import { chooseLocationAtom } from "../context/atoms/chooseLocationAtom";
 import { ChooseLocationHeader } from "./ChooseLocationHeader";
+import { locationAtom } from "../context/atoms/locationAtom";
+import { socket } from "../utils/socket";
 
 // eslint-disable-next-line react/prop-types
 export const CrearActividad = ({ setCrearScreen }) => {
@@ -17,7 +21,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
   const [question, setQuestion] = useAtom(questionAtom); // Utilizar el átomo questionAtom
   const [questions, setQuestions] = useState([]);
   const [errors, setErrors] = useAtom(errorsQuestionAtom);
-  const [chooseLocation] = useAtom(chooseLocationAtom);
+  const [chooseLocation, setChooseLocation] = useAtom(chooseLocationAtom);
+  const [location, setLocation] = useAtom(locationAtom); // Utilizar el átomo locationAtom
   console.log("chooseLocation en Crear", chooseLocation);
 
   const questionIsCreated = useMemo(() => {
@@ -130,6 +135,16 @@ export const CrearActividad = ({ setCrearScreen }) => {
     }
   };
 
+  const handleBack = () => {
+    handleChooseLocation();
+    setLocation({ ...location, position: null });
+  };
+
+  const handleChooseLocation = () => {
+    socket.emit("clearPointer");
+    setChooseLocation({ isChoosing: false });
+  };
+
   return (
     <>
       {!chooseLocation.isChoosing ? (
@@ -219,7 +234,24 @@ export const CrearActividad = ({ setCrearScreen }) => {
           </div>
         </div>
       ) : (
-        <ChooseLocationHeader/>
+        <div className="absolute h-screen w-full pointer-events-none">
+          <button
+            className="bg-[#167563] flex items-center justify-center text-white text-lg font-semibold absolute left-4 bottom-4 p-3 rounded-xl min-w-32 pointer-events-auto"
+            onClick={handleBack}
+          >
+            <IoArrowBack size={22} className="absolute left-2" />
+            Volver
+          </button>
+
+          <button
+            className="bg-[#167563] flex items-center justify-center text-white text-lg font-semibold absolute right-4 bottom-4 p-3 rounded-xl min-w-48 pointer-events-auto"
+            onClick={handleChooseLocation}
+          >
+            <MdLocationPin size={22} className="absolute right-4" />
+            Seleccionar
+          </button>
+          <ChooseLocationHeader />
+        </div>
       )}
     </>
   );

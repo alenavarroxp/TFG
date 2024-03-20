@@ -56,8 +56,21 @@ export default function WebSocketServer() {
       });
 
       socket.on("getCurrentLocation",(position)=>{
-        socket.emit("returnCurrentLocation", position);
+        socket.emit("returnLocation", position);
       })
+
+      socket.on("chooseLocation", () => {
+        socket.emit("chooseLocation");
+      });
+
+      socket.on("returnChooseLocation", (position) => {
+        socket.emit("returnLocation", position);
+      });
+      
+      socket.on("clearPointer", () => {
+        console.log("BORRANDO POINTER")
+        socket.emit("clearPointer");
+      });
     });
   };
 }

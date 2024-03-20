@@ -33,9 +33,9 @@ export const LocationPicker = () => {
   };
 
   console.log("locationAtom", location);
-  console.log("chooseLocationAtom", chooseLocation)
+  console.log("chooseLocationAtom", chooseLocation);
 
-  socket.on("returnCurrentLocation", (position) => {
+  socket.on("returnLocation", (position) => {
     setLocation({ id: socket.id, position: position });
   });
 
