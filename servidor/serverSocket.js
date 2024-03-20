@@ -49,6 +49,15 @@ export default function WebSocketServer() {
       socket.on("getUsers", () => {
         socket.emit("getUsers", this.usersWorld);
       });
+
+      socket.on("currentLocation", (socketId) => {
+        console.log("Obteniendo ubicación actual...");
+        socket.emit("getCurrentLocation", socketId);
+      });
+
+      socket.on("getCurrentLocation",(position)=>{
+        socket.emit("returnCurrentLocation", position);
+      })
     });
   };
 }

@@ -336,4 +336,11 @@ export function initScene(canvas, user) {
       }
     }
   });
+
+  socket.on("getCurrentLocation", (socketId) => {
+    const character = characters.find((character) => character.id === socketId);
+    if (character) {
+      socket.emit("getCurrentLocation", character.mesh.position);
+    }
+  });
 }
