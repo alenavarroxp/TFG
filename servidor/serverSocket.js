@@ -55,9 +55,9 @@ export default function WebSocketServer() {
         socket.emit("getCurrentLocation", socketId);
       });
 
-      socket.on("getCurrentLocation",(position)=>{
+      socket.on("getCurrentLocation", (position) => {
         socket.emit("returnLocation", position);
-      })
+      });
 
       socket.on("chooseLocation", () => {
         socket.emit("chooseLocation");
@@ -66,10 +66,13 @@ export default function WebSocketServer() {
       socket.on("returnChooseLocation", (position) => {
         socket.emit("returnLocation", position);
       });
-      
+
       socket.on("clearPointer", () => {
-        console.log("BORRANDO POINTER")
         socket.emit("clearPointer");
+      });
+
+      socket.on("returnPointer", (obj) => {
+        socket.emit("returnPointer", { id: obj.id, position: obj.position });
       });
     });
   };

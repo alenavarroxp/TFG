@@ -17,7 +17,6 @@ export const LocationPicker = () => {
   };
 
   const socketEvent = (option) => {
-    setLocation({ id: socket.id, position: null });
     switch (option) {
       case 1:
         setChooseLocation({ isChoosing: false });
@@ -25,6 +24,8 @@ export const LocationPicker = () => {
         break;
       case 2:
         setChooseLocation({ isChoosing: true });
+        if (location.position)
+          socket.emit("returnPointer", {id: socket.id, position:location.position});
         socket.emit("chooseLocation");
         break;
       default:
