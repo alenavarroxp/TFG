@@ -26,7 +26,7 @@ export class Pointer {
 
         this.scene.registerBeforeRender(() => {
           if (this.pointer)
-            this.pointer.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL); // Rotación en el eje Y
+            this.pointer.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);
         });
       }
     );

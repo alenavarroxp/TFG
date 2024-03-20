@@ -346,11 +346,7 @@ export function initScene(canvas, user) {
         }
         pointer = new Pointer(scene);
         pickResult.pickedPoint._y += 0.15;
-        console.log("pickResult.pickedPoint", pickResult.pickedPoint);
         pointer.createPointer(pickResult.pickedPoint);
-        console.log("pointer", pointer);
-        console.log("Objeto seleccionado: ", pickResult.pickedMesh.name);
-        console.log("Posición en el mundo: ", pickResult.pickedPoint);
         socket.emit("returnChooseLocation", pickResult.pickedPoint);
       }
     }
@@ -372,23 +368,12 @@ export function initScene(canvas, user) {
   });
 
   socket.on("returnPointer", (obj) => {
-    //QUiero ver si la posicion es la misma que la de mi personaje
-    console.log("Recibiendo posición del puntero...", obj.id, obj.position);
     const character = characters.find((character) => character.id === obj.id);
 
-    console.log(
-      "character",
-      character,
-      "\n character.mesh.position",
-      character.mesh.position,
-      "\n obj.position",
-      obj.position
-    );
     if (
       character.mesh.position._x === obj.position._x &&
       character.mesh.position._z === obj.position._z
     ) {
-      console.log("La posición es la misma que la de mi personaje");
       obj.position._y += 0.3;
     } else {
       if (obj.position_y < 0.15) obj.position._y += 0.15;
@@ -399,7 +384,6 @@ export function initScene(canvas, user) {
       pointer = null;
     }
 
-    console.log("obj.position", obj.position);
     pointer = new Pointer(scene);
     pointer.createPointer(obj.position);
   });
