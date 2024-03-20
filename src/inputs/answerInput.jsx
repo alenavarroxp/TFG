@@ -1,15 +1,25 @@
 /* eslint-disable react/prop-types */
+import { useAtom } from "jotai";
 import { IoCheckmarkCircle } from "react-icons/io5";
+import { errorsQuestionAtom } from "../context/atoms/errorsQuestionAtom";
 
 export const AnswerInput = ({ index, answer, setAnswer }) => {
+  const [errors, setErrors] = useAtom(errorsQuestionAtom); // Utilizar el átomo errorsQuestionAtom
   const optionId = `option${index}`;
   const { answerText, isCorrect } = answer;
 
+  console.log("ANSWERERRORS", errors);
   const handleCheckboxChange = () => {
+    setErrors((prevErrors) => ({ ...prevErrors, correct: false }));
     setAnswer({ ...answer, isCorrect: !isCorrect });
   };
 
   const handleAnswerTextChange = (text) => {
+    setErrors(prevErrors => {
+      const newErrors = { ...prevErrors };
+      newErrors.answerError = text.trim() === "";
+      return newErrors;
+    });
     setAnswer({ ...answer, answerText: text });
   };
 
@@ -18,7 +28,7 @@ export const AnswerInput = ({ index, answer, setAnswer }) => {
       <p className="text-sm font-semibold">{`Opción ${index + 1}`}</p>
       <div className="flex bg-white rounded-lg">
         <textarea
-          className="text-[#167563] text-sm placeholder-[#167563] placeholder-opacity-80 font-medium focus:outline-none px-3 rounded-xl w-full mr-4 custom-scrollbar bg-white"
+          className={`text-[#167563] text-sm placeholder-[#167563] placeholder-opacity-80 font-medium focus:outline-none px-3 rounded-l-lg w-full mr-4 custom-scrollbar bg-white ${errors.answerError ? "border-[1.5px] border-red-500" : ""}`}
           placeholder="Escriba la opción..."
           style={{
             minHeight: "3rem",
@@ -43,12 +53,15 @@ export const AnswerInput = ({ index, answer, setAnswer }) => {
             className="cursor-pointer relative inline-flex items-center justify-center w-4 h-4 border border-gray-400 rounded-full transition-all duration-300 bg-white"
           >
             <IoCheckmarkCircle
-              className={`text-[#24B817] ${isCorrect ? "opacity-100" : "opacity-0"} absolute transition-all duration-300 ease-out`}
+              className={`text-[#24B817] ${
+                isCorrect ? "opacity-100" : "opacity-0"
+              } absolute transition-all duration-300 ease-out`}
               size={20}
             />
           </label>
         </div>
       </div>
+      
     </div>
   );
 };

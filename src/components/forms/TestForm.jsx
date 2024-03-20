@@ -5,7 +5,6 @@ import { AnswerInput } from "../../inputs/answerInput";
 import { NumberInput } from "../../inputs/numberInput";
 import { useAtom } from "jotai";
 import { questionAtom } from "../../context/atoms/questionAtom";
-import { IoAlertCircle } from "react-icons/io5";
 import { errorsQuestionAtom } from "../../context/atoms/errorsQuestionAtom";
 import { ErrorAlert } from "../ErrorAlert";
 
@@ -22,7 +21,6 @@ export const TestForm = ({ numQuestion }) => {
     const newCorrectsIndex = newAnswers
       .map((answer, i) => (answer.isCorrect ? i : -1))
       .filter((index) => index !== -1);
-    console.log(newCorrectsIndex);
 
     setQuestion({
       ...question,
@@ -33,6 +31,8 @@ export const TestForm = ({ numQuestion }) => {
   };
 
   const handleClick = () => {
+    console.log("errros", errors);
+    setErrors((prevErrors) => ({ ...prevErrors, correct: false }));
     setQuestion({
       ...question,
       answers: [...question.answers, { answerText: "", isCorrect: false }],
@@ -40,7 +40,10 @@ export const TestForm = ({ numQuestion }) => {
   };
 
   const handleQuestionTextChange = (text) => {
-    setErrors({ ...errors, questionText: false });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      questionText: text.trim() === "",
+    }));
     setQuestion({ ...question, id: numQuestion, questionText: text });
   };
 
@@ -53,7 +56,10 @@ export const TestForm = ({ numQuestion }) => {
           </p>
           <LuAsterisk className="mb-2" size={12} />
           {errors.questionText && (
-            <ErrorAlert message="La pregunta no puede estar vacía" style={{"marginLeft":'0.5em'}}/>
+            <ErrorAlert
+              message="La pregunta no puede estar vacía"
+              style={{ marginLeft: "0.5em" }}
+            />
           )}
         </div>
         <div className="mt-2">
@@ -76,8 +82,17 @@ export const TestForm = ({ numQuestion }) => {
         <div className="flex flex-row">
           <p className="text-lg border-b-2 font-semibold">Respuestas</p>
           <LuAsterisk className="mt-1" size={12} />
-          {errors.answers && (
-            <ErrorAlert message="Debe haber al menos una respuesta"  />
+          {errors.answers && errors.correct && (
+            <ErrorAlert message="Debe haber al menos una respuesta y una opción correcta" />
+          )}
+          {errors.correct && !errors.answers && !errors.answerError && (
+            <ErrorAlert message="Debe haber al menos una opción correcta" />
+          )}
+          {errors.answerError && errors.correct && (
+            <ErrorAlert message="Las respuestas no pueden estar vacías y debe haber al menos una opción correcta" />
+          )}
+          {errors.answerError && !errors.correct && (
+            <ErrorAlert message="Las respuestas no pueden estar vacías" />
           )}
         </div>
         {question.answers.map((answer, i) => (
@@ -95,7 +110,10 @@ export const TestForm = ({ numQuestion }) => {
       <div className="absolute top-1 right-2 flex">
         <div className="flex flex-row">
           {errors.score && (
-            <ErrorAlert message="La puntuación no puede ser 0" style={{"marginRight":'0.5em'}} />
+            <ErrorAlert
+              message="La puntuación debe de estar entre 0 y 10"
+              style={{ marginRight: "0.5em" }}
+            />
           )}
           <p className="text-md border-b-2 font-semibold">Puntuación</p>
           <LuAsterisk className="mt-1" size={12} />

@@ -35,6 +35,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
     setErrors({
       questionText: false,
       answers: false,
+      answerError: false,
       correct: false,
       score: false,
     });
@@ -96,6 +97,16 @@ export const CrearActividad = ({ setCrearScreen }) => {
       isValid = false;
     } else {
       errorsCopy.score = false;
+    }
+
+    for (let i = 0; i < question.answers.length; i++) {
+      if (question.answers[i].answerText.trim() === "") {
+        errorsCopy.answerError = true;
+        isValid = false;
+        break;
+      } else {
+        errorsCopy.answerError = false;
+      }
     }
 
     setErrors(errorsCopy);
