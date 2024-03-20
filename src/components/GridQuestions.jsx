@@ -15,8 +15,10 @@ export const GridQuestions = ({ questions, setQuestion }) => {
   
     return (
       <div className="flex flex-col w-96 ml-16">
-        <label className="font-semibold text-xl border-b-2 mb-2">
+        <label className="font-semibold text-xl mb-2">
+          <p className="border-b-2 w-fit">
           Preguntas añadidas
+          </p>
         </label>
         {Array.isArray(questions) && questions.length > 0 ? (
           <div className="grid grid-cols-10 gap-2 overflow-y-auto max-h-48 custom-scrollbar overflow-x-hidden">

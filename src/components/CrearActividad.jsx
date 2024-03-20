@@ -7,6 +7,7 @@ import SelectInput from "../inputs/selectInput";
 import { GridQuestions } from "./GridQuestions";
 import { questionAtom } from "../context/atoms/questionAtom";
 import { errorsQuestionAtom } from "../context/atoms/errorsQuestionAtom";
+import { LocationPicker } from "./LocationPicker";
 
 // eslint-disable-next-line react/prop-types
 export const CrearActividad = ({ setCrearScreen }) => {
@@ -207,6 +208,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
         </div>
         <div className="w-1/3 m-5">
           <GridQuestions questions={questions} setQuestion={setQuestion} />
+          <LocationPicker/>          
         </div>
       </div>
     </div>

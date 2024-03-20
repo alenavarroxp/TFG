@@ -1,14 +1,10 @@
-import { LuAsterisk } from "react-icons/lu";
+import { MandatoryText } from "../components/MandatoryText";
+
 /* eslint-disable react/prop-types */
 const SelectInput = ({ name, list, onChange }) => {
   return (
     <div className="ml-5 mr-10 mt-2">
-      <div className="flex-row flex ">
-        <label htmlFor={name} className="font-semibold text-xl border-b-2 mb-2">
-          {name}
-        </label>
-        <LuAsterisk className="mt-1" size={14} />
-      </div>
+      <MandatoryText text={name}/>
       <select
         id={name}
         name={name}
