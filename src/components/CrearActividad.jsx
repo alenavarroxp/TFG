@@ -2,7 +2,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { AiFillInfoCircle } from "react-icons/ai";
 import { MdLocationPin } from "react-icons/md";
 import { IoArrowBack } from "react-icons/io5";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai"; // Importar useAtom desde jotai
 import { TestForm } from "./forms/TestForm";
 import SelectInput from "../inputs/selectInput";
@@ -31,8 +31,29 @@ export const CrearActividad = ({ setCrearScreen }) => {
     return questions.some((q) => q.id === question.id);
   }, [questions, question]);
 
+  useEffect(() => {
+    if (questions.length > 0) {
+      setErrorsTest((prev) => ({ ...prev, questions: false }));
+    }
+  }, [questions, setErrorsTest]);
+
   const handleClickCerrar = () => {
     setCrearScreen(false);
+  };
+
+  const resetErrors = () => {
+    setErrors({
+      questionText: false,
+      answers: false,
+      answerError: false,
+      correct: false,
+      score: false,
+    });
+
+    setErrorsTest({
+      questions: questions.length === 0,
+      position: location.position === null,
+    });
   };
 
   const handleNewQuestion = () => {
@@ -44,13 +65,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
       score: 0,
     });
 
-    setErrors({
-      questionText: false,
-      answers: false,
-      answerError: false,
-      correct: false,
-      score: false,
-    });
+    resetErrors();
   };
 
   const handleUpdateQuestion = () => {
@@ -69,6 +84,11 @@ export const CrearActividad = ({ setCrearScreen }) => {
   };
 
   const handleAddQuestion = () => {
+    let errorTestCopy = { ...errorsTest };
+
+    errorTestCopy.questions = questions.length === 0;
+
+    console.log("errorTest", errorTestCopy);
     if (!validateFields()) return;
 
     setQuestions([...questions, question]);
@@ -124,17 +144,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
     setErrors(errorsCopy);
     console.log("errorsvlaidate", errorsCopy);
 
-    const errorTestCopy = { ...errorsTest };
-
-    if (location.position === null) {
-      errorTestCopy.position = true;
-      isValid = false;
-    } else {
-      errorTestCopy.position = false;
-    }
-
-    setErrorsTest(errorTestCopy);
-
     return isValid;
   };
 
@@ -160,10 +169,19 @@ export const CrearActividad = ({ setCrearScreen }) => {
   };
 
   const confirmTest = () => {
-    if(!validateFields()) return;
+    let errorTestCopy = { ...errorsTest };
 
-    console.log("Test creado")
-  }
+    errorTestCopy.questions = questions.length === 0;
+    errorTestCopy.position = location.position === null;
+
+    setErrorsTest(errorTestCopy);
+    console.log("errorTest", errorTestCopy);
+
+    if (!errorTestCopy.questions && !errorTestCopy.position) {
+      console.log("Test creado");
+      return;
+    }
+  };
 
   return (
     <>
