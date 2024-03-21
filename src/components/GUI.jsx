@@ -21,8 +21,6 @@ export const GUI = () => {
   const [test] = useAtom(testAtom);
   const [tests, setTests] = useState({});
 
-  console.log("GUI user: ", getUser);
-  console.log("GUI tests fuera: ", tests);
   const crearUuid = () => {
     return uuidv4();
   };
@@ -41,8 +39,12 @@ export const GUI = () => {
   }, [test]);
 
   useEffect(() => {
-    socket.emit("createPointer", tests);
+    if (Object.keys(tests).length > 0) socket.emit("createPointer", tests);
   }, [tests]);
+
+  useEffect(() => {
+    if (crearScreen) socket.emit("NoMove");
+  }, [crearScreen]);
 
   return (
     <>

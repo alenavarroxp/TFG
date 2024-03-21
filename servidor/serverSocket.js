@@ -78,6 +78,10 @@ export default function WebSocketServer() {
       socket.on("createPointer", (obj) => {
         socket.emit("createPointer", obj);
       });
+
+      socket.on("NoMove", () => {
+        socket.emit("NoMove");
+      });
     });
   };
 }

@@ -140,6 +140,7 @@ export function initScene(canvas, user) {
   let cameraMode = "default"; // Modo de la cámara por defecto
 
   // Función para cambiar el modo de la cámara
+  // eslint-disable-next-line no-unused-vars
   function animateCameraProperty(propertyName, endValue) {
     BABYLON.Animation.CreateAndStartAnimation(
       "camera" + propertyName + "Animation",
@@ -154,7 +155,7 @@ export function initScene(canvas, user) {
   }
 
   function changeCameraMode() {
-    console.log("change camera")
+    console.log("change camera");
     if (cameraMode === "default") {
       cameraMode = "followPlayer";
     } else {
@@ -355,7 +356,7 @@ export function initScene(canvas, user) {
         }
         pointer = new Pointer(scene);
         pickResult.pickedPoint._y += 0.15;
-        pointer.createPointer(pickResult.pickedPoint,"pointer");
+        pointer.createPointer(pickResult.pickedPoint, "pointer");
         socket.emit("returnChooseLocation", pickResult.pickedPoint);
       }
     }
@@ -394,17 +395,18 @@ export function initScene(canvas, user) {
     }
 
     pointer = new Pointer(scene);
-    pointer.createPointer(obj.position,"pointer");
+    pointer.createPointer(obj.position, "pointer");
   });
 
   socket.on("createPointer", (obj) => {
-    console.warn("CREAR BOOK", obj)
+    console.warn("CREAR BOOK", obj);
+    move = true;
     for (const key in obj) {
       if (!activities.map((activity) => activity.id).includes(key)) {
         let element = new Pointer(scene);
-        element.createPointer(obj[key].location,"book");
+        element.createPointer(obj[key].location, "book");
 
-        console.log("ELEMENT", element)
+        console.log("ELEMENT", element);
         let activity = {
           id: key,
           element: element,
@@ -412,5 +414,16 @@ export function initScene(canvas, user) {
         activities.push(activity);
       }
     }
+  });
+
+  socket.on("NoMove", () => {
+    move = false;
+    keys.W = false;
+    keys.A = false;
+    keys.S = false;
+    keys.D = false;
+    keys.SPACE = false;
+    keys.SHIFT = false;
+    
   });
 }
