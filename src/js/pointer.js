@@ -6,11 +6,11 @@ export class Pointer {
     this.pointer = null;
   }
 
-  createPointer(position) {
+  createPointer(position, fileName) {
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
-      "pointer.glb",
+      fileName + ".glb",
       this.scene,
       (newMeshes) => {
         this.meshes = newMeshes;
@@ -20,8 +20,10 @@ export class Pointer {
           position._y,
           position._z
         );
-        this.pointer.scaling.set(0.05, 0.05, 0.05);
-        this.pointer.name = "pointer";
+        if (fileName === "pointer") this.pointer.scaling.set(0.05, 0.05, 0.05);
+        else {this.pointer.scaling.set(0.15, 0.15, 0.15);
+        this.pointer.position.y= 0.075}
+        this.pointer.name = fileName;
 
         this.scene.registerBeforeRender(() => {
           if (this.pointer)

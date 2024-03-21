@@ -3,7 +3,7 @@ import { AiFillInfoCircle } from "react-icons/ai";
 import { MdLocationPin } from "react-icons/md";
 import { IoArrowBack } from "react-icons/io5";
 import { useEffect, useMemo, useState } from "react";
-import { useAtom } from "jotai"; // Importar useAtom desde jotai
+import { useAtom, useSetAtom } from "jotai"; // Importar useAtom desde jotai
 import { TestForm } from "./forms/TestForm";
 import SelectInput from "../inputs/selectInput";
 import { GridQuestions } from "./GridQuestions";
@@ -16,6 +16,7 @@ import { locationAtom } from "../context/atoms/locationAtom";
 import { socket } from "../utils/socket";
 import { CreateTest } from "./CreateTest";
 import { errorsTestAtom } from "../context/atoms/errorsTestAtom";
+import { testAtom } from "../context/atoms/testAtom";
 
 // eslint-disable-next-line react/prop-types
 export const CrearActividad = ({ setCrearScreen }) => {
@@ -25,7 +26,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
   const [errors, setErrors] = useAtom(errorsQuestionAtom);
   const [chooseLocation, setChooseLocation] = useAtom(chooseLocationAtom);
   const [location, setLocation] = useAtom(locationAtom);
-  const [errorsTest, setErrorsTest] = useAtom(errorsTestAtom); // Crear un nuevo estado con useAtom
+  const [errorsTest, setErrorsTest] = useAtom(errorsTestAtom);
+  const setTest = useSetAtom(testAtom);
 
   const questionIsCreated = useMemo(() => {
     return questions.some((q) => q.id === question.id);
@@ -178,7 +180,15 @@ export const CrearActividad = ({ setCrearScreen }) => {
     console.log("errorTest", errorTestCopy);
 
     if (!errorTestCopy.questions && !errorTestCopy.position) {
-      console.log("Test creado");
+      setTest({
+        creador: location.id,
+        questions: questions,
+        location: location.position,
+      });
+      handleNewQuestion();
+      //reset el location
+      setLocation({ id: "", position: null });
+      setQuestions([]);
       return;
     }
   };

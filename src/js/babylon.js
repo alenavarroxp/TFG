@@ -95,6 +95,8 @@ export function initScene(canvas, user) {
   const characters = [];
   let character;
 
+  const activities = [];
+
   // Control de teclado
   const keys = {
     W: false,
@@ -152,16 +154,23 @@ export function initScene(canvas, user) {
   }
 
   function changeCameraMode() {
+    console.log("change camera")
     if (cameraMode === "default") {
       cameraMode = "followPlayer";
     } else {
       cameraMode = "default";
 
       // Llamar a animateCameraProperty para cada propiedad que quieres animar
-      animateCameraProperty("position", cameraInitialPosition);
-      animateCameraProperty("radius", 7);
-      animateCameraProperty("alpha", -Math.PI / 2);
-      animateCameraProperty("beta", Math.PI / 4);
+      // animateCameraProperty("position", cameraInitialPosition);
+      // animateCameraProperty("radius", 7);
+      // animateCameraProperty("alpha", -Math.PI / 2);
+      // animateCameraProperty("beta", Math.PI / 4);
+
+      // Sin animacion
+      camera.position = cameraInitialPosition;
+      camera.radius = 7;
+      camera.alpha = -Math.PI / 2;
+      camera.beta = Math.PI / 4;
 
       // Mira hacia el objetivo (ajusta según sea necesario)
       camera.setTarget(BABYLON.Vector3.Zero());
@@ -346,7 +355,7 @@ export function initScene(canvas, user) {
         }
         pointer = new Pointer(scene);
         pickResult.pickedPoint._y += 0.15;
-        pointer.createPointer(pickResult.pickedPoint);
+        pointer.createPointer(pickResult.pickedPoint,"pointer");
         socket.emit("returnChooseLocation", pickResult.pickedPoint);
       }
     }
@@ -385,6 +394,23 @@ export function initScene(canvas, user) {
     }
 
     pointer = new Pointer(scene);
-    pointer.createPointer(obj.position);
+    pointer.createPointer(obj.position,"pointer");
+  });
+
+  socket.on("createPointer", (obj) => {
+    console.warn("CREAR BOOK", obj)
+    for (const key in obj) {
+      if (!activities.map((activity) => activity.id).includes(key)) {
+        let element = new Pointer(scene);
+        element.createPointer(obj[key].location,"book");
+
+        console.log("ELEMENT", element)
+        let activity = {
+          id: key,
+          element: element,
+        };
+        activities.push(activity);
+      }
+    }
   });
 }
