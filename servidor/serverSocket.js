@@ -2,6 +2,7 @@ export default function WebSocketServer() {
   this.users = {};
   this.usersWorld = {};
   this.start = function (io) {
+    
     io.on("connection", (socket) => {
       console.log("Se ha conectado el usuario: " + socket.id);
       socket.emit("init");
@@ -77,7 +78,10 @@ export default function WebSocketServer() {
 
       socket.on("createPointer", (obj) => {
         socket.emit("createPointer", obj);
+        socket.broadcast.emit("newActivity", obj);
       });
+
+     
 
       socket.on("NoMove", () => {
         socket.emit("NoMove");

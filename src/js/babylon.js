@@ -398,22 +398,36 @@ export function initScene(canvas, user) {
     pointer.createPointer(obj.position, "pointer");
   });
 
-  socket.on("createPointer", (obj) => {
-    console.warn("CREAR BOOK", obj);
-    move = true;
-    for (const key in obj) {
+  const createPointer = (obj) => {
+    Object.keys(obj).forEach((key) => {
       if (!activities.map((activity) => activity.id).includes(key)) {
-        let element = new Pointer(scene);
-        element.createPointer(obj[key].location, "book");
+        try {
+          let element = new Pointer(scene);
+          element.createPointer(obj[key].location, "book");
 
-        console.log("ELEMENT", element);
-        let activity = {
-          id: key,
-          element: element,
-        };
-        activities.push(activity);
+          console.log("ELEMENT", element);
+          let activity = {
+            id: key,
+            element: element,
+          };
+          activities.push(activity);
+          console.log("ACTIVIDAD CREADA", activity);
+        } catch (err) {
+          console.log(err);
+        }
       }
-    }
+    });
+  };
+
+  socket.on("createPointer", (obj) => {
+    move = true;
+    console.log("OBJETO", obj);
+    createPointer(obj);
+  });
+
+  socket.on("newActivity", (obj) => {
+    console.log("Nueva actividad en babylonJS", obj);
+    createPointer(obj);
   });
 
   socket.on("NoMove", () => {
@@ -424,6 +438,5 @@ export function initScene(canvas, user) {
     keys.D = false;
     keys.SPACE = false;
     keys.SHIFT = false;
-    
   });
 }
