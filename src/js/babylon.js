@@ -271,6 +271,7 @@ export function initScene(canvas, user) {
         });
 
         socket.emit("recuperarPersonajes", socket.id);
+        socket.emit("recuperarActividades");
 
         // Ajusta el radio de la esfera según las dimensiones de tu personaje
         const sphereRadius = 0.5;
@@ -331,6 +332,21 @@ export function initScene(canvas, user) {
           position: character.mesh.position,
           rotation: character.mesh.rotation,
           user: character.user,
+        });
+      } catch (err) {
+        // console.log(err);
+      }
+    }
+  });
+
+  socket.on("recuperarActividades", () => {
+    console.log("Recuperando actividades...");
+    for (const activity of activities) {
+      try {
+        console.log("activity", activity);
+        socket.emit("newActivity", {
+          id: activity.id,
+          location: activity.element.pointer._position,
         });
       } catch (err) {
         // console.log(err);

@@ -2,13 +2,13 @@ export default function WebSocketServer() {
   this.users = {};
   this.usersWorld = {};
   this.start = function (io) {
-    
     io.on("connection", (socket) => {
       console.log("Se ha conectado el usuario: " + socket.id);
       socket.emit("init");
       this.users[socket.id] = socket.id;
       console.log("USERS", this.users);
       socket.broadcast.emit("recuperarPersonajes", socket.id);
+      socket.broadcast.emit("recuperarActividades");
 
       socket.on("init", () => {
         socket.emit("init");
@@ -30,6 +30,15 @@ export default function WebSocketServer() {
         socket.broadcast.emit("newCharacter", obj);
       });
 
+      socket.on("newActivity", (obj) => {
+        const objActivity = {
+          [obj.id]: {
+            location: obj.location,
+          },
+        };
+        socket.broadcast.emit("newActivity", objActivity);
+      });
+
       socket.on("moveCharacter", (obj) => {
         socket.broadcast.emit("moveCharacter", obj);
       });
@@ -37,6 +46,11 @@ export default function WebSocketServer() {
       socket.on("recuperarPersonajes", (id) => {
         console.log("Recuperando personajes...");
         socket.broadcast.emit("recuperarPersonajes", id);
+      });
+
+      socket.on("recuperarActividades", () => {
+        console.log("Recuperando actividades...");
+        socket.broadcast.emit("recuperarActividades");
       });
 
       socket.on("newUserWorld", (obj) => {
@@ -77,11 +91,10 @@ export default function WebSocketServer() {
       });
 
       socket.on("createPointer", (obj) => {
+        console.log("Creando puntero... PROFESOR", obj);
         socket.emit("createPointer", obj);
         socket.broadcast.emit("newActivity", obj);
       });
-
-     
 
       socket.on("NoMove", () => {
         socket.emit("NoMove");
