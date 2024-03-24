@@ -43,10 +43,10 @@ export const UserList = () => {
               <p className="font-semibold">{user.name}</p>
               <p className="text-sm">{user.role}</p>
             </div>
-            <button className="btn btn-sm btn-circle ml-auto focus:outline-none" onClick={notify} onKeyDown={handleKeyDown} >
+            <button className="btn btn-sm btn-circle ml-auto focus:outline-none bg-white" onClick={notify} onKeyDown={handleKeyDown} >
               <BsChatLeft color="black" />
             </button>
-            <button className="btn btn-sm btn-circle ml-3 focus:outline-none" onClick={notify} onKeyDown={handleKeyDown}>
+            <button className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white" onClick={notify} onKeyDown={handleKeyDown}>
               <BsThreeDots color="black" />
             </button>
           </li>

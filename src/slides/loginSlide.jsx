@@ -118,7 +118,7 @@ const LoginSlide = () => {
         <a
           onClick={cleanOption}
           href="#homeSlide"
-          className="px-4 text-lg font-bold shadow-lg bg-gray-200 rounded-full p-2 m-1 flex flex-row justify-center items-center"
+          className="px-4 text-lg text-black font-bold shadow-lg bg-gray-200 rounded-full p-2 m-1 flex flex-row justify-center items-center"
         >
           <MdOutlineArrowBack className="mr-1" />
           Volver
