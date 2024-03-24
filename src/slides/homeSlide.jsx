@@ -10,7 +10,7 @@ const HomeSlide = () => {
       </div>
       <div className="absolute bottom-1/4 w-full items-center justify-center flex px-4 ">
         <a href='#loginSlide'
-          className="px-6 xl:py-5 lg:py-4 py-3 w-fit shadow-lg lg:text-2xl md:text-xl text-lg  font-bold bg-gray-200 rounded-full p-3 m-1 flex-row justify-center items-center "
+          className="px-6 xl:py-5 lg:py-4 py-3 w-fit shadow-lg lg:text-2xl md:text-xl text-lg  font-bold bg-gray-200 rounded-full p-3 m-1 flex-row justify-center items-center text-black"
         >
           ¡Comenzar la aventura!
         </a>

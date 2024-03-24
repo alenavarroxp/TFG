@@ -8,7 +8,7 @@ export const UserModal = () => {
       >
         <div className="mt-2 text-white py-2 w-full px-6 flex items-center justify-between border-b-2 border-white">
           <h1 className="text-2xl font-medium ">Entorno CRA</h1>
-          <div className="badge font-semibold badge-lg">1º Primaria</div>
+          <div className="badge font-semibold badge-lg bg-white">1º Primaria</div>
         </div>
         <UserList />
       </div>

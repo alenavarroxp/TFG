@@ -13,7 +13,7 @@ const PersonInput = ({ label, id, type, ...rest }) => {
       <input
         type={type}
         id={id}
-        className="mt-1 p-2 pl-10 border rounded-full w-80 text-black font-semibold focus:outline-none
+        className="mt-1 p-2 pl-10 border rounded-full w-80 text-black font-semibold focus:outline-none bg-white
         "
         {...rest}
       ></input>
