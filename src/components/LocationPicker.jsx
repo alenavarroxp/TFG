@@ -1,18 +1,23 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { RadioLocation } from "../inputs/radioLocation";
 import { MandatoryText } from "./MandatoryText";
 import { socket } from "../utils/socket";
 import { useAtom } from "jotai";
 import { locationAtom } from "../context/atoms/locationAtom";
 import { chooseLocationAtom } from "../context/atoms/chooseLocationAtom";
+import { locationOptionAtom } from "../context/atoms/locationOptionAtom";
+import { errorsTestAtom } from "../context/atoms/errorsTestAtom";
+import { ErrorAlert } from "./ErrorAlert";
 
 export const LocationPicker = () => {
-  const [selectedOption, setSelectedOption] = useState(null);
   const [location, setLocation] = useAtom(locationAtom);
-  const [chooseLocation, setChooseLocation] = useAtom(chooseLocationAtom);
+  const [, setChooseLocation] = useAtom(chooseLocationAtom);
+  const [option, setOption] = useAtom(locationOptionAtom);
+  const [errorsTest, setErrorsTest] = useAtom(errorsTestAtom);
 
   const handleSelectOption = (option) => {
-    setSelectedOption(option);
+    console.log("option", option);
+    setOption(option);
     socketEvent(option);
   };
 
@@ -25,7 +30,10 @@ export const LocationPicker = () => {
       case 2:
         setChooseLocation({ isChoosing: true });
         if (location.position)
-          socket.emit("returnPointer", {id: socket.id, position:location.position});
+          socket.emit("returnPointer", {
+            id: socket.id,
+            position: location.position,
+          });
         socket.emit("chooseLocation");
         break;
       default:
@@ -33,25 +41,39 @@ export const LocationPicker = () => {
     }
   };
 
-  console.log("locationAtom", location);
-  console.log("chooseLocationAtom", chooseLocation);
+  useEffect(() => {
+    socket.on("returnLocation", (obj) => {
+      console.log("Received location", obj);
+      setErrorsTest({ position: false });
+      setLocation({
+        id: socket.id,
+        position: obj.position ? obj.position : null,
+      });
+      setOption(obj.option);
+    });
+  }, [setLocation, setOption, setErrorsTest]);
 
-  socket.on("returnLocation", (position) => {
-    setLocation({ id: socket.id, position: position });
-  });
+  useEffect(() => {
+    if (!location.position) setOption(null);
+  }, [location, setOption]);
 
   return (
     <div className="ml-16 mt-4">
       <MandatoryText text={"Ubicación de la actividad"} />
+      {errorsTest.position && (
+        <div className="w-fit mb-2">
+          <ErrorAlert message={"Debes seleccionar una ubicación"} />
+        </div>
+      )}
       <div className="flex flex-col">
         <RadioLocation
           text={"Posición actual"}
-          selected={selectedOption === 1}
+          selected={option === 1}
           onSelect={() => handleSelectOption(1)}
         />
         <RadioLocation
           text={"Elegir ubicación en el mapa"}
-          selected={selectedOption === 2}
+          selected={option === 2}
           onSelect={() => handleSelectOption(2)}
         />
       </div>

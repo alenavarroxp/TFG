@@ -8,6 +8,7 @@ export default function WebSocketServer() {
       this.users[socket.id] = socket.id;
       console.log("USERS", this.users);
       socket.broadcast.emit("recuperarPersonajes", socket.id);
+      socket.broadcast.emit("recuperarActividades");
 
       socket.on("init", () => {
         socket.emit("init");
@@ -29,6 +30,15 @@ export default function WebSocketServer() {
         socket.broadcast.emit("newCharacter", obj);
       });
 
+      socket.on("newActivity", (obj) => {
+        const objActivity = {
+          [obj.id]: {
+            location: obj.location,
+          },
+        };
+        socket.broadcast.emit("newActivity", objActivity);
+      });
+
       socket.on("moveCharacter", (obj) => {
         socket.broadcast.emit("moveCharacter", obj);
       });
@@ -36,6 +46,11 @@ export default function WebSocketServer() {
       socket.on("recuperarPersonajes", (id) => {
         console.log("Recuperando personajes...");
         socket.broadcast.emit("recuperarPersonajes", id);
+      });
+
+      socket.on("recuperarActividades", () => {
+        console.log("Recuperando actividades...");
+        socket.broadcast.emit("recuperarActividades");
       });
 
       socket.on("newUserWorld", (obj) => {
@@ -56,7 +71,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("getCurrentLocation", (position) => {
-        socket.emit("returnLocation", position);
+        socket.emit("returnLocation", { position: position, option: 1 });
       });
 
       socket.on("chooseLocation", () => {
@@ -64,7 +79,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("returnChooseLocation", (position) => {
-        socket.emit("returnLocation", position);
+        socket.emit("returnLocation", { position: position, option: 2 });
       });
 
       socket.on("clearPointer", () => {
@@ -73,6 +88,16 @@ export default function WebSocketServer() {
 
       socket.on("returnPointer", (obj) => {
         socket.emit("returnPointer", { id: obj.id, position: obj.position });
+      });
+
+      socket.on("createPointer", (obj) => {
+        console.log("Creando puntero... PROFESOR", obj);
+        socket.emit("createPointer", obj);
+        socket.broadcast.emit("newActivity", obj);
+      });
+
+      socket.on("NoMove", () => {
+        socket.emit("NoMove");
       });
     });
   };

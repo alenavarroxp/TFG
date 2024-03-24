@@ -13,7 +13,7 @@ export class Escenario {
   }
 
   createMap(camera, callback) {
-    let fileName = "aldea_simp.glb";
+    let fileName = "aldea_simp_remove.glb";
 
     // Limpiar cualquier escenario anterior
     if (this.map) {

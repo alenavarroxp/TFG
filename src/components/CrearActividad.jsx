@@ -2,8 +2,8 @@ import { IoCloseOutline } from "react-icons/io5";
 import { AiFillInfoCircle } from "react-icons/ai";
 import { MdLocationPin } from "react-icons/md";
 import { IoArrowBack } from "react-icons/io5";
-import { useMemo, useState } from "react";
-import { useAtom } from "jotai"; // Importar useAtom desde jotai
+import { useEffect, useMemo, useState } from "react";
+import { useAtom, useSetAtom } from "jotai"; // Importar useAtom desde jotai
 import { TestForm } from "./forms/TestForm";
 import SelectInput from "../inputs/selectInput";
 import { GridQuestions } from "./GridQuestions";
@@ -14,23 +14,48 @@ import { chooseLocationAtom } from "../context/atoms/chooseLocationAtom";
 import { ChooseLocationHeader } from "./ChooseLocationHeader";
 import { locationAtom } from "../context/atoms/locationAtom";
 import { socket } from "../utils/socket";
+import { CreateTest } from "./CreateTest";
+import { errorsTestAtom } from "../context/atoms/errorsTestAtom";
+import { testAtom } from "../context/atoms/testAtom";
 
 // eslint-disable-next-line react/prop-types
 export const CrearActividad = ({ setCrearScreen }) => {
   const [optionActivity, setOptionActivity] = useState("Test");
-  const [question, setQuestion] = useAtom(questionAtom); // Utilizar el átomo questionAtom
+  const [question, setQuestion] = useAtom(questionAtom);
   const [questions, setQuestions] = useState([]);
   const [errors, setErrors] = useAtom(errorsQuestionAtom);
   const [chooseLocation, setChooseLocation] = useAtom(chooseLocationAtom);
-  const [location, setLocation] = useAtom(locationAtom); // Utilizar el átomo locationAtom
-  console.log("chooseLocation en Crear", chooseLocation);
+  const [location, setLocation] = useAtom(locationAtom);
+  const [errorsTest, setErrorsTest] = useAtom(errorsTestAtom);
+  const setTest = useSetAtom(testAtom);
 
   const questionIsCreated = useMemo(() => {
     return questions.some((q) => q.id === question.id);
   }, [questions, question]);
 
+  useEffect(() => {
+    if (questions.length > 0) {
+      setErrorsTest((prev) => ({ ...prev, questions: false }));
+    }
+  }, [questions, setErrorsTest]);
+
   const handleClickCerrar = () => {
     setCrearScreen(false);
+  };
+
+  const resetErrors = () => {
+    setErrors({
+      questionText: false,
+      answers: false,
+      answerError: false,
+      correct: false,
+      score: false,
+    });
+
+    setErrorsTest({
+      questions: questions.length === 0,
+      position: location.position === null,
+    });
   };
 
   const handleNewQuestion = () => {
@@ -42,13 +67,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
       score: 0,
     });
 
-    setErrors({
-      questionText: false,
-      answers: false,
-      answerError: false,
-      correct: false,
-      score: false,
-    });
+    resetErrors();
   };
 
   const handleUpdateQuestion = () => {
@@ -67,6 +86,11 @@ export const CrearActividad = ({ setCrearScreen }) => {
   };
 
   const handleAddQuestion = () => {
+    let errorTestCopy = { ...errorsTest };
+
+    errorTestCopy.questions = questions.length === 0;
+
+    console.log("errorTest", errorTestCopy);
     if (!validateFields()) return;
 
     setQuestions([...questions, question]);
@@ -121,6 +145,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
     setErrors(errorsCopy);
     console.log("errorsvlaidate", errorsCopy);
+
     return isValid;
   };
 
@@ -137,12 +162,35 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
   const handleBack = () => {
     handleChooseLocation();
-    setLocation({ ...location, position: null });
+    setLocation({ position: null });
   };
 
   const handleChooseLocation = () => {
     socket.emit("clearPointer");
     setChooseLocation({ isChoosing: false });
+  };
+
+  const confirmTest = () => {
+    let errorTestCopy = { ...errorsTest };
+
+    errorTestCopy.questions = questions.length === 0;
+    errorTestCopy.position = location.position === null;
+
+    setErrorsTest(errorTestCopy);
+    console.log("errorTest", errorTestCopy);
+
+    if (!errorTestCopy.questions && !errorTestCopy.position) {
+      setTest({
+        creador: location.id,
+        questions: questions,
+        location: location.position,
+      });
+      handleNewQuestion();
+      //reset el location
+      setLocation({ id: "", position: null });
+      setQuestions([]);
+      return;
+    }
   };
 
   return (
@@ -227,9 +275,10 @@ export const CrearActividad = ({ setCrearScreen }) => {
                 </button>
               </div>
             </div>
-            <div className="w-1/3 m-5">
+            <div className="w-1/3 m-5 relative">
               <GridQuestions questions={questions} setQuestion={setQuestion} />
               <LocationPicker />
+              <CreateTest onClick={confirmTest} />
             </div>
           </div>
         </div>
