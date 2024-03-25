@@ -196,7 +196,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
   return (
     <>
       {!chooseLocation.isChoosing ? (
-        <div className="h-screen w-full absolute bg-[#167563] text-white ">
+        <div className="min-h-screen w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-auto custom-scrollbar">
           <div className="absolute top-2 right-3">
             <button onClick={handleClickCerrar}>
               <IoCloseOutline size={24} />
@@ -217,9 +217,9 @@ export const CrearActividad = ({ setCrearScreen }) => {
             Elabora una actividad para los estudiantes de tu clase. Selecciona
             los campos obligatorios para poder crearla.
           </div>
-          <div className="flex flex-row">
-            <div id="form" className="w-2/3">
-              <div className="flex flex-row">
+          <div className="flex-1">
+            <div id="form" className="w-full">
+              <div className="flex flex-col md:flex-row lg:flex-row">
                 <SelectInput
                   name="Curso"
                   list={[
@@ -246,39 +246,47 @@ export const CrearActividad = ({ setCrearScreen }) => {
                   list={["Opción múltiple", "Rellenar", "Verdadero o Falso"]}
                 />
               </div>
-
-              <div
-                id="questionContainer"
-                className="border-2 w-full min-h-96 rounded-lg m-5"
-              >
-                {optionActivity === "Test" && (
-                  <TestForm numQuestion={calculateNumQuestions()} />
-                )}
-              </div>
-
-              <div className="flex items-center justify-around w-full m-5">
-                <button
-                  id="addQuestionBtn"
-                  className="bg-white px-6 py-2 text-[#167563] font-semibold rounded-2xl"
-                  onClick={handleNewQuestion}
-                >
-                  Nueva
-                </button>
-                <button
-                  id="addQuestionBtn"
-                  className="bg-white px-6 py-2 text-[#167563] font-semibold rounded-2xl"
-                  onClick={
-                    questionIsCreated ? handleUpdateQuestion : handleAddQuestion
-                  }
-                >
-                  {questionIsCreated ? "Actualizar" : "Añadir"}
-                </button>
-              </div>
             </div>
-            <div className="w-1/3 m-5 relative">
-              <GridQuestions questions={questions} setQuestion={setQuestion} />
-              <LocationPicker />
-              <CreateTest onClick={confirmTest} />
+            <div className="flex h-full flex-col md:flex-row">
+              <div className="lg:w-2/3 md:w-2/3 sm:w-full w-full h-full">
+                <div
+                  id="questionContainer"
+                  className="border-2 min-h-88 max-h-88 rounded-lg ml-5 mt-5 mr-5"
+                >
+                  {optionActivity === "Test" && (
+                    <TestForm numQuestion={calculateNumQuestions()} />
+                  )}
+                </div>
+
+                <div className="flex items-center justify-around w-full mt-4 ">
+                  <button
+                    id="addQuestionBtn"
+                    className="bg-white px-6 py-2 text-[#167563] font-semibold rounded-2xl"
+                    onClick={handleNewQuestion}
+                  >
+                    Nueva
+                  </button>
+                  <button
+                    id="addQuestionBtn"
+                    className="bg-white px-6 py-2 text-[#167563] font-semibold rounded-2xl"
+                    onClick={
+                      questionIsCreated
+                        ? handleUpdateQuestion
+                        : handleAddQuestion
+                    }
+                  >
+                    {questionIsCreated ? "Actualizar" : "Añadir"}
+                  </button>
+                </div>
+              </div>
+              <div className="lg:w-1/3 md:w-1/3 sm:w-full w-full flex flex-1 flex-col relative mt-5">
+                <GridQuestions
+                  questions={questions}
+                  setQuestion={setQuestion}
+                />
+                <LocationPicker />
+                <CreateTest onClick={confirmTest} />
+              </div>
             </div>
           </div>
         </div>

@@ -77,7 +77,7 @@ export const TestForm = ({ numQuestion }) => {
 
       <div
         id="options"
-        className="px-3  max-h-96 overflow-y-auto custom-scrollbar"
+        className="px-3 max-h-40"
       >
         <div className="flex flex-row">
           <p className="text-lg border-b-2 font-semibold">Respuestas</p>
@@ -95,6 +95,7 @@ export const TestForm = ({ numQuestion }) => {
             <ErrorAlert message="Las respuestas no pueden estar vacías" />
           )}
         </div>
+        <div className="overflow-y-auto custom-scrollbar max-h-32 ">
         {question.answers.map((answer, i) => (
           <AnswerInput
             key={i}
@@ -103,6 +104,7 @@ export const TestForm = ({ numQuestion }) => {
             setAnswer={(updatedAnswer) => handleAnswerChange(i, updatedAnswer)}
           />
         ))}
+        </div>
       </div>
 
       <PlusInput onClick={handleClick} />

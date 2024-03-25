@@ -8,7 +8,7 @@ const SelectInput = ({ name, list, onChange }) => {
       <select
         id={name}
         name={name}
-        className="w-44 select select-sm text-left rounded-xl text-md text-[#167563] font-semibold focus:outline-none"
+        className="w-full select select-sm text-left rounded-xl text-md text-[#167563] font-semibold focus:outline-none"
         onChange={onChange}
       >
         {list.map((item, index) => (

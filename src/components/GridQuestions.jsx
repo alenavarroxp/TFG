@@ -1,11 +1,10 @@
-import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { errorsTestAtom } from "../context/atoms/errorsTestAtom";
 import { ErrorAlert } from "./ErrorAlert";
 
 /* eslint-disable react/prop-types */
 export const GridQuestions = ({ questions, setQuestion }) => {
-  const [errorTest, setErrorTest] = useAtom(errorsTestAtom); // Crear un nuevo estado con useAtom
+  const [errorTest, ] = useAtom(errorsTestAtom); // Crear un nuevo estado con useAtom
     const handleQuestionClick = (question) => {
       console.log("question",question)
       //SACAR EL INDICE DE LA PREGUNTA
@@ -14,7 +13,7 @@ export const GridQuestions = ({ questions, setQuestion }) => {
     };
      
     return (
-      <div className="flex flex-col w-96 ml-16">
+      <div className="flex flex-col w-full ml-5">
         <label className="font-semibold text-xl mb-2">
           <p className="border-b-2 w-fit">
           Preguntas añadidas
@@ -23,12 +22,13 @@ export const GridQuestions = ({ questions, setQuestion }) => {
             <ErrorAlert message={"Debes añadir al menos una pregunta"} style={{"marginTop":"4px"}}/>
           )}
         </label>
+        <div className="mr-6">
         {Array.isArray(questions) && questions.length > 0 ? (
-          <div className="grid grid-cols-10 gap-2 overflow-y-auto max-h-48 custom-scrollbar overflow-x-hidden">
+          <div className="grid grid-cols-10 gap-2 overflow-y-auto max-h-36 custom-scrollbar overflow-x-hidden">
             {questions.map((question, index) => (
               <div
                 key={index}
-                className="bg-white py-2 px-pointer-events-auto cursor-pointer rounded-sm flex items-center justify-center"
+                className="bg-white py-2 px-pointer-events-auto cursor-pointer rounded-md flex items-center justify-center"
                 onClick={() => handleQuestionClick(question)}
               >
                 <p className="text-[#167563] font-semibold">{`${index + 1}`}</p>
@@ -42,6 +42,7 @@ export const GridQuestions = ({ questions, setQuestion }) => {
             </p>
           </div>
         )}
+        </div>
       </div>
     );
   };
