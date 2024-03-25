@@ -24,6 +24,10 @@ export default function WebSocketServer() {
         socket.broadcast.emit("disconnected", socket.id);
       });
 
+      socket.on("changeCamera", () => {
+        socket.emit("changeCamera");
+      });
+
       socket.on("newCharacter", (obj) => {
         obj.users = this.users;
         obj.id = socket.id;
@@ -98,6 +102,10 @@ export default function WebSocketServer() {
 
       socket.on("NoMove", () => {
         socket.emit("NoMove");
+      });
+
+      socket.on("move", () => {
+        socket.emit("move");
       });
     });
   };

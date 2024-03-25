@@ -23,9 +23,8 @@ export const GUI = () => {
   const [chooseLocation] = useAtom(chooseLocationAtom);
   const [test] = useAtom(testAtom);
   const [tests, setTests] = useState({});
-  
-  const navigation = useNavigate();
 
+  const navigation = useNavigate();
 
   const crearUuid = () => {
     return uuidv4();
@@ -41,6 +40,7 @@ export const GUI = () => {
       }));
 
       setCrearScreen(false);
+      socket.emit("move");
     }
   }, [test]);
 
@@ -49,7 +49,10 @@ export const GUI = () => {
   }, [tests]);
 
   useEffect(() => {
-    if (crearScreen) socket.emit("NoMove");
+    if (crearScreen) {
+      socket.emit("NoMove");
+      setUserModal(false);
+    }
   }, [crearScreen]);
 
   const handleUserModalClick = () => {
@@ -58,6 +61,10 @@ export const GUI = () => {
 
   const handleCrearScreenClick = () => {
     setCrearScreen(!crearScreen);
+  };
+
+  const handleChangeCameraClick = () => {
+    socket.emit("changeCamera");
   };
 
   const handleHomeClick = () => {
@@ -72,7 +79,7 @@ export const GUI = () => {
           className="absolute w-full h-full flex flex-row pointer-events-none"
         >
           <div className="items-start justify-start flex w-full">
-          <GUIButton
+            <GUIButton
               id="homeBtn"
               onClick={handleHomeClick}
               onKeyDown={handleKeyDown}
@@ -100,6 +107,7 @@ export const GUI = () => {
             )}
             <GUIButton
               id="changeCameraBtn"
+              onClick={handleChangeCameraClick}
               onKeyDown={handleKeyDown}
               icon={<HiVideoCamera size={22} />}
               props="mb-6 mr-6"

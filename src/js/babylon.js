@@ -178,10 +178,6 @@ export function initScene(canvas, user) {
     }
   }
 
-  // Asignar la función al evento de clic del botón
-  const changeCameraBtn = document.getElementById("changeCameraBtn");
-  changeCameraBtn.addEventListener("click", changeCameraMode);
-
   // Iniciar la renderización de la escena
   engine.runRenderLoop(() => {
     // Mover el personaje según las teclas presionadas
@@ -454,5 +450,13 @@ export function initScene(canvas, user) {
     keys.D = false;
     keys.SPACE = false;
     keys.SHIFT = false;
+  });
+
+  socket.on("move", () => {
+    move = true;
+  });
+
+  socket.on("changeCamera", () => {
+    changeCameraMode();
   });
 }

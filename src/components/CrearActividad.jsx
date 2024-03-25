@@ -41,6 +41,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
   const handleClickCerrar = () => {
     setCrearScreen(false);
+    socket.emit("move")
   };
 
   const resetErrors = () => {
