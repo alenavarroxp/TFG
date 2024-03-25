@@ -327,7 +327,7 @@ export class Character {
     return false; // No hay colisiones
   }
 
-  moveCamera(camera, keys) {
+  moveCamera(camera, keys, escenario) {
     const lerpFactor = 0.3;
     const distanceFromPlayer = 0.35; // Ajusta esto para cambiar la distancia de la cámara al jugador
 
@@ -341,6 +341,7 @@ export class Character {
 
       // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
       // eslint-disable-next-line no-undef
+
       camera.position = BABYLON.Vector3.Lerp(
         camera.position,
         targetPosition,
@@ -348,12 +349,19 @@ export class Character {
       );
     }
     // Mira al jugador
+    if (this.checkCollisionsCamera(camera,escenario)) {
+      console.log("colisiona con la camara");
+    }
     camera.position = BABYLON.Vector3.Lerp(
       camera.position,
       this.mesh.position,
       lerpFactor
     );
     camera.setTarget(this.mesh.position);
+  }
+
+  checkCollisionsCamera(camera,escenario) {
+    console.log("this camera", camera,escenario)
   }
 
   increaseSpeed() {

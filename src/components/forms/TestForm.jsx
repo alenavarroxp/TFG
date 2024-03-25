@@ -64,7 +64,7 @@ export const TestForm = ({ numQuestion }) => {
         </div>
         <div className="mt-2">
           <textarea
-            className={`text-[#167563] text-sm placeholder-[#167563] placeholder-opacity-80 font-medium focus:outline-none px-3 py-2 rounded-xl w-full custom-scrollbar ${
+            className={`text-[#167563] bg-white text-sm placeholder-[#167563] placeholder-opacity-80 font-medium focus:outline-none px-3 py-2 rounded-xl w-full custom-scrollbar ${
               errors.questionText ? "border-2 border-red-500" : ""
             }`}
             placeholder="Escriba la pregunta..."

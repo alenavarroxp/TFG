@@ -45,7 +45,7 @@ export function initScene(canvas, user) {
   const cameraInitialPosition = camera.position.clone();
   // camera.applyGravity = true;
   // camera.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
-  // camera.checkCollisions = true;
+  camera.checkCollisions = true;
 
   // Crear una luz
   // eslint-disable-next-line no-unused-vars
@@ -225,7 +225,7 @@ export function initScene(canvas, user) {
     }
 
     if (cameraMode === "followPlayer") {
-      character.moveCamera(camera, keys);
+      character.moveCamera(camera, keys, escenario);
     }
 
     scene.render();
@@ -247,41 +247,43 @@ export function initScene(canvas, user) {
 
   socket.on("init", () => {
     console.log("Conectado al servidor con ID: ", socket.id);
-    character = new Character(
-      socket.id,
-      new BABYLON.Vector3(
-        Math.random() * (0.25 - -0.25) + -0.25,
-        10,
-        Math.random() * (0.25 - -0.25) + -0.25
-      ),
-      new BABYLON.Vector3(0, 0, 0),
-      user,
-      scene,
-      (character) => {
-        characters.push(character);
-        socket.emit("newCharacter", {
-          id: socket.id,
-          position: character.mesh.position,
-          rotation: character.mesh.rotation,
-          user: user,
-        });
+    setTimeout(() => {
+      character = new Character(
+        socket.id,
+        new BABYLON.Vector3(
+          Math.random() * (0.25 - -0.25) + -0.25,
+          10,
+          Math.random() * (0.25 - -0.25) + -0.25
+        ),
+        new BABYLON.Vector3(0, 0, 0),
+        user,
+        scene,
+        (character) => {
+          characters.push(character);
+          socket.emit("newCharacter", {
+            id: socket.id,
+            position: character.mesh.position,
+            rotation: character.mesh.rotation,
+            user: user,
+          });
 
-        socket.emit("recuperarPersonajes", socket.id);
-        socket.emit("recuperarActividades");
+          socket.emit("recuperarPersonajes", socket.id);
+          socket.emit("recuperarActividades");
 
-        // Ajusta el radio de la esfera según las dimensiones de tu personaje
-        const sphereRadius = 0.5;
+          // Ajusta el radio de la esfera según las dimensiones de tu personaje
+          const sphereRadius = 0.5;
 
-        character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
-          character.mesh,
-          BABYLON.PhysicsImpostor.SphereImpostor,
-          { mass: 10, radius: sphereRadius },
-          scene
-        );
+          character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
+            character.mesh,
+            BABYLON.PhysicsImpostor.SphereImpostor,
+            { mass: 10, radius: sphereRadius },
+            scene
+          );
 
-        move = true;
-      }
-    );
+          move = true;
+        }
+      );
+    }, 500);
   });
 
   socket.on("disconnected", (id) => {
