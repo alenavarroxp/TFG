@@ -72,7 +72,7 @@ export function initScene(canvas, user) {
   ground.rotate(BABYLON.Axis.X, Math.PI / 2, BABYLON.Space.WORLD);
   ground.visibility = 0;
   // Enable collisions for the ground
-  ground.checkCollisions = true;
+  // ground.checkCollisions = true;
 
   // Add a physics impostor to the ground
   ground.physicsImpostor = new BABYLON.PhysicsImpostor(

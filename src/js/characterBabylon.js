@@ -128,7 +128,7 @@ export class Character {
     ctx.fillText(this.user.userName, 256, 240); // Ajustar la posición del texto del nombre
 
     // Configurar el estilo del texto del rol
-    ctx.font = "italic 36px Arial";
+    ctx.font = "italic 40px Arial";
     ctx.fillStyle = "white";
 
     // Dibujar el texto del rol en el contexto
@@ -214,7 +214,6 @@ export class Character {
 
   move(keys, characters, escenario, scene) {
     let computedRotation = this.mesh.rotation.z;
-    // eslint-disable-next-line no-undef
     let computedMovement = new BABYLON.Vector3();
 
     if (keys["A"]) {
@@ -239,18 +238,11 @@ export class Character {
       this.speed * Math.sin(this.mesh.rotation.z) * movementSpeedFactor;
 
     if (keys["W"]) {
-      // eslint-disable-next-line no-undef
       computedMovement = new BABYLON.Vector3(-xMovement, 0, -zMovement);
     } else if (keys["S"]) {
-      // eslint-disable-next-line no-undef
       computedMovement = new BABYLON.Vector3(xMovement, 0, zMovement);
     }
 
-    this.oldPosition = new BABYLON.Vector3(
-      this.mesh.position.x,
-      this.mesh.position.y,
-      this.mesh.position.z
-    );
     const newPosition = this.mesh.position.add(computedMovement);
     const collisionResult = this.checkCollisions(
       scene,
@@ -261,9 +253,18 @@ export class Character {
     );
 
     if (!collisionResult) {
+      // No hay colisión, el personaje puede moverse libremente
+      this.oldPosition = this.mesh.position.clone(); // Actualizamos la posición anterior
       this.mesh.position = newPosition;
     } else if (collisionResult === "scenary_collision") {
-      console.log("Colisión con el escenario");
+      const avoidancePosition = BABYLON.Vector3.Lerp(
+        newPosition,
+        this.oldPosition,
+        0.5
+      );
+
+      // Mover el personaje hacia la nueva posición evitando la colisión
+      this.mesh.position = avoidancePosition;
     }
   }
 
