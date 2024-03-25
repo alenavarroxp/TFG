@@ -58,7 +58,7 @@ export const LocationPicker = () => {
   }, [location, setOption]);
 
   return (
-    <div className="ml-16 mt-4">
+    <div className="ml-12 mt-4 mr-8">
       <MandatoryText text={"Ubicación de la actividad"} />
       {errorsTest.position && (
         <div className="w-fit mb-2">

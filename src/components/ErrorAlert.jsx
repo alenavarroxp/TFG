@@ -5,7 +5,7 @@ export const ErrorAlert = ({ message, ...props }) => {
   return (
     <div className={`flex flex-row items-center text-white bg-red-500 p-1 rounded-md`} {...props}>
       <IoAlertCircle className="text-white" />
-      <p className="text-xs ml-1">{message}</p>
+      <p className="lg:text-xs md:text-[9px] sm:text-[9px] text-[8px] ml-1">{message}</p>
     </div>
   );
 };

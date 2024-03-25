@@ -12,6 +12,9 @@ import { chooseLocationAtom } from "../context/atoms/chooseLocationAtom";
 import { testAtom } from "../context/atoms/testAtom";
 import { socket } from "../utils/socket";
 import { v4 as uuidv4 } from "uuid";
+import GUIButton from "../inputs/GUIButton";
+import { useNavigate } from "react-router-dom";
+import { IoHome } from "react-icons/io5";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -20,6 +23,9 @@ export const GUI = () => {
   const [chooseLocation] = useAtom(chooseLocationAtom);
   const [test] = useAtom(testAtom);
   const [tests, setTests] = useState({});
+  
+  const navigation = useNavigate();
+
 
   const crearUuid = () => {
     return uuidv4();
@@ -46,41 +52,59 @@ export const GUI = () => {
     if (crearScreen) socket.emit("NoMove");
   }, [crearScreen]);
 
+  const handleUserModalClick = () => {
+    setUserModal(!userModal);
+  };
+
+  const handleCrearScreenClick = () => {
+    setCrearScreen(!crearScreen);
+  };
+
+  const handleHomeClick = () => {
+    navigation("/");
+  };
+
   return (
     <>
       {!chooseLocation.isChoosing ? (
         <div
           id="GUI"
-          className="absolute w-full h-full flex flex-col items-end pointer-events-none"
+          className="absolute w-full h-full flex flex-row pointer-events-none"
         >
-          <button
-            id="usersModalBtn"
-            className="text-white font-bold rounded-full p-4 top-6 right-6 absolute border-white border-2 pointer-events-auto focus:outline-none"
-            onClick={() => {
-              setUserModal(!userModal);
-            }}
-            onKeyDown={handleKeyDown}
-          >
-            <FaUsers size={22} />
-          </button>
-
-          {getUser.isProfessor && (
-            <button
-              id="crearActividadBtn"
-              className="text-white font-bold rounded-full p-4 bottom-1/2 right-6 absolute border-white border-2 pointer-events-auto focus:outline-none"
+          <div className="items-start justify-start flex w-full">
+          <GUIButton
+              id="homeBtn"
+              onClick={handleHomeClick}
               onKeyDown={handleKeyDown}
-              onClick={() => setCrearScreen(!crearScreen)} // Aquí se utiliza una función de callback
-            >
-              <HiMiniSquaresPlus size={22} />
-            </button>
-          )}
-          <button
-            id="changeCameraBtn"
-            className="text-white font-bold rounded-full p-4 bottom-6 right-6 absolute border-white border-2 pointer-events-auto focus:outline-none"
-            onKeyDown={handleKeyDown}
-          >
-            <HiVideoCamera size={22} />
-          </button>
+              icon={<IoHome size={22} />}
+              props="mt-6 ml-6"
+            />
+          </div>
+          <div className="flex flex-col justify-between items-end w-full">
+            <GUIButton
+              id="usersModalBtn"
+              onClick={handleUserModalClick}
+              onKeyDown={handleKeyDown}
+              icon={<FaUsers size={22} />}
+              props="mt-6 mr-6"
+            />
+
+            {getUser.isProfessor && (
+              <GUIButton
+                id="crearActividadBtn"
+                onClick={handleCrearScreenClick}
+                onKeyDown={handleKeyDown}
+                icon={<HiMiniSquaresPlus size={22} />}
+                props="mr-6"
+              />
+            )}
+            <GUIButton
+              id="changeCameraBtn"
+              onKeyDown={handleKeyDown}
+              icon={<HiVideoCamera size={22} />}
+              props="mb-6 mr-6"
+            />
+          </div>
         </div>
       ) : (
         <></>

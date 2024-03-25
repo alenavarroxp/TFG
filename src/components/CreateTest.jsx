@@ -2,10 +2,9 @@
 export const CreateTest = ({ onClick }) => {
   return (
     <div
-      className="w-full min-h-16 flex items-center justify-center absolute bottom-4 cursor-pointer pointer-events-auto"
-      onClick={onClick}
+      className="w-full h-full flex flex-1 flex-col items-end justify-end"
     >
-      <div className="bg-white text-[#167563] p-5 px-10 font-semibold text-xl rounded-3xl">
+      <div className="bg-white text-[#167563] p-3 px-10 font-semibold text-xl rounded-3xl pointer-events-auto cursor-pointer" onClick={onClick}>
         Crear actividad
       </div>
     </div>
