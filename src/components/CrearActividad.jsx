@@ -187,7 +187,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
         location: location.position,
       });
       handleNewQuestion();
-      //reset el location
       setLocation({ id: "", position: null });
       setQuestions([]);
       return;

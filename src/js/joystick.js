@@ -1,7 +1,7 @@
 import nipplejs from "nipplejs";
 /* eslint-disable no-undef */
 export class JoyStick {
-  constructor(container, canvas) {
+  constructor(container, canvas, keys) {
     this.container = container;
     this.canvas = canvas;
     this.joystick = null;
@@ -15,18 +15,16 @@ export class JoyStick {
       fadeTime: 250, // Cambiar el tiempo de desvanecimiento
       restOpacity: 0.5, // Cambiar la opacidad de reposo
     };
-    this.joystickManager = nipplejs.create(this.joystickOptions);
-    this.joystickManager.on("start", () => {
-      console.log("Joystick started");
-    });
+
+    this.enabled = false; // Inicialmente deshabilitado
+    this.enable(keys, container); // Llamar a enable en el constructor para crear la instancia inicial
   }
 
   handleMove = (keys) => {
     this.joystickManager.on("move", (evt, data) => {
-      console.log("DATA FORCE", data.force);
       this.resetKeys(keys);
 
-      if (data.force > 3) {
+      if (data.force > 2.25) {
         keys.SHIFT = true;
       } else {
         keys.SHIFT = false;
@@ -79,5 +77,27 @@ export class JoyStick {
     keys.S = false;
     keys.D = false;
     keys.SHIFT = false;
+  };
+
+  disable = () => {
+    if (this.joystickManager) {
+      this.joystickManager.destroy();
+      this.joystickManager = null;
+      this.enabled = false;
+    }
+    console.log("Joystick disabled", this);
+  };
+
+  enable = (keys, container) => {
+    if (!this.enabled) {
+      console.log("Joystick enabled");
+      this.container = container;
+      this.joystickManager = nipplejs.create({
+        ...this.joystickOptions,
+        zone: container,
+      }); // Crear un nuevo joystick
+      this.enabled = true;
+      this.handleMove(keys); // Suponiendo que `keys` es un parámetro válido
+    }
   };
 }

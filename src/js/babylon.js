@@ -107,14 +107,15 @@ export function initScene(canvas, user) {
     SHIFT: false,
   };
 
-  const joystickContainer = document.getElementById("joystickContainer");
+  let joystickContainer = document.getElementById("joystickContainer");
+  let joystick;
+
+  const createJoyStick = (container, canvas) => {
+    joystick = new JoyStick(container, canvas, keys);
+  };
 
   if (joystickContainer) {
-    // Configurar el joystick virtual
-    const joystick = new JoyStick(joystickContainer, canvas);
-
-    console.log("joyStick", joystick);
-    joystick.handleMove(keys);
+    createJoyStick(joystickContainer, canvas);
   }
 
   document.addEventListener("keydown", (event) => {
@@ -196,10 +197,9 @@ export function initScene(canvas, user) {
       return;
     }
 
-    if (keys.W) character.move(keys, characters, escenario, scene);
-    if (keys.A) character.move(keys, characters, escenario, scene);
-    if (keys.S) character.move(keys, characters, escenario, scene);
-    if (keys.D) character.move(keys, characters, escenario, scene);
+    if (keys.W || keys.A || keys.S || keys.D) {
+      character.move(keys, characters, escenario, scene);
+    }
 
     if (character) {
       if (keys.SPACE) {
@@ -462,10 +462,20 @@ export function initScene(canvas, user) {
     keys.D = false;
     keys.SPACE = false;
     keys.SHIFT = false;
+
+    // Deshabilitar el joystick
+    if (joystick) {
+      joystick.disable();
+    }
   });
 
   socket.on("move", () => {
     move = true;
+    // Habilitar el joystick
+    if (joystick) {
+      joystickContainer = document.getElementById("joystickContainer");
+      joystick = new JoyStick(joystickContainer, canvas, keys);
+    } 
   });
 
   socket.on("changeCamera", () => {

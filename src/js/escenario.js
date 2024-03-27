@@ -76,8 +76,14 @@ export class Escenario {
               mesh.name.includes("primitive4") ||
               mesh.name.includes("primitive3") ||
               mesh.name.includes("b_vallas.001") ||
-              mesh.name.includes("b_heno.002_primitive0")
+              mesh.name.includes("b_heno.002_primitive0") ||
+              mesh.name.includes("b_pozos.003_primitive0")
             ) {
+              if (
+                mesh.name.includes("b_pozos.003_primitive3") ||
+                mesh.name.includes("b_pozos.003_primitive4")
+              )
+                return;
               mesh.checkCollisions = true;
               mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
                 mesh,
