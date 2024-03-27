@@ -212,7 +212,7 @@ export class Character {
     }
   }
 
-  move(keys, characters, escenario, scene) {
+  move(keys, characters, escenario, scene, activities) {
     let computedRotation = this.mesh.rotation.z;
     let computedMovement = new BABYLON.Vector3();
 
@@ -249,7 +249,8 @@ export class Character {
       newPosition,
       this.oldPosition,
       characters,
-      escenario
+      escenario,
+      activities
     );
 
     if (!collisionResult) {
@@ -265,6 +266,10 @@ export class Character {
 
       // Mover el personaje hacia la nueva posición evitando la colisión
       this.mesh.position = avoidancePosition;
+    }else if(collisionResult === "activity_collision"){
+      console.log("Colisión con actividad");
+      this.oldPosition = this.mesh.position.clone(); // Actualizamos la posición anterior
+      this.mesh.position = newPosition;
     }
   }
 
@@ -305,7 +310,14 @@ export class Character {
     return a + t * (b - a);
   }
 
-  checkCollisions(scene, newPosition, oldPosition, characters, escenario) {
+  checkCollisions(
+    scene,
+    newPosition,
+    oldPosition,
+    characters,
+    escenario,
+    activities
+  ) {
     // Verificar colisiones con otras cápsulas de personajes
     for (const character of characters) {
       if (character.id !== this.id && character.capsule.position) {
@@ -318,6 +330,11 @@ export class Character {
       }
     }
 
+    for (const activity of activities) {
+      if(activity.element.pointer.intersectsMesh(this.capsule, true)){
+        return "activity_collision";
+      }
+    }
     // Verificar colisiones con el escenario pero solo si el personaje se está moviendo. No quiero que me lo deje atrapado en el intersectsMesh
     for (const mesh of escenario.elements) {
       if (mesh.intersectsMesh(this.capsule, true)) {

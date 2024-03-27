@@ -198,7 +198,7 @@ export function initScene(canvas, user) {
     }
 
     if (keys.W || keys.A || keys.S || keys.D) {
-      character.move(keys, characters, escenario, scene);
+      character.move(keys, characters, escenario, scene, activities);
     }
 
     if (character) {
