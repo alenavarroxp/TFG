@@ -4,6 +4,7 @@ import { Character } from "./characterBabylon.js";
 import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
 import { Pointer } from "./pointer.js";
+import { JoyStick } from "./joystick.js";
 
 export function initScene(canvas, user) {
   console.log("Iniciando escena...");
@@ -41,12 +42,11 @@ export function initScene(canvas, user) {
   camera.attachControl(canvas, true);
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
-  camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
   const cameraInitialPosition = camera.position.clone();
-  // camera.applyGravity = true;
-  // camera.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
-  camera.checkCollisions = true;
 
+  camera.onCollide = function (collidedMesh) {
+    console.log("Colisión con: ", collidedMesh);
+  };
   // Crear una luz
   // eslint-disable-next-line no-unused-vars
   const light = new BABYLON.HemisphericLight(
@@ -106,6 +106,16 @@ export function initScene(canvas, user) {
     SPACE: false,
     SHIFT: false,
   };
+
+  const joystickContainer = document.getElementById("joystickContainer");
+
+  if (joystickContainer) {
+    // Configurar el joystick virtual
+    const joystick = new JoyStick(joystickContainer, canvas);
+
+    console.log("joyStick", joystick);
+    joystick.handleMove(keys);
+  }
 
   document.addEventListener("keydown", (event) => {
     if (move) handleKeyDown(event);
@@ -225,7 +235,7 @@ export function initScene(canvas, user) {
     }
 
     if (cameraMode === "followPlayer") {
-      character.moveCamera(camera, keys, escenario);
+      character.moveCamera(scene, camera, keys, escenario);
     }
 
     scene.render();

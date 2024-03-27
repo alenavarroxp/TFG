@@ -308,7 +308,7 @@ export class Character {
   checkCollisions(scene, newPosition, oldPosition, characters, escenario) {
     // Verificar colisiones con otras cápsulas de personajes
     for (const character of characters) {
-      if (character.id !== this.id) {
+      if (character.id !== this.id && character.capsule.position) {
         const distanceVector = newPosition.subtract(character.capsule.position);
         const distance = distanceVector.length();
         // Detener el movimiento si hay colisión con otro personaje
@@ -327,7 +327,7 @@ export class Character {
     return false; // No hay colisiones
   }
 
-  moveCamera(camera, keys, escenario) {
+  moveCamera(scene, camera, keys, escenario) {
     const lerpFactor = 0.3;
     const distanceFromPlayer = 0.35; // Ajusta esto para cambiar la distancia de la cámara al jugador
 
@@ -349,19 +349,30 @@ export class Character {
       );
     }
     // Mira al jugador
-    if (this.checkCollisionsCamera(camera,escenario)) {
-      console.log("colisiona con la camara");
+    if (this.checkCollisionsCamera(scene, camera, escenario)) {
+      console.log("Colisión con el escenario");
     }
     camera.position = BABYLON.Vector3.Lerp(
       camera.position,
       this.mesh.position,
       lerpFactor
     );
+
     camera.setTarget(this.mesh.position);
   }
 
-  checkCollisionsCamera(camera,escenario) {
-    console.log("this camera", camera,escenario)
+  checkCollisionsCamera(scene, camera, escenario) {
+    const direction = this.mesh.position.subtract(camera.position).normalize();
+    const maxDistance = this.mesh.position.subtract(camera.position).length();
+    const ray = new BABYLON.Ray(camera.position, direction, maxDistance);
+
+    const intersectedMeshes = ray.intersectsMeshes(escenario.elements);
+
+    if (intersectedMeshes.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   increaseSpeed() {

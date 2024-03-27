@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import GUIButton from "../inputs/GUIButton";
 import { useNavigate } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
+import { JoyStickContainer } from "./JoyStickContainer";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -86,6 +87,7 @@ export const GUI = () => {
               icon={<IoHome size={22} />}
               props="mt-6 ml-6"
             />
+            <JoyStickContainer/>
           </div>
           <div className="flex flex-col justify-between items-end w-full">
             <GUIButton
