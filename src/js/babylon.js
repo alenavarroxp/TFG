@@ -430,6 +430,10 @@ export function initScene(canvas, user) {
     pointer.createPointer(obj.position, "pointer");
   });
 
+  const createExclamation = () => {
+    infoStand.createExclamation();
+  }
+
   const createPointer = (obj) => {
     Object.keys(obj).forEach((key) => {
       if (!activities.map((activity) => activity.id).includes(key)) {
@@ -444,6 +448,7 @@ export function initScene(canvas, user) {
           };
           activities.push(activity);
           console.log("ACTIVIDAD CREADA", activity);
+          createExclamation();
         } catch (err) {
           console.log(err);
         }

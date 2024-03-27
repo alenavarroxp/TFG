@@ -36,13 +36,13 @@ export class Stand {
           );
           if (mesh.name === "Object_4") elements.push(mesh);
         });
-
-        this.createExclamation();
       }
     );
   }
 
   createExclamation() {
+    if (this.exclamation) return;
+
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
@@ -67,11 +67,11 @@ export class Stand {
         exclamationMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
           "#FFD700"
         );
-        
+
         newMeshes.forEach((mesh) => {
           //Cambiar el color del material
-          console.log("mesh.name: ", mesh.name)
-          mesh.material = exclamationMaterial
+          console.log("mesh.name: ", mesh.name);
+          mesh.material = exclamationMaterial;
         });
 
         this.scene.registerBeforeRender(() => {
