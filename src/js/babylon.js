@@ -5,6 +5,7 @@ import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
 import { Pointer } from "./pointer.js";
 import { JoyStick } from "./joystick.js";
+import { Stand } from "./stand.js";
 
 export function initScene(canvas, user) {
   console.log("Iniciando escena...");
@@ -61,6 +62,13 @@ export function initScene(canvas, user) {
     console.log("Escenario cargado");
     engine.hideLoadingUI();
   });
+
+  const infoStand = new Stand(scene);
+  infoStand.createStand(
+    new BABYLON.Vector3(-0.85, 0, 0),
+    "info_stand",
+    escenario.elements
+  );
 
   // Create a ground mesh
   var ground = BABYLON.MeshBuilder.CreateBox(
@@ -475,7 +483,7 @@ export function initScene(canvas, user) {
     if (joystick) {
       joystickContainer = document.getElementById("joystickContainer");
       joystick = new JoyStick(joystickContainer, canvas, keys);
-    } 
+    }
   });
 
   socket.on("changeCamera", () => {
