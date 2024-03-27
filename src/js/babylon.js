@@ -432,7 +432,15 @@ export function initScene(canvas, user) {
 
   const createExclamation = () => {
     infoStand.createExclamation();
-  }
+  };
+
+  const updateInfoStand = () => {
+    const activityCount = activities.length;
+    const activityText = activityCount === 1 ? "actividad pendiente" : "actividades pendientes";
+    infoStand.createDisplayInfo(
+      "¡Descubre y completa " + activityCount + " " + activityText + " en el mundo!"
+    );
+  };
 
   const createPointer = (obj) => {
     Object.keys(obj).forEach((key) => {
@@ -449,6 +457,7 @@ export function initScene(canvas, user) {
           activities.push(activity);
           console.log("ACTIVIDAD CREADA", activity);
           createExclamation();
+          updateInfoStand();
         } catch (err) {
           console.log(err);
         }
