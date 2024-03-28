@@ -127,7 +127,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
     }
 
     // Validar score
-    if (question.score === 0) {
+    const score = parseInt(question.score);
+    if (score <= 0 || score > 10) {
       errorsCopy.score = true;
       isValid = false;
     } else {

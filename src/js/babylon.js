@@ -255,11 +255,13 @@ export function initScene(canvas, user) {
   });
 
   function eliminarPersonaje(id) {
-    const character = characters.find((character) => character.id === id);
+    let character = characters.find((character) => character.id === id);
     if (character) {
       character.eliminarMeshes();
       const index = characters.indexOf(character);
+      //Eliminar el jugador por completo
       characters.splice(index, 1);
+
     }
   }
 
@@ -311,6 +313,7 @@ export function initScene(canvas, user) {
 
   socket.on("newCharacter", (obj) => {
     const object = characters.find((character) => character.id === obj.id);
+    console.log("CHARACTER EN NEW CHARACTER", object)
     if (!object) {
       const character = new Character(
         obj.id,
@@ -436,9 +439,14 @@ export function initScene(canvas, user) {
 
   const updateInfoStand = () => {
     const activityCount = activities.length;
-    const activityText = activityCount === 1 ? "actividad pendiente" : "actividades pendientes";
+    const activityText =
+      activityCount === 1 ? "actividad pendiente" : "actividades pendientes";
     infoStand.createDisplayInfo(
-      "¡Descubre y completa " + activityCount + " " + activityText + " en el mundo!"
+      "¡Descubre y completa " +
+        activityCount +
+        " " +
+        activityText +
+        " en el mundo!"
     );
   };
 
@@ -502,5 +510,12 @@ export function initScene(canvas, user) {
 
   socket.on("changeCamera", () => {
     changeCameraMode();
+  });
+
+  socket.on("jump", () => {
+    if (character) {
+      character.playAnimation("CharacterArmature|Jump");
+      character.jump();
+    }
   });
 }

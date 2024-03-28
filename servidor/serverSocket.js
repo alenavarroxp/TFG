@@ -15,6 +15,8 @@ export default function WebSocketServer() {
       });
       socket.on("disconnect", () => {
         console.log("Se ha desconectado el usuario", socket.id);
+        console.log("USERS", this.users);
+        console.log("USERS WORLD", this.usersWorld);
         delete this.users[socket.id];
 
         if (this.usersWorld[socket.id]) {
@@ -106,6 +108,10 @@ export default function WebSocketServer() {
 
       socket.on("move", () => {
         socket.emit("move");
+      });
+
+      socket.on("jump", () => {
+        socket.emit("jump");
       });
     });
   };
