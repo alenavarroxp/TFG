@@ -19,7 +19,9 @@ export const GridQuestions = ({ questions, setQuestion }) => {
           Preguntas añadidas
           </p>
           {errorTest.questions && (
-            <ErrorAlert message={"Debes añadir al menos una pregunta"} style={{"marginTop":"4px"}}/>
+            <div className="w-fit mt-1">
+            <ErrorAlert message={"Debes añadir al menos una pregunta"}/>
+            </div>
           )}
         </label>
         <div className="mr-6">

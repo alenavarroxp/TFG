@@ -16,7 +16,6 @@ export const LocationPicker = () => {
   const [errorsTest, setErrorsTest] = useAtom(errorsTestAtom);
 
   const handleSelectOption = (option) => {
-    console.log("option", option);
     setOption(option);
     socketEvent(option);
   };
@@ -43,7 +42,6 @@ export const LocationPicker = () => {
 
   useEffect(() => {
     socket.on("returnLocation", (obj) => {
-      console.log("Received location", obj);
       setErrorsTest({ position: false });
       setLocation({
         id: socket.id,
@@ -58,7 +56,7 @@ export const LocationPicker = () => {
   }, [location, setOption]);
 
   return (
-    <div className="ml-12 mt-4 mr-8">
+    <div className="ml-5 mt-4 mr-8 mb-2">
       <MandatoryText text={"Ubicación de la actividad"} />
       {errorsTest.position && (
         <div className="w-fit mb-2">

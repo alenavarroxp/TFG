@@ -128,7 +128,7 @@ export class Character {
     ctx.fillText(this.user.userName, 256, 240); // Ajustar la posición del texto del nombre
 
     // Configurar el estilo del texto del rol
-    ctx.font = "italic 36px Arial";
+    ctx.font = "italic 40px Arial";
     ctx.fillStyle = "white";
 
     // Dibujar el texto del rol en el contexto
@@ -212,9 +212,8 @@ export class Character {
     }
   }
 
-  move(keys, characters, escenario, scene) {
+  move(keys, characters, escenario, scene, activities) {
     let computedRotation = this.mesh.rotation.z;
-    // eslint-disable-next-line no-undef
     let computedMovement = new BABYLON.Vector3();
 
     if (keys["A"]) {
@@ -239,31 +238,38 @@ export class Character {
       this.speed * Math.sin(this.mesh.rotation.z) * movementSpeedFactor;
 
     if (keys["W"]) {
-      // eslint-disable-next-line no-undef
       computedMovement = new BABYLON.Vector3(-xMovement, 0, -zMovement);
     } else if (keys["S"]) {
-      // eslint-disable-next-line no-undef
       computedMovement = new BABYLON.Vector3(xMovement, 0, zMovement);
     }
 
-    this.oldPosition = new BABYLON.Vector3(
-      this.mesh.position.x,
-      this.mesh.position.y,
-      this.mesh.position.z
-    );
     const newPosition = this.mesh.position.add(computedMovement);
     const collisionResult = this.checkCollisions(
       scene,
       newPosition,
       this.oldPosition,
       characters,
-      escenario
+      escenario,
+      activities
     );
 
     if (!collisionResult) {
+      // No hay colisión, el personaje puede moverse libremente
+      this.oldPosition = this.mesh.position.clone(); // Actualizamos la posición anterior
       this.mesh.position = newPosition;
     } else if (collisionResult === "scenary_collision") {
-      console.log("Colisión con el escenario");
+      const avoidancePosition = BABYLON.Vector3.Lerp(
+        newPosition,
+        this.oldPosition,
+        0.5
+      );
+
+      // Mover el personaje hacia la nueva posición evitando la colisión
+      this.mesh.position = avoidancePosition;
+    }else if(collisionResult === "activity_collision"){
+      console.log("Colisión con actividad");
+      this.oldPosition = this.mesh.position.clone(); // Actualizamos la posición anterior
+      this.mesh.position = newPosition;
     }
   }
 
@@ -304,10 +310,17 @@ export class Character {
     return a + t * (b - a);
   }
 
-  checkCollisions(scene, newPosition, oldPosition, characters, escenario) {
+  checkCollisions(
+    scene,
+    newPosition,
+    oldPosition,
+    characters,
+    escenario,
+    activities
+  ) {
     // Verificar colisiones con otras cápsulas de personajes
     for (const character of characters) {
-      if (character.id !== this.id) {
+      if (character.id !== this.id && character.capsule.position) {
         const distanceVector = newPosition.subtract(character.capsule.position);
         const distance = distanceVector.length();
         // Detener el movimiento si hay colisión con otro personaje
@@ -317,6 +330,11 @@ export class Character {
       }
     }
 
+    for (const activity of activities) {
+      if(activity.element.pointer.intersectsMesh(this.capsule, true)){
+        return "activity_collision";
+      }
+    }
     // Verificar colisiones con el escenario pero solo si el personaje se está moviendo. No quiero que me lo deje atrapado en el intersectsMesh
     for (const mesh of escenario.elements) {
       if (mesh.intersectsMesh(this.capsule, true)) {
@@ -326,7 +344,7 @@ export class Character {
     return false; // No hay colisiones
   }
 
-  moveCamera(camera, keys) {
+  moveCamera(scene, camera, keys, escenario) {
     const lerpFactor = 0.3;
     const distanceFromPlayer = 0.35; // Ajusta esto para cambiar la distancia de la cámara al jugador
 
@@ -340,6 +358,7 @@ export class Character {
 
       // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
       // eslint-disable-next-line no-undef
+
       camera.position = BABYLON.Vector3.Lerp(
         camera.position,
         targetPosition,
@@ -347,12 +366,30 @@ export class Character {
       );
     }
     // Mira al jugador
+    if (this.checkCollisionsCamera(scene, camera, escenario)) {
+      console.log("Colisión con el escenario");
+    }
     camera.position = BABYLON.Vector3.Lerp(
       camera.position,
       this.mesh.position,
       lerpFactor
     );
+
     camera.setTarget(this.mesh.position);
+  }
+
+  checkCollisionsCamera(scene, camera, escenario) {
+    const direction = this.mesh.position.subtract(camera.position).normalize();
+    const maxDistance = this.mesh.position.subtract(camera.position).length();
+    const ray = new BABYLON.Ray(camera.position, direction, maxDistance);
+
+    const intersectedMeshes = ray.intersectsMeshes(escenario.elements);
+
+    if (intersectedMeshes.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   increaseSpeed() {

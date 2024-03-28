@@ -52,7 +52,9 @@ export class Escenario {
 
         // Agrega los demás nombres de mallas
         visibleMeshNames.push(
-          "a_muralla",
+          "a_muralla_primitive0",
+          "a_muralla_primitive1",
+          "a_muralla_primitive2",
           "b_heno.002_primitive0",
           "b_heno.002_primitive1",
           "b_pozos.003_primitive0",
@@ -72,8 +74,16 @@ export class Escenario {
             //Si el mesh.name termina en primitive4 o primitive 3 lo añade
             if (
               mesh.name.includes("primitive4") ||
-              mesh.name.includes("primitive3")
+              mesh.name.includes("primitive3") ||
+              mesh.name.includes("b_vallas.001") ||
+              mesh.name.includes("b_heno.002_primitive0") ||
+              mesh.name.includes("b_pozos.003_primitive0")
             ) {
+              if (
+                mesh.name.includes("b_pozos.003_primitive3") ||
+                mesh.name.includes("b_pozos.003_primitive4")
+              )
+                return;
               mesh.checkCollisions = true;
               mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
                 mesh,
@@ -88,7 +98,7 @@ export class Escenario {
             mesh.visibility = 0;
           }
         });
-        
+
         if (callback) {
           callback(this);
         }

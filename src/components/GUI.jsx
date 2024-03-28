@@ -15,6 +15,8 @@ import { v4 as uuidv4 } from "uuid";
 import GUIButton from "../inputs/GUIButton";
 import { useNavigate } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
+import { JoyStickContainer } from "./JoyStickContainer";
+import { JumpButton } from "./JumpButton";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -23,8 +25,6 @@ export const GUI = () => {
   const [chooseLocation] = useAtom(chooseLocationAtom);
   const [test] = useAtom(testAtom);
   const [tests, setTests] = useState({});
-  
-  const navigation = useNavigate();
 
 
   const crearUuid = () => {
@@ -41,6 +41,7 @@ export const GUI = () => {
       }));
 
       setCrearScreen(false);
+      socket.emit("move");
     }
   }, [test]);
 
@@ -49,7 +50,10 @@ export const GUI = () => {
   }, [tests]);
 
   useEffect(() => {
-    if (crearScreen) socket.emit("NoMove");
+    if (crearScreen) {
+      socket.emit("NoMove");
+      setUserModal(false);
+    }
   }, [crearScreen]);
 
   const handleUserModalClick = () => {
@@ -60,8 +64,14 @@ export const GUI = () => {
     setCrearScreen(!crearScreen);
   };
 
+  const handleChangeCameraClick = () => {
+    socket.emit("changeCamera");
+  };
+
   const handleHomeClick = () => {
-    navigation("/");
+    //Recargar la página
+    window.location.reload();
+
   };
 
   return (
@@ -72,15 +82,16 @@ export const GUI = () => {
           className="absolute w-full h-full flex flex-row pointer-events-none"
         >
           <div className="items-start justify-start flex w-full">
-          <GUIButton
+            <GUIButton
               id="homeBtn"
               onClick={handleHomeClick}
               onKeyDown={handleKeyDown}
               icon={<IoHome size={22} />}
               props="mt-6 ml-6"
             />
+            <JoyStickContainer/>
           </div>
-          <div className="flex flex-col justify-between items-end w-full">
+          <div className="flex flex-col justify-between items-end w-full h-2/3">
             <GUIButton
               id="usersModalBtn"
               onClick={handleUserModalClick}
@@ -100,10 +111,12 @@ export const GUI = () => {
             )}
             <GUIButton
               id="changeCameraBtn"
+              onClick={handleChangeCameraClick}
               onKeyDown={handleKeyDown}
               icon={<HiVideoCamera size={22} />}
               props="mb-6 mr-6"
             />
+            <JumpButton/>
           </div>
         </div>
       ) : (

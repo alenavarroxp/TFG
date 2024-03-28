@@ -41,6 +41,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
   const handleClickCerrar = () => {
     setCrearScreen(false);
+    socket.emit("move")
   };
 
   const resetErrors = () => {
@@ -126,7 +127,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
     }
 
     // Validar score
-    if (question.score === 0) {
+    const score = parseInt(question.score);
+    if (score <= 0 || score > 10) {
       errorsCopy.score = true;
       isValid = false;
     } else {
@@ -186,7 +188,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
         location: location.position,
       });
       handleNewQuestion();
-      //reset el location
       setLocation({ id: "", position: null });
       setQuestions([]);
       return;
