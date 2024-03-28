@@ -24,7 +24,7 @@ export const NumberInput = ({ numQuestion }) => {
       maxLength={5}
       max={10}
       min={0}
-      className={`ml-1 rounded-full w-12 text-[#167563] text-center font-semibold focus:outline-none ${errors.score ? "border-[1.5px] border-red-500" : ""}`}
+      className={`ml-1 bg-white rounded-full w-12 text-[#167563] text-center font-semibold focus:outline-none ${errors.score ? "border-[1.5px] border-red-500" : ""}`}
     />
   );
 };

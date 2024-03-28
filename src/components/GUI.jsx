@@ -15,6 +15,8 @@ import { v4 as uuidv4 } from "uuid";
 import GUIButton from "../inputs/GUIButton";
 import { useNavigate } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
+import { JoyStickContainer } from "./JoyStickContainer";
+import { JumpButton } from "./JumpButton";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -24,7 +26,6 @@ export const GUI = () => {
   const [test] = useAtom(testAtom);
   const [tests, setTests] = useState({});
 
-  const navigation = useNavigate();
 
   const crearUuid = () => {
     return uuidv4();
@@ -68,7 +69,9 @@ export const GUI = () => {
   };
 
   const handleHomeClick = () => {
-    navigation("/");
+    //Recargar la página
+    window.location.reload();
+
   };
 
   return (
@@ -86,8 +89,9 @@ export const GUI = () => {
               icon={<IoHome size={22} />}
               props="mt-6 ml-6"
             />
+            <JoyStickContainer/>
           </div>
-          <div className="flex flex-col justify-between items-end w-full">
+          <div className="flex flex-col justify-between items-end w-full h-2/3">
             <GUIButton
               id="usersModalBtn"
               onClick={handleUserModalClick}
@@ -112,6 +116,7 @@ export const GUI = () => {
               icon={<HiVideoCamera size={22} />}
               props="mb-6 mr-6"
             />
+            <JumpButton/>
           </div>
         </div>
       ) : (

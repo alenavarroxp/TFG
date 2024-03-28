@@ -4,6 +4,8 @@ import { Character } from "./characterBabylon.js";
 import { Escenario } from "./escenario.js";
 import * as CANNON from "cannon";
 import { Pointer } from "./pointer.js";
+import { JoyStick } from "./joystick.js";
+import { Stand } from "./stand.js";
 
 export function initScene(canvas, user) {
   console.log("Iniciando escena...");
@@ -41,12 +43,11 @@ export function initScene(canvas, user) {
   camera.attachControl(canvas, true);
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
-  camera.collisionRadius = new BABYLON.Vector3(0.1, 0.1, 0.1);
   const cameraInitialPosition = camera.position.clone();
-  // camera.applyGravity = true;
-  // camera.ellipsoid = new BABYLON.Vector3(0.5, 0.5, 0.5);
-  // camera.checkCollisions = true;
 
+  camera.onCollide = function (collidedMesh) {
+    console.log("Colisión con: ", collidedMesh);
+  };
   // Crear una luz
   // eslint-disable-next-line no-unused-vars
   const light = new BABYLON.HemisphericLight(
@@ -62,6 +63,13 @@ export function initScene(canvas, user) {
     engine.hideLoadingUI();
   });
 
+  const infoStand = new Stand(scene);
+  infoStand.createStand(
+    new BABYLON.Vector3(-0.85, 0, 0),
+    "info_stand",
+    escenario.elements
+  );
+
   // Create a ground mesh
   var ground = BABYLON.MeshBuilder.CreateBox(
     "ground",
@@ -72,7 +80,7 @@ export function initScene(canvas, user) {
   ground.rotate(BABYLON.Axis.X, Math.PI / 2, BABYLON.Space.WORLD);
   ground.visibility = 0;
   // Enable collisions for the ground
-  ground.checkCollisions = true;
+  // ground.checkCollisions = true;
 
   // Add a physics impostor to the ground
   ground.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -106,6 +114,17 @@ export function initScene(canvas, user) {
     SPACE: false,
     SHIFT: false,
   };
+
+  let joystickContainer = document.getElementById("joystickContainer");
+  let joystick;
+
+  const createJoyStick = (container, canvas) => {
+    joystick = new JoyStick(container, canvas, keys);
+  };
+
+  if (joystickContainer) {
+    createJoyStick(joystickContainer, canvas);
+  }
 
   document.addEventListener("keydown", (event) => {
     if (move) handleKeyDown(event);
@@ -186,10 +205,9 @@ export function initScene(canvas, user) {
       return;
     }
 
-    if (keys.W) character.move(keys, characters, escenario, scene);
-    if (keys.A) character.move(keys, characters, escenario, scene);
-    if (keys.S) character.move(keys, characters, escenario, scene);
-    if (keys.D) character.move(keys, characters, escenario, scene);
+    if (keys.W || keys.A || keys.S || keys.D) {
+      character.move(keys, characters, escenario, scene, activities);
+    }
 
     if (character) {
       if (keys.SPACE) {
@@ -225,7 +243,7 @@ export function initScene(canvas, user) {
     }
 
     if (cameraMode === "followPlayer") {
-      character.moveCamera(camera, keys);
+      character.moveCamera(scene, camera, keys, escenario);
     }
 
     scene.render();
@@ -237,51 +255,55 @@ export function initScene(canvas, user) {
   });
 
   function eliminarPersonaje(id) {
-    const character = characters.find((character) => character.id === id);
+    let character = characters.find((character) => character.id === id);
     if (character) {
       character.eliminarMeshes();
       const index = characters.indexOf(character);
+      //Eliminar el jugador por completo
       characters.splice(index, 1);
+
     }
   }
 
   socket.on("init", () => {
     console.log("Conectado al servidor con ID: ", socket.id);
-    character = new Character(
-      socket.id,
-      new BABYLON.Vector3(
-        Math.random() * (0.25 - -0.25) + -0.25,
-        10,
-        Math.random() * (0.25 - -0.25) + -0.25
-      ),
-      new BABYLON.Vector3(0, 0, 0),
-      user,
-      scene,
-      (character) => {
-        characters.push(character);
-        socket.emit("newCharacter", {
-          id: socket.id,
-          position: character.mesh.position,
-          rotation: character.mesh.rotation,
-          user: user,
-        });
+    setTimeout(() => {
+      character = new Character(
+        socket.id,
+        new BABYLON.Vector3(
+          Math.random() * (0.25 - -0.25) + -0.25,
+          10,
+          Math.random() * (0.25 - -0.25) + -0.25
+        ),
+        new BABYLON.Vector3(0, 0, 0),
+        user,
+        scene,
+        (character) => {
+          characters.push(character);
+          socket.emit("newCharacter", {
+            id: socket.id,
+            position: character.mesh.position,
+            rotation: character.mesh.rotation,
+            user: user,
+          });
 
-        socket.emit("recuperarPersonajes", socket.id);
-        socket.emit("recuperarActividades");
+          socket.emit("recuperarPersonajes", socket.id);
+          socket.emit("recuperarActividades");
 
-        // Ajusta el radio de la esfera según las dimensiones de tu personaje
-        const sphereRadius = 0.5;
+          // Ajusta el radio de la esfera según las dimensiones de tu personaje
+          const sphereRadius = 0.5;
 
-        character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
-          character.mesh,
-          BABYLON.PhysicsImpostor.SphereImpostor,
-          { mass: 10, radius: sphereRadius },
-          scene
-        );
+          character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
+            character.mesh,
+            BABYLON.PhysicsImpostor.SphereImpostor,
+            { mass: 10, radius: sphereRadius },
+            scene
+          );
 
-        move = true;
-      }
-    );
+          move = true;
+        }
+      );
+    }, 500);
   });
 
   socket.on("disconnected", (id) => {
@@ -291,6 +313,7 @@ export function initScene(canvas, user) {
 
   socket.on("newCharacter", (obj) => {
     const object = characters.find((character) => character.id === obj.id);
+    console.log("CHARACTER EN NEW CHARACTER", object)
     if (!object) {
       const character = new Character(
         obj.id,
@@ -410,6 +433,23 @@ export function initScene(canvas, user) {
     pointer.createPointer(obj.position, "pointer");
   });
 
+  const createExclamation = () => {
+    infoStand.createExclamation();
+  };
+
+  const updateInfoStand = () => {
+    const activityCount = activities.length;
+    const activityText =
+      activityCount === 1 ? "actividad pendiente" : "actividades pendientes";
+    infoStand.createDisplayInfo(
+      "¡Descubre y completa " +
+        activityCount +
+        " " +
+        activityText +
+        " en el mundo!"
+    );
+  };
+
   const createPointer = (obj) => {
     Object.keys(obj).forEach((key) => {
       if (!activities.map((activity) => activity.id).includes(key)) {
@@ -424,6 +464,8 @@ export function initScene(canvas, user) {
           };
           activities.push(activity);
           console.log("ACTIVIDAD CREADA", activity);
+          createExclamation();
+          updateInfoStand();
         } catch (err) {
           console.log(err);
         }
@@ -450,13 +492,30 @@ export function initScene(canvas, user) {
     keys.D = false;
     keys.SPACE = false;
     keys.SHIFT = false;
+
+    // Deshabilitar el joystick
+    if (joystick) {
+      joystick.disable();
+    }
   });
 
   socket.on("move", () => {
     move = true;
+    // Habilitar el joystick
+    if (joystick) {
+      joystickContainer = document.getElementById("joystickContainer");
+      joystick = new JoyStick(joystickContainer, canvas, keys);
+    }
   });
 
   socket.on("changeCamera", () => {
     changeCameraMode();
+  });
+
+  socket.on("jump", () => {
+    if (character) {
+      character.playAnimation("CharacterArmature|Jump");
+      character.jump();
+    }
   });
 }
