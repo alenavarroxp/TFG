@@ -15,6 +15,7 @@ export function initScene(canvas, user) {
   let move = false;
   const engine = new BABYLON.Engine(canvas, true);
   engine.displayLoadingUI();
+  engine.setHardwareScalingLevel(1 / window.devicePixelRatio)
 
   // Crear una escena
   const scene = new BABYLON.Scene(engine);
