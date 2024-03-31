@@ -85,7 +85,7 @@ export class JoyStick {
       this.joystickManager = null;
       this.enabled = false;
     }
-    console.log("Joystick disabled", this);
+    console.log("Joystick disabled");
   };
 
   enable = (keys, container) => {

@@ -15,7 +15,7 @@ export function initScene(canvas, user) {
   let move = false;
   const engine = new BABYLON.Engine(canvas, true);
   engine.displayLoadingUI();
-  engine.setHardwareScalingLevel(1 / window.devicePixelRatio)
+  engine.setHardwareScalingLevel(1 / window.devicePixelRatio);
 
   // Crear una escena
   const scene = new BABYLON.Scene(engine);
@@ -127,7 +127,27 @@ export function initScene(canvas, user) {
     createJoyStick(joystickContainer, canvas);
   }
 
+  let meshes = [];
+  let show = true;
+
   document.addEventListener("keydown", (event) => {
+    if (event.key.toUpperCase() === "K") {
+      show = !show;
+
+      scene.meshes.forEach((mesh) => {
+        if (meshes.includes(mesh.name)) {
+          mesh.showBoundingBox = show;
+        }
+      });
+
+      if (show && meshes.length === 0) {
+        scene.meshes.forEach((mesh) => {
+          if (mesh.showBoundingBox) {
+            meshes.push(mesh.name);
+          }
+        });
+      }
+    }
     if (move) handleKeyDown(event);
   });
 
@@ -262,7 +282,6 @@ export function initScene(canvas, user) {
       const index = characters.indexOf(character);
       //Eliminar el jugador por completo
       characters.splice(index, 1);
-
     }
   }
 
@@ -314,7 +333,7 @@ export function initScene(canvas, user) {
 
   socket.on("newCharacter", (obj) => {
     const object = characters.find((character) => character.id === obj.id);
-    console.log("CHARACTER EN NEW CHARACTER", object)
+    console.log("CHARACTER EN NEW CHARACTER", object);
     if (!object) {
       const character = new Character(
         obj.id,
@@ -407,10 +426,7 @@ export function initScene(canvas, user) {
       pointer.dispose();
       pointer = null;
     }
-    console.log("scene.onPointerObservable", scene.onPointerObservable);
     scene.onPointerObservable.removeCallback(pointerDownListener);
-
-    console.log("scene", scene.onPointerObservable);
   });
 
   socket.on("returnPointer", (obj) => {
@@ -458,13 +474,11 @@ export function initScene(canvas, user) {
           let element = new Pointer(scene);
           element.createPointer(obj[key].location, "book");
 
-          console.log("ELEMENT", element);
           let activity = {
             id: key,
             element: element,
           };
           activities.push(activity);
-          console.log("ACTIVIDAD CREADA", activity);
           createExclamation();
           updateInfoStand();
         } catch (err) {
@@ -476,7 +490,6 @@ export function initScene(canvas, user) {
 
   socket.on("createPointer", (obj) => {
     move = true;
-    console.log("OBJETO", obj);
     createPointer(obj);
   });
 
