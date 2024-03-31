@@ -8,7 +8,6 @@ export const AnswerInput = ({ index, answer, setAnswer }) => {
   const optionId = `option${index}`;
   const { answerText, isCorrect } = answer;
 
-  console.log("ANSWERERRORS", errors);
   const handleCheckboxChange = () => {
     setErrors((prevErrors) => ({ ...prevErrors, correct: false }));
     setAnswer({ ...answer, isCorrect: !isCorrect });

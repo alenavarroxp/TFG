@@ -45,7 +45,6 @@ export class Stand {
             mesh.material.roughness = 1;
           }
 
-          console.log("mesh.name: ", mesh);
           if (mesh.name === "Object_4") elements.push(mesh);
           if (mesh.name === "Object_5") this.display = mesh;
         });
@@ -124,7 +123,6 @@ export class Stand {
         this.stand.position.z
     );
 
-    console.log("DISPLAY: ", this.display);
     this.displayInfo.rotation = new BABYLON.Vector3(
         //37.5 grados
         Math.PI / 3.43,
@@ -182,7 +180,6 @@ export class Stand {
 
         newMeshes.forEach((mesh) => {
           //Cambiar el color del material
-          console.log("mesh.name: ", mesh.name);
           mesh.material = exclamationMaterial;
         });
 

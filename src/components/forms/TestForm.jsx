@@ -31,7 +31,6 @@ export const TestForm = ({ numQuestion }) => {
   };
 
   const handleClick = () => {
-    console.log("errros", errors);
     setErrors((prevErrors) => ({ ...prevErrors, correct: false }));
     setQuestion({
       ...question,

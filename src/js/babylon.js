@@ -407,10 +407,8 @@ export function initScene(canvas, user) {
       pointer.dispose();
       pointer = null;
     }
-    console.log("scene.onPointerObservable", scene.onPointerObservable);
     scene.onPointerObservable.removeCallback(pointerDownListener);
 
-    console.log("scene", scene.onPointerObservable);
   });
 
   socket.on("returnPointer", (obj) => {
@@ -458,13 +456,11 @@ export function initScene(canvas, user) {
           let element = new Pointer(scene);
           element.createPointer(obj[key].location, "book");
 
-          console.log("ELEMENT", element);
           let activity = {
             id: key,
             element: element,
           };
           activities.push(activity);
-          console.log("ACTIVIDAD CREADA", activity);
           createExclamation();
           updateInfoStand();
         } catch (err) {
@@ -476,7 +472,6 @@ export function initScene(canvas, user) {
 
   socket.on("createPointer", (obj) => {
     move = true;
-    console.log("OBJETO", obj);
     createPointer(obj);
   });
 

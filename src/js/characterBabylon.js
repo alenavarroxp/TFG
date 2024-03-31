@@ -263,10 +263,9 @@ export class Character {
         this.oldPosition,
         0.5
       );
-
-      // Mover el personaje hacia la nueva posición evitando la colisión
       this.mesh.position = avoidancePosition;
-    }else if(collisionResult === "activity_collision"){
+      //TODO: Check Y COLLISION (Probably modifying keys)
+    } else if (collisionResult === "activity_collision") {
       console.log("Colisión con actividad");
       this.oldPosition = this.mesh.position.clone(); // Actualizamos la posición anterior
       this.mesh.position = newPosition;
@@ -331,7 +330,7 @@ export class Character {
     }
 
     for (const activity of activities) {
-      if(activity.element.pointer.intersectsMesh(this.capsule, true)){
+      if (activity.element.pointer.intersectsMesh(this.capsule, true)) {
         return "activity_collision";
       }
     }

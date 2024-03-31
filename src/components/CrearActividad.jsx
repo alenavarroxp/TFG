@@ -91,7 +91,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
     errorTestCopy.questions = questions.length === 0;
 
-    console.log("errorTest", errorTestCopy);
     if (!validateFields()) return;
 
     setQuestions([...questions, question]);
@@ -146,14 +145,12 @@ export const CrearActividad = ({ setCrearScreen }) => {
     }
 
     setErrors(errorsCopy);
-    console.log("errorsvlaidate", errorsCopy);
 
     return isValid;
   };
 
   const calculateNumQuestions = () => {
     if (questions.length > 0) {
-      console.log("questions", questions);
       if (questionIsCreated)
         return questions.findIndex((q) => q.id === question.id) + 1;
       return questions.length + 1;
@@ -179,7 +176,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
     errorTestCopy.position = location.position === null;
 
     setErrorsTest(errorTestCopy);
-    console.log("errorTest", errorTestCopy);
 
     if (!errorTestCopy.questions && !errorTestCopy.position) {
       setTest({
@@ -254,9 +250,9 @@ export const CrearActividad = ({ setCrearScreen }) => {
                   id="questionContainer"
                   className="border-2 min-h-88 max-h-88 rounded-lg ml-5 mt-5 mr-5"
                 >
-                  {optionActivity === "Test" && (
+                  {optionActivity === "Test" ? (
                     <TestForm numQuestion={calculateNumQuestions()} />
-                  )}
+                  ): <div className="flex items-center justify-center min-h-32 text-lg font-semibold">Tipo de actividad no implementada</div>}
                 </div>
 
                 <div className="flex items-center justify-around w-full mt-4 ">

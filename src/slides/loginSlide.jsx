@@ -46,10 +46,10 @@ const LoginSlide = () => {
   return (
     <div
       id="loginSlide"
-      className="carousel-item relative h-screen w-screen bg-[#167563]"
+      className="carousel-item relative h-screen w-screen bg-[#167563] overflow-y-auto"
     >
       <div className="flex justify-start flex-col items-center w-full text-white">
-        <div className="items-center justify-center flex flex-col lg:mt-14 mt-10">
+        <div className="items-center justify-center flex flex-col">
           <p className="font-bold mt-16 lg:text-2xl md:text-xl sm:text-lg px-4 text-center">
             Antes de comenzar, ¿qué{" "}
             <span className="text-white underline">rol</span> te gustaría
@@ -82,7 +82,6 @@ const LoginSlide = () => {
             </h1>
             <div>
               <div className="flex items-center justify-center mt-4">
-                <div>
                   <PersonInput
                     label="Nombre de usuario"
                     id="usernameInput"
@@ -92,11 +91,10 @@ const LoginSlide = () => {
                     onChange={handleUserNameChange}
                     value={userName}
                   />
-                </div>
               </div>
             </div>
 
-            <div className="absolute flex justify-center bottom-16 left-0 right-0 px-4">
+            <div className="mt-8 mb-8 flex justify-center bottom-16 left-0 right-0 px-4">
               <button
                 id="loginButton"
                 className="disabled:pointer-events-none disabled:bg-gray-400 flex items-center justify-center bg-white text-lg lg:text-xl md:text-md font-bold rounded-full shadow-lg px-16 lg:px-20 py-3 lg:py-4 text-gray-800 transition-transform hover:scale-105 hover:shadow-xl relative"
