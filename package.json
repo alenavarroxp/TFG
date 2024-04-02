@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@babylonjs/core": "^6.46.0",
+    "antd": "^5.16.0",
     "babylonjs": "^6.46.0",
     "babylonjs-loaders": "^6.46.0",
     "cannon": "^0.6.2",

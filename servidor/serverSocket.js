@@ -118,8 +118,8 @@ export default function WebSocketServer() {
         socket.emit("jump");
       });
 
-      socket.on("modifyActivity", (obj) => {
-        socket.emit("modifyActivity", obj);
+      socket.on("modalActivity", (obj) => {
+        socket.emit("modalActivity", obj);
       });
 
       socket.on("updateActivity", (obj) => {

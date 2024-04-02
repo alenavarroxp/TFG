@@ -274,11 +274,8 @@ export class Character {
       );
       this.mesh.position = avoidancePosition;
       socket.emit("NoMove");
-      if (this.user.isProfessor) {
-        socket.emit("modifyActivity", collisionResult.activityId);
-      } else {
-        socket.emit("doActivity", collisionResult.activityId);
-      }
+
+      socket.emit("modalActivity", collisionResult.activityId);
     }
   }
 

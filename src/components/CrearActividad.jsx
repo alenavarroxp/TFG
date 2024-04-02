@@ -48,7 +48,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       setActivityId(obj.id);
       setQuestions(obj.activity.questions);
-      setQuestion(obj.activity.questions[0]);
+      if (obj.activity.questions.length > 0)
+        setQuestion(obj.activity.questions[0]);
       setLocation({
         id: obj.activity.creador,
         position: obj.activity.location,

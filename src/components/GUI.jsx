@@ -16,29 +16,33 @@ import GUIButton from "../inputs/GUIButton";
 import { IoHome } from "react-icons/io5";
 import { JoyStickContainer } from "./JoyStickContainer";
 import { JumpButton } from "./JumpButton";
+import { CustomModal } from "./CustomModal";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
+  const [modal, setModal] = useState(false);
   const [crearScreen, setCrearScreen] = useState(false);
   const getUser = useAtomValue(userAtom);
   const [chooseLocation] = useAtom(chooseLocationAtom);
   const [test] = useAtom(testAtom);
   const [tests, setTests] = useState({});
+  const [activityId, setActivityId] = useState("");
 
   const crearUuid = () => {
     return uuidv4();
   };
 
   useEffect(() => {
-    socket.on("modifyActivity", (obj) => {
-      modifyActivity(obj);
+    socket.on("modalActivity", (obj) => {
+      modalActivity(obj);
     });
   }, []);
 
-  const modifyActivity = (obj) => {
+  const modalActivity = (obj) => {
     console.log("GUI obj", obj, "tests[obj.id]", tests[obj.id]);
-    setCrearScreen(true);
-    socket.emit("getActivity", { id: obj });
+    setModal(true);
+    setActivityId(obj);
+    setUserModal(false);
   };
 
   useEffect(() => {
@@ -90,7 +94,7 @@ export const GUI = () => {
 
   return (
     <>
-      {!chooseLocation.isChoosing ? (
+      {!chooseLocation.isChoosing && !modal ? (
         <div
           id="GUI"
           className="absolute w-full h-full flex flex-row pointer-events-none"
@@ -139,6 +143,14 @@ export const GUI = () => {
 
       {userModal && <UserModal />}
       {crearScreen && <CrearActividad setCrearScreen={setCrearScreen} />}
+      {modal && (
+        <CustomModal
+          modal={modal}
+          setModal={setModal}
+          setCrearScreen={setCrearScreen}
+          activityId = {activityId}
+        />
+      )}
     </>
   );
 };
