@@ -1,6 +1,8 @@
 export default function WebSocketServer() {
   this.users = {};
   this.usersWorld = {};
+  this.activities = {};
+
   this.start = function (io) {
     io.on("connection", (socket) => {
       console.log("Se ha conectado el usuario: " + socket.id);
@@ -37,11 +39,13 @@ export default function WebSocketServer() {
       });
 
       socket.on("newActivity", (obj) => {
+        console.log("Nueva actividad...", obj);
         const objActivity = {
           [obj.id]: {
             location: obj.location,
           },
         };
+        this.activities[obj.id] = objActivity;
         socket.broadcast.emit("newActivity", objActivity);
       });
 
@@ -112,6 +116,45 @@ export default function WebSocketServer() {
 
       socket.on("jump", () => {
         socket.emit("jump");
+      });
+
+      socket.on("modifyActivity", (obj) => {
+        socket.emit("modifyActivity", obj);
+      });
+
+      socket.on("updateActivity", (obj) => {
+        this.activities[obj.id] = obj.test;
+      });
+
+      socket.on("getActivity", (obj) => {
+        console.log("GET ACTIVITY", this.activities[obj.id]);
+        const getObj = {
+          id: obj.id,
+          activity: this.activities[obj.id],
+        };
+        socket.emit("getActivity", getObj);
+      });
+
+      socket.on("setActivity", (obj) => {
+        if (
+          this.activities[obj.id].location._x != obj.location._x ||
+          this.activities[obj.id].location._y != obj.location._y ||
+          this.activities[obj.id].location._z != obj.location._z
+        ) {
+          console.log(
+            "UBICACIONES DISTINTAS",
+            this.activities[obj.id].location,
+            obj.location
+          );
+          socket.emit("updatePointer", { id: obj.id, location: obj.location });
+        }
+        const objActivity = {
+          creador: obj.creador,
+          location: obj.location,
+          questions: obj.questions,
+        };
+        this.activities[obj.id] = objActivity;
+        console.log("ACTIVITIES UPDATE", this.activities);
       });
     });
   };

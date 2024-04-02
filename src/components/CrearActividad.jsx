@@ -29,6 +29,9 @@ export const CrearActividad = ({ setCrearScreen }) => {
   const [errorsTest, setErrorsTest] = useAtom(errorsTestAtom);
   const setTest = useSetAtom(testAtom);
 
+  const [activityIsModifying, setActivityIsModifying] = useState(false);
+  const [activityId, setActivityId] = useState("");
+
   const questionIsCreated = useMemo(() => {
     return questions.some((q) => q.id === question.id);
   }, [questions, question]);
@@ -39,9 +42,25 @@ export const CrearActividad = ({ setCrearScreen }) => {
     }
   }, [questions, setErrorsTest]);
 
+  useEffect(() => {
+    socket.on("getActivity", (obj) => {
+      console.log("GET ACTIVITY", obj);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      setActivityId(obj.id);
+      setQuestions(obj.activity.questions);
+      setQuestion(obj.activity.questions[0]);
+      setLocation({
+        id: obj.activity.creador,
+        position: obj.activity.location,
+      });
+      setActivityIsModifying(true);
+    });
+  }, [setQuestions, setQuestion, setLocation, activityId]);
+
   const handleClickCerrar = () => {
     setCrearScreen(false);
-    socket.emit("move")
+    handleNewQuestion();
+    socket.emit("move");
   };
 
   const resetErrors = () => {
@@ -178,15 +197,45 @@ export const CrearActividad = ({ setCrearScreen }) => {
     setErrorsTest(errorTestCopy);
 
     if (!errorTestCopy.questions && !errorTestCopy.position) {
+      handleNewQuestion();
+      setLocation({ id: "", position: null });
+      setQuestions([]);
+      return true;
+    }
+
+    return false;
+  };
+
+  const createTest = () => {
+    if (confirmTest()) {
       setTest({
         creador: location.id,
         questions: questions,
         location: location.position,
       });
+    }
+  };
+
+  const updateTest = () => {
+    if (confirmTest()) {
+      console.log(
+        "ACTUALIZAR TEST",
+        activityId,
+        location.id,
+        questions,
+        location.position
+      );
+      socket.emit("setActivity", {
+        id: activityId,
+        creador: location.id,
+        questions: questions,
+        location: location.position,
+      });
+      setCrearScreen(false);
+      socket.emit("move");
       handleNewQuestion();
       setLocation({ id: "", position: null });
       setQuestions([]);
-      return;
     }
   };
 
@@ -252,7 +301,11 @@ export const CrearActividad = ({ setCrearScreen }) => {
                 >
                   {optionActivity === "Test" ? (
                     <TestForm numQuestion={calculateNumQuestions()} />
-                  ): <div className="flex items-center justify-center min-h-32 text-lg font-semibold">Tipo de actividad no implementada</div>}
+                  ) : (
+                    <div className="flex items-center justify-center min-h-32 text-lg font-semibold">
+                      Tipo de actividad no implementada
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-around w-full mt-4 ">
@@ -282,7 +335,10 @@ export const CrearActividad = ({ setCrearScreen }) => {
                   setQuestion={setQuestion}
                 />
                 <LocationPicker />
-                <CreateTest onClick={confirmTest} />
+                <CreateTest
+                  onClick={!activityIsModifying ? createTest : updateTest}
+                  activityIsModifying={activityIsModifying}
+                />
               </div>
             </div>
           </div>
