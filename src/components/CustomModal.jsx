@@ -3,6 +3,7 @@ import { socket } from "../utils/socket";
 import { Modal } from "antd";
 import { useState } from "react";
 import { useAtomValue } from "jotai";
+import { BsQuestionCircleFill } from "react-icons/bs";
 import { userAtom } from "../context/atoms/userAtom";
 
 export const CustomModal = ({
@@ -21,7 +22,9 @@ export const CustomModal = ({
   );
 
   const handleOk = () => {
-    setModalText("Cargando la información de la actividad... Por favor, espera...");
+    setModalText(
+      "Cargando la información de la actividad... Por favor, espera..."
+    );
     setConfirmLoading(true);
     setTimeout(() => {
       setModal(false);
@@ -61,6 +64,11 @@ export const CustomModal = ({
         centered={true}
       >
         <p>{modalText}</p>
+        <p className="text-gray-400 text-xs">Actividad compuesta por:</p>
+        <div className="bg-[#FFD700] px-4 py-1 w-fit mt-2 font-semibold flex justify-center items-center rounded-full">
+          <p className="mr-2">10 Preguntas</p>
+          <BsQuestionCircleFill color="black" />
+        </div>
       </Modal>
     </>
   );
