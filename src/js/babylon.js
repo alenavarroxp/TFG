@@ -227,7 +227,7 @@ export function initScene(canvas, user) {
     }
 
     if (keys.W || keys.A || keys.S || keys.D) {
-      character.move(keys, characters, escenario, scene, activities);
+      character.move(keys, characters, escenario, scene, activities, socket);
     }
 
     if (character) {
@@ -530,6 +530,14 @@ export function initScene(canvas, user) {
     if (character) {
       character.playAnimation("CharacterArmature|Jump");
       character.jump();
+    }
+  });
+
+  socket.on("updatePointer", (obj) => {
+    const activity = activities.find((activity) => activity.id === obj.id);
+    if (activity) {
+      console.log("ACTIVITY", activity);
+      activity.element.updatePosition(obj.location);
     }
   });
 }

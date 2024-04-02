@@ -30,6 +30,19 @@ export const GUI = () => {
   };
 
   useEffect(() => {
+    socket.on("modifyActivity", (obj) => {
+      modifyActivity(obj);
+    });
+  }, []);
+
+  const modifyActivity = (obj) => {
+    console.log("GUI obj", obj, "tests[obj.id]", tests[obj.id]);
+    setCrearScreen(true);
+    socket.emit("getActivity", { id: obj });
+  };
+
+  useEffect(() => {
+    if (!test) return;
     if (test.creador != "") {
       const testUuid = crearUuid();
 
@@ -38,13 +51,18 @@ export const GUI = () => {
         [testUuid]: { ...test },
       }));
 
+      socket.emit("updateActivity", { id: testUuid, test: test });
+
       setCrearScreen(false);
       socket.emit("move");
     }
   }, [test]);
 
   useEffect(() => {
-    if (Object.keys(tests).length > 0) socket.emit("createPointer", tests);
+    if (Object.keys(tests).length > 0) {
+      console.log("CREAR POINTER");
+      socket.emit("createPointer", tests);
+    }
   }, [tests]);
 
   useEffect(() => {
@@ -67,7 +85,6 @@ export const GUI = () => {
   };
 
   const handleHomeClick = () => {
-    //Recargar la página
     window.location.reload();
   };
 
