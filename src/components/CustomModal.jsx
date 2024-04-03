@@ -11,6 +11,7 @@ export const CustomModal = ({
   setModal,
   setCrearScreen,
   activityId,
+  setActivityScreen
 }) => {
   const [open] = useState(modal);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -37,6 +38,8 @@ export const CustomModal = ({
         socket.emit("getActivity", { id: activityId });
       } else {
         console.log("Realizando actividad...");
+        setActivityScreen(true);
+        socket.emit("NoMove");
       }
     }, 2000);
   };

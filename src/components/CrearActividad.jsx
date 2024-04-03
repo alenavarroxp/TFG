@@ -17,6 +17,7 @@ import { socket } from "../utils/socket";
 import { CreateTest } from "./CreateTest";
 import { errorsTestAtom } from "../context/atoms/errorsTestAtom";
 import { testAtom } from "../context/atoms/testAtom";
+import { UnderlinedText } from "./UnderlinedText";
 
 // eslint-disable-next-line react/prop-types
 export const CrearActividad = ({ setCrearScreen }) => {
@@ -270,14 +271,11 @@ export const CrearActividad = ({ setCrearScreen }) => {
               <IoCloseOutline size={24} />
             </button>
           </div>
-          <div
-            id="title"
-            className="text-white ml-5 mt-5 font-semibold text-2xl justify-center items-center border-b-2 w-fit flex flex-row"
-          >
-            Crear actividad
+          <div className="flex justify-center items-center w-fit mt-5">
+            <UnderlinedText text={"Crear actividad"} style="text-2xl" />
             <AiFillInfoCircle
               size={16}
-              className="ml-2 pointer-events-auto cursor-pointer"
+              className="ml-2 pointer-events-auto cursor-pointer border-b-0"
               onClick={() => console.log("HELPING")}
             />
           </div>
