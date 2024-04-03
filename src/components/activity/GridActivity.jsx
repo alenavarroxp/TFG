@@ -2,7 +2,8 @@
 export const GridActivity = ({ questions, setQuestion}) => {
 
     const handleQuestionClick = (question) => {
-        setQuestion(question);
+        // setQuestion(question);
+        console.log(question)
     };
     
   return (

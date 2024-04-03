@@ -14,7 +14,7 @@ export const AnswerInput = ({ index, answer, setAnswer }) => {
   };
 
   const handleAnswerTextChange = (text) => {
-    setErrors(prevErrors => {
+    setErrors((prevErrors) => {
       const newErrors = { ...prevErrors };
       newErrors.answerError = text.trim() === "";
       return newErrors;
@@ -27,7 +27,9 @@ export const AnswerInput = ({ index, answer, setAnswer }) => {
       <p className="text-sm font-semibold">{`Opción ${index + 1}`}</p>
       <div className="flex bg-white rounded-lg">
         <textarea
-          className={`text-[#167563] text-sm mr-3 placeholder-[#167563] placeholder-opacity-80 font-medium focus:outline-none px-2 rounded-l-lg w-full custom-scrollbar bg-white ${errors.answerError ? "border-[1.5px] border-red-500" : ""}`}
+          className={`text-[#167563] text-sm mr-3 placeholder-[#167563] placeholder-opacity-80 font-medium focus:outline-none px-2 rounded-l-lg w-full custom-scrollbar bg-white ${
+            errors.answerError ? "border-[1.5px] border-red-500" : ""
+          }`}
           placeholder="Escriba la opción..."
           style={{
             minHeight: "3rem",
@@ -60,7 +62,6 @@ export const AnswerInput = ({ index, answer, setAnswer }) => {
           </label>
         </div>
       </div>
-      
     </div>
   );
 };

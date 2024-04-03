@@ -31,13 +31,13 @@ export const ActivityScreen = ({ setActivityScreen }) => {
         />
       </div>
 
-      <div className="bg-orange-400 flex flex-1">
+      <div className="flex flex-1">
         <div className=" w-3/4">
           <PreguntaContainer />
         </div>
         <div>
           <GridActivity questions={[{id: 1}, {id: 2}, {id: 3}]} setQuestion={null}/>
-          <EndActivity/>
+          <EndActivity onClick={console.log("Terminar actividad")}/>
         </div>
       </div>
     </div>

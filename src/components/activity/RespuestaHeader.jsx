@@ -4,7 +4,7 @@ import { CgOptions } from "react-icons/cg";
 
 export const RespuestaHeader = () => {
   return (
-    <div className="bg-purple-400">
+    <div>
       <div className="flex items-center">
         <UnderlinedText text="Respuestas" style="text-xl ml-0 mr-4" />
         <QuestionBadge text="Opción múltiple" icon={<CgOptions />} />
