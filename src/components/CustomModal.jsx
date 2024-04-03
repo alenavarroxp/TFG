@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { socket } from "../utils/socket";
 import { Modal } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { BsQuestionCircleFill } from "react-icons/bs";
 import { userAtom } from "../context/atoms/userAtom";
@@ -11,8 +11,9 @@ export const CustomModal = ({
   setModal,
   setCrearScreen,
   activityId,
-  setActivityScreen
+  setActivityScreen,
 }) => {
+  const [activity, setActivity] = useState({});
   const [open] = useState(modal);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const getUser = useAtomValue(userAtom);
@@ -21,6 +22,21 @@ export const CustomModal = ({
       ? "Al confirmar, podrás editar los detalles necesarios para mantener la información de la actividad actualizada."
       : "Al confirmar, podrás realizar la actividad propuesta por el profesor para evaluar tus conocimientos."
   );
+
+  useEffect(() => {
+    socket.emit("getActivity", { id: activityId });
+  }, [modal, activityId]);
+
+  useEffect(() => {
+    socket.on("getActivity", (obj) => {
+      console.log("ACTIVITY Nidak", obj);
+      setActivity(obj.activity);
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log("ACTIVITY", activity);
+  }, [activity])
 
   const handleOk = () => {
     setModalText(
@@ -40,6 +56,7 @@ export const CustomModal = ({
         console.log("Realizando actividad...");
         setActivityScreen(true);
         socket.emit("NoMove");
+        socket.emit("startActivity", { id: activityId });
       }
     }, 2000);
   };
@@ -69,7 +86,13 @@ export const CustomModal = ({
         <p>{modalText}</p>
         <p className="text-gray-400 text-xs">Actividad compuesta por:</p>
         <div className="bg-[#FFD700] px-4 py-1 w-fit mt-2 font-semibold flex justify-center items-center rounded-full">
-          <p className="mr-2">10 Preguntas</p>
+          {activity && (
+            <p className="mr-2">
+                {activity.questions?.length}{" "}
+                {activity.questions?.length === 1 ? "Pregunta" : "Preguntas"}
+            </p>
+          )}
+
           <BsQuestionCircleFill color="black" />
         </div>
       </Modal>

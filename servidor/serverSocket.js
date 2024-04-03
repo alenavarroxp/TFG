@@ -40,13 +40,20 @@ export default function WebSocketServer() {
 
       socket.on("newActivity", (obj) => {
         console.log("Nueva actividad...", obj);
-        const objActivity = {
-          [obj.id]: {
-            location: obj.location,
-          },
+        const activity = this.activities[obj.id];
+        console.log("NEW ACTIVITIES", activity);
+        if (!activity) {
+          const objActivity = {
+            [obj.id]: {
+              location: obj.location,
+            },
+          };
+          this.activities[obj.id] = objActivity;
+        }
+        const objSend = {
+          [obj.id]: this.activities[obj.id],
         };
-        this.activities[obj.id] = objActivity;
-        socket.broadcast.emit("newActivity", objActivity);
+        socket.broadcast.emit("newActivity", objSend);
       });
 
       socket.on("moveCharacter", (obj) => {
@@ -157,6 +164,15 @@ export default function WebSocketServer() {
         };
         this.activities[obj.id] = objActivity;
         console.log("ACTIVITIES UPDATE", this.activities);
+      });
+
+      socket.on("startActivity", (obj) => {
+        const activity = this.activities[obj.id];
+        const objSend = {
+          id: obj.id,
+          activity: activity,
+        };
+        socket.emit("startActivity", objSend);
       });
     });
   };

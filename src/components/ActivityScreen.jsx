@@ -7,12 +7,19 @@ import { PreguntaContainer } from "./activity/PreguntaContainer";
 import { UnderlinedText } from "./UnderlinedText";
 import { GridActivity } from "./activity/GridActivity";
 import { EndActivity } from "./activity/EndActivity";
+import { useEffect } from "react";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
   const handleClickCerrar = () => {
     setActivityScreen(false);
     socket.emit("move");
   };
+
+  useEffect(() => {
+    socket.on("startActivity", (obj) => {
+      console.log("ACTIVITY STARTED", obj);
+    });
+  }, []);
 
   return (
     <div className="min-h-screen w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
@@ -36,8 +43,11 @@ export const ActivityScreen = ({ setActivityScreen }) => {
           <PreguntaContainer />
         </div>
         <div>
-          <GridActivity questions={[{id: 1}, {id: 2}, {id: 3}]} setQuestion={null}/>
-          <EndActivity onClick={console.log("Terminar actividad")}/>
+          <GridActivity
+            questions={[{ id: 1 }, { id: 2 }, { id: 3 }]}
+            setQuestion={null}
+          />
+          <EndActivity onClick={console.log("Terminar actividad")} />
         </div>
       </div>
     </div>
