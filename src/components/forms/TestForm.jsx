@@ -8,9 +8,9 @@ import { questionAtom } from "../../context/atoms/questionAtom";
 import { errorsQuestionAtom } from "../../context/atoms/errorsQuestionAtom";
 import { ErrorAlert } from "../ErrorAlert";
 
-export const TestForm = ({ numQuestion }) => {
+export const TestForm = ({ numQuestion, optionAnswer}) => {
   const [question, setQuestion] = useAtom(questionAtom);
-  const [errors, setErrors] = useAtom(errorsQuestionAtom); // Utilizar el átomo errorsQuestionAtom
+  const [errors, setErrors] = useAtom(errorsQuestionAtom);
 
   const handleAnswerChange = (index, updatedAnswer) => {
     const newAnswers = question.answers.map((answer, i) => {
@@ -27,6 +27,8 @@ export const TestForm = ({ numQuestion }) => {
       id: numQuestion,
       answers: newAnswers,
       correct: newCorrectsIndex,
+      kindOfQuestion: "Test",
+      kindOfAnswer: optionAnswer
     });
   };
 

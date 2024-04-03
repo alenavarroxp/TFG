@@ -149,6 +149,8 @@ export default function WebSocketServer() {
           socket.emit("updatePointer", { id: obj.id, location: obj.location });
         }
         const objActivity = {
+          course: obj.course,
+          subject: obj.subject,
           creador: obj.creador,
           location: obj.location,
           questions: obj.questions,

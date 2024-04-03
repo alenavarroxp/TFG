@@ -20,7 +20,10 @@ import { testAtom } from "../context/atoms/testAtom";
 
 // eslint-disable-next-line react/prop-types
 export const CrearActividad = ({ setCrearScreen }) => {
-  const [optionActivity, setOptionActivity] = useState("Test");
+  const [course, setCourse] = useState("1º Primaria");
+  const [subject, setSubject] = useState("Lengua");
+  const [optionQuestion, setOptionQuestion] = useState("Test");
+  const [optionAnswer, setOptionAnswer] = useState("Opción múltiple");
   const [question, setQuestion] = useAtom(questionAtom);
   const [questions, setQuestions] = useState([]);
   const [errors, setErrors] = useAtom(errorsQuestionAtom);
@@ -37,6 +40,11 @@ export const CrearActividad = ({ setCrearScreen }) => {
   }, [questions, question]);
 
   useEffect(() => {
+    if (!question) return;
+    console.log("question en crear", question);
+  }, [question]);
+
+  useEffect(() => {
     if (questions.length > 0) {
       setErrorsTest((prev) => ({ ...prev, questions: false }));
     }
@@ -48,8 +56,13 @@ export const CrearActividad = ({ setCrearScreen }) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       setActivityId(obj.id);
       setQuestions(obj.activity.questions);
-      if (obj.activity.questions.length > 0)
+      if (obj.activity.questions.length > 0) {
+        setCourse(obj.activity.course);
+        setSubject(obj.activity.subject);
+        setOptionQuestion(obj.activity.questions[0].kindOfQuestion);
+        setOptionAnswer(obj.activity.questions[0].kindOfAnswer);
         setQuestion(obj.activity.questions[0]);
+      }
       setLocation({
         id: obj.activity.creador,
         position: obj.activity.location,
@@ -86,6 +99,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
       answers: [],
       correct: [],
       score: 0,
+      kindOfQuestion: "",
+      kindOfAnswer: "",
     });
 
     resetErrors();
@@ -213,6 +228,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
         creador: location.id,
         questions: questions,
         location: location.position,
+        course: course,
+        subject: subject,
       });
     }
   };
@@ -224,13 +241,17 @@ export const CrearActividad = ({ setCrearScreen }) => {
         activityId,
         location.id,
         questions,
-        location.position
+        location.position,
+        course,
+        subject
       );
       socket.emit("setActivity", {
         id: activityId,
         creador: location.id,
         questions: questions,
         location: location.position,
+        course: course,
+        subject: subject,
       });
       setCrearScreen(false);
       socket.emit("move");
@@ -268,6 +289,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
             <div id="form" className="w-full">
               <div className="flex flex-col md:flex-row lg:flex-row">
                 <SelectInput
+                  id="optionCourse"
+                  value={course}
                   name="Curso"
                   list={[
                     "1º Primaria",
@@ -275,22 +298,44 @@ export const CrearActividad = ({ setCrearScreen }) => {
                     "3º Primaria",
                     "4º Primaria",
                   ]}
-                />
-                <SelectInput
-                  name="Asignatura"
-                  list={["Lengua", "Matemáticas", "Inglés", "Biología"]}
-                />
-                <SelectInput
-                  id="optionActivity"
-                  name="Tipo de actividad"
-                  list={["Test", "Redacción"]}
                   onChange={(e) => {
-                    setOptionActivity(e.target.value);
+                    setCourse(e.target.value);
                   }}
                 />
                 <SelectInput
+                  id="optionSubject"
+                  value={subject}
+                  name="Asignatura"
+                  list={["Lengua", "Matemáticas", "Inglés", "Biología"]}
+                  onChange={(e) => {
+                    setSubject(e.target.value);
+                  }}
+                />
+                <SelectInput
+                  id="optionQuestion"
+                  value={optionQuestion}
                   name="Tipo de pregunta"
+                  list={["Test", "Redacción"]}
+                  onChange={(e) => {
+                    setOptionQuestion(e.target.value);
+                    setQuestion((prev) => ({
+                      ...prev,
+                      kindOfQuestion: e.target.value,
+                    }));
+                  }}
+                />
+                <SelectInput
+                  id="optionAnswer"
+                  value={optionAnswer}
+                  name="Tipo de respuesta"
                   list={["Opción múltiple", "Rellenar", "Verdadero o Falso"]}
+                  onChange={(e) => {
+                    setOptionAnswer(e.target.value);
+                    setQuestion((prev) => ({
+                      ...prev,
+                      kindOfAnswer: e.target.value,
+                    }));
+                  }}
                 />
               </div>
             </div>
@@ -300,8 +345,11 @@ export const CrearActividad = ({ setCrearScreen }) => {
                   id="questionContainer"
                   className="border-2 min-h-88 max-h-88 rounded-lg ml-5 mt-5 mr-5"
                 >
-                  {optionActivity === "Test" ? (
-                    <TestForm numQuestion={calculateNumQuestions()} />
+                  {optionQuestion === "Test" ? (
+                    <TestForm
+                      numQuestion={calculateNumQuestions()}
+                      optionAnswer={optionAnswer}
+                    />
                   ) : (
                     <div className="flex items-center justify-center min-h-32 text-lg font-semibold">
                       Tipo de actividad no implementada
