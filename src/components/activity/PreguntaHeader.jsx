@@ -8,7 +8,7 @@ export const PreguntaHeader = ({actualQuestion}) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center">
-        <UnderlinedText text={"Pregunta 1"} style="text-2xl ml-0 mr-4" />
+        <UnderlinedText text={`Pregunta ${actualQuestion.id}`} style="text-2xl ml-0 mr-4" />
         <QuestionBadge text={actualQuestion?.kindOfQuestion} icon={<TbTimeline />} />
       </div>
       <div>

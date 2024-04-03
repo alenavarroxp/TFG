@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
-export const GridActivity = ({ questions, setQuestion}) => {
+export const GridActivity = ({ questions, setActualQuestion}) => {
 
     const handleQuestionClick = (question) => {
-        // setQuestion(question);
+        setActualQuestion(question);
         console.log(question)
     };
     

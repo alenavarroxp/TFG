@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 export const ActivityScreen = ({ setActivityScreen }) => {
   const [activity, setActivity] = useState({});
   const [actualQuestion, setActualQuestion] = useState({});
+
   const handleClickCerrar = () => {
     setActivityScreen(false);
     socket.emit("move");
@@ -24,6 +25,24 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     });
   }, []);
 
+  const handleNextQuestion = () => {
+    const index = activity.questions.findIndex(
+      (question) => question.id === actualQuestion.id
+    );
+    if (index + 1 < activity.questions.length) {
+      setActualQuestion(activity.questions[index + 1]);
+    }
+  };
+
+  const handlePrevQuestion = () => {
+    const index = activity.questions.findIndex(
+      (question) => question.id === actualQuestion.id
+    );
+    if (index - 1 >= 0) {
+      setActualQuestion(activity.questions[index - 1]);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
       <div className="absolute top-2 right-3">
@@ -33,7 +52,10 @@ export const ActivityScreen = ({ setActivityScreen }) => {
       </div>
 
       <div className="flex justify-center items-center w-fit mt-5">
-        <UnderlinedText text={`${activity.course} - ${activity.subject}`} style="text-3xl ml-5" />
+        <UnderlinedText
+          text={`${activity.course} - ${activity.subject}`}
+          style="text-3xl ml-5"
+        />
         <AiFillInfoCircle
           size={16}
           className="ml-2 pointer-events-auto cursor-pointer border-b-0"
@@ -43,12 +65,17 @@ export const ActivityScreen = ({ setActivityScreen }) => {
 
       <div className="flex flex-1">
         <div className=" w-3/4">
-          <PreguntaContainer actualQuestion={actualQuestion} />
+          <PreguntaContainer
+            activity={activity}
+            actualQuestion={actualQuestion}
+            next={handleNextQuestion}
+            prev={handlePrevQuestion}
+          />
         </div>
         <div>
           <GridActivity
-            questions={[{ id: 1 }, { id: 2 }, { id: 3 }]}
-            setQuestion={null}
+            questions={activity.questions}
+            setActualQuestion={setActualQuestion}
           />
           <EndActivity onClick={console.log("Terminar actividad")} />
         </div>
