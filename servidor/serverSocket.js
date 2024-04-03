@@ -167,12 +167,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("startActivity", (obj) => {
-        const activity = this.activities[obj.id];
-        const objSend = {
-          id: obj.id,
-          activity: activity,
-        };
-        socket.emit("startActivity", objSend);
+        socket.emit("startActivity", obj);
       });
     });
   };

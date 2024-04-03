@@ -7,9 +7,11 @@ import { PreguntaContainer } from "./activity/PreguntaContainer";
 import { UnderlinedText } from "./UnderlinedText";
 import { GridActivity } from "./activity/GridActivity";
 import { EndActivity } from "./activity/EndActivity";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
+  const [activity, setActivity] = useState({});
+  const [actualQuestion, setActualQuestion] = useState({});
   const handleClickCerrar = () => {
     setActivityScreen(false);
     socket.emit("move");
@@ -17,7 +19,8 @@ export const ActivityScreen = ({ setActivityScreen }) => {
 
   useEffect(() => {
     socket.on("startActivity", (obj) => {
-      console.log("ACTIVITY STARTED", obj);
+      setActivity(obj.activity);
+      setActualQuestion(obj.activity.questions[0]);
     });
   }, []);
 
@@ -30,7 +33,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
       </div>
 
       <div className="flex justify-center items-center w-fit mt-5">
-        <UnderlinedText text={"1º Primaria - Lengua"} style="text-3xl" />
+        <UnderlinedText text={`${activity.course} - ${activity.subject}`} style="text-3xl ml-5" />
         <AiFillInfoCircle
           size={16}
           className="ml-2 pointer-events-auto cursor-pointer border-b-0"
@@ -40,7 +43,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
 
       <div className="flex flex-1">
         <div className=" w-3/4">
-          <PreguntaContainer />
+          <PreguntaContainer actualQuestion={actualQuestion} />
         </div>
         <div>
           <GridActivity

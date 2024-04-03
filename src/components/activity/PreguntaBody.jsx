@@ -1,7 +1,8 @@
-export const PreguntaBody = () => {
+/* eslint-disable react/prop-types */
+export const PreguntaBody = ({actualQuestion}) => {
   return (
     <div className="py-2 font-semibold text-lg">
-      Texto de la pregunta
+      {actualQuestion?.questionText}
     </div>
   );
 };

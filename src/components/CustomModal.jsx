@@ -36,7 +36,7 @@ export const CustomModal = ({
 
   useEffect(() => {
     console.log("ACTIVITY", activity);
-  }, [activity])
+  }, [activity]);
 
   const handleOk = () => {
     setModalText(
@@ -56,7 +56,7 @@ export const CustomModal = ({
         console.log("Realizando actividad...");
         setActivityScreen(true);
         socket.emit("NoMove");
-        socket.emit("startActivity", { id: activityId });
+        socket.emit("startActivity", { id: activityId, activity: activity });
       }
     }, 2000);
   };
@@ -88,8 +88,8 @@ export const CustomModal = ({
         <div className="bg-[#FFD700] px-4 py-1 w-fit mt-2 font-semibold flex justify-center items-center rounded-full">
           {activity && (
             <p className="mr-2">
-                {activity.questions?.length}{" "}
-                {activity.questions?.length === 1 ? "Pregunta" : "Preguntas"}
+              {activity.questions?.length}{" "}
+              {activity.questions?.length === 1 ? "Pregunta" : "Preguntas"}
             </p>
           )}
 
