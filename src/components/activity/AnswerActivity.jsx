@@ -12,8 +12,9 @@ export const AnswerActivity = ({ index, answer }) => {
   };
 
   return (
-    <div className="flex mt-2 rounded-lg py-2.5 bg-white">
-      <div className="mr-4 ml-4 flex items-center">
+    <div className="flex mt-2 rounded-lg py-2.5 bg-white ">
+      <p className="px-4 font-medium">{index+1}.</p>
+      <div className="mr-4  flex items-center">
         <input
           type="checkbox"
           id={optionId}

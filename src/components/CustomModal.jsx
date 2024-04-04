@@ -3,8 +3,8 @@ import { socket } from "../utils/socket";
 import { Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
-import { BsQuestionCircleFill } from "react-icons/bs";
 import { userAtom } from "../context/atoms/userAtom";
+import { BadgeModal } from "./BadgeModal";
 
 export const CustomModal = ({
   modal,
@@ -14,6 +14,7 @@ export const CustomModal = ({
   setActivityScreen,
 }) => {
   const [activity, setActivity] = useState({});
+  const [kindQuestion, setKindQuestion] = useState([]);
   const [open] = useState(modal);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const getUser = useAtomValue(userAtom);
@@ -35,8 +36,16 @@ export const CustomModal = ({
   }, []);
 
   useEffect(() => {
-    console.log("ACTIVITY", activity);
+    setKindQuestion(
+      activity.questions?.map((question) => question.kindOfQuestion)
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activity]);
+
+  useEffect(() => {
+    console.log("KIND QUESTION", kindQuestion);
+  }, [kindQuestion]);
 
   const handleOk = () => {
     setModalText(
@@ -66,6 +75,11 @@ export const CustomModal = ({
     socket.emit("move");
   };
 
+  const kindQuestionCount = (kindQuestion ?? []).reduce((acc, kind) => {
+    acc[kind] = (acc[kind] || 0) + 1;
+    return acc;
+  }, {});
+
   return (
     <>
       <Modal
@@ -84,16 +98,38 @@ export const CustomModal = ({
         centered={true}
       >
         <p>{modalText}</p>
-        <p className="text-gray-400 text-xs">Actividad compuesta por:</p>
-        <div className="bg-[#FFD700] px-4 py-1 w-fit mt-2 font-semibold flex justify-center items-center rounded-full">
-          {activity && (
-            <p className="mr-2">
-              {activity.questions?.length}{" "}
-              {activity.questions?.length === 1 ? "Pregunta" : "Preguntas"}
-            </p>
-          )}
 
-          <BsQuestionCircleFill color="black" />
+        <p className=" text-md font-semibold mt-2">
+          {`Actividad con ${activity.questions?.length} pregunta${
+            activity.questions?.length === 1 ? "" : "s"
+          } dónde hay:`}{" "}
+        </p>
+        <div className="py-1 w-fit mt-2 font-semibold flex justify-center items-center">
+          {kindQuestion &&
+            Object.entries(kindQuestionCount).map(([kind, count]) => {
+              if (kind === "Test") {
+                return (
+                  <BadgeModal
+                    key={kind}
+                    count={count}
+                    kind={`${kind}${count === 1 ? "" : "s"}`}
+                    style="bg-green-500 text-green-700"
+                  />
+                );
+              }
+              if (kind === "Redacción") {
+                const kindText = count === 1? "Redacción" : "Redacciones"
+                return (
+                  <BadgeModal
+                    key={kind}
+                    count={count}
+                    kind={kindText}
+                    style="bg-yellow-400 text-yellow-600"
+                  />
+                );
+              }
+              return null;
+            })}
         </div>
       </Modal>
     </>

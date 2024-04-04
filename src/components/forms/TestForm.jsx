@@ -49,7 +49,7 @@ export const TestForm = ({ numQuestion, optionAnswer}) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex-1">
       <div id="question" className="flex flex-col px-3">
         <div className="flex flex-row items-center">
           <p className="text-lg border-b-2 font-semibold">
@@ -78,9 +78,9 @@ export const TestForm = ({ numQuestion, optionAnswer}) => {
 
       <div
         id="options"
-        className="px-3 max-h-40"
+        className="px-3 flex-1 flex flex-col"
       >
-        <div className="flex flex-row">
+        <div className="flex flex-1 flex-row">
           <p className="text-lg border-b-2 font-semibold">Respuestas</p>
           <LuAsterisk className="mt-1" size={12} />
           {errors.answers && errors.correct && (
@@ -96,7 +96,7 @@ export const TestForm = ({ numQuestion, optionAnswer}) => {
             <ErrorAlert message="Las respuestas no pueden estar vacías" />
           )}
         </div>
-        <div className="overflow-y-auto custom-scrollbar max-h-32 ">
+        <div className="overflow-y-auto custom-scrollbar max-h-[440px]">
         {question.answers.map((answer, i) => (
           <AnswerInput
             key={i}
@@ -106,9 +106,9 @@ export const TestForm = ({ numQuestion, optionAnswer}) => {
           />
         ))}
         </div>
+      <PlusInput onClick={handleClick} />
       </div>
 
-      <PlusInput onClick={handleClick} />
 
       <div className="absolute top-1 right-2 flex">
         <div className="flex flex-row">
