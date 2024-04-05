@@ -1,11 +1,19 @@
 /* eslint-disable react/prop-types */
-export const GridActivity = ({ questions, setActualQuestion}) => {
+import { useEffect, useState } from 'react';
 
-    const handleQuestionClick = (question) => {
-        setActualQuestion(question);
-        console.log(question)
-    };
-    
+export const GridActivity = ({ questions, actualQuestion, setActualQuestion }) => {
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
+
+  const handleQuestionClick = (question) => {
+    setActualQuestion(question);
+    setSelectedQuestion(question);
+    console.log(question);
+  };
+
+  useEffect(()=>{
+    setSelectedQuestion(actualQuestion)
+  },[actualQuestion])
+
   return (
     <div className="flex flex-col w-full ml-5">
       <label className="font-semibold text-xl mb-2">
@@ -13,11 +21,13 @@ export const GridActivity = ({ questions, setActualQuestion}) => {
       </label>
       <div className="mr-6">
         {Array.isArray(questions) && questions.length > 0 && (
-          <div className="grid grid-cols-10 gap-2 overflow-y-auto max-h-36 custom-scrollbar overflow-x-hidden">
+          <div className="grid grid-cols-10 gap-2 overflow-y-auto max-h-60w custom-scrollbar overflow-x-hidden">
             {questions.map((question, index) => (
               <div
                 key={index}
-                className="bg-white p-2 px-pointer-events-auto cursor-pointer rounded-md flex items-center justify-center"
+                className={`bg-white min-w-8 max-w-8 min-h-10 max-h-10 p-2 px-pointer-events-auto cursor-pointer rounded-md flex items-center justify-center ${
+                  selectedQuestion === question ? 'border-2 border-yellow-500' : ''
+                }`}
                 onClick={() => handleQuestionClick(question)}
               >
                 <p className="text-[#167563] font-semibold">{`${index + 1}`}</p>

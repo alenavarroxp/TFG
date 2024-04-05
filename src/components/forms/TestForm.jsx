@@ -7,8 +7,10 @@ import { useAtom } from "jotai";
 import { questionAtom } from "../../context/atoms/questionAtom";
 import { errorsQuestionAtom } from "../../context/atoms/errorsQuestionAtom";
 import { ErrorAlert } from "../ErrorAlert";
+import { useEffect, useRef } from "react";
 
-export const TestForm = ({ numQuestion, optionAnswer}) => {
+export const TestForm = ({ numQuestion, optionAnswer }) => {
+  const lastAnswerRef = useRef(null);
   const [question, setQuestion] = useAtom(questionAtom);
   const [errors, setErrors] = useAtom(errorsQuestionAtom);
 
@@ -28,7 +30,7 @@ export const TestForm = ({ numQuestion, optionAnswer}) => {
       answers: newAnswers,
       correct: newCorrectsIndex,
       kindOfQuestion: "Test",
-      kindOfAnswer: optionAnswer
+      kindOfAnswer: optionAnswer,
     });
   };
 
@@ -38,7 +40,13 @@ export const TestForm = ({ numQuestion, optionAnswer}) => {
       ...question,
       answers: [...question.answers, { answerText: "", isCorrect: false }],
     });
+    console.log(lastAnswerRef.current.scrollHeight)
   };
+
+  useEffect(()=>{
+    lastAnswerRef.current.scrollTop = lastAnswerRef.current.scrollHeight
+  
+  },[question.answers])
 
   const handleQuestionTextChange = (text) => {
     setErrors((prevErrors) => ({
@@ -76,10 +84,7 @@ export const TestForm = ({ numQuestion, optionAnswer}) => {
         </div>
       </div>
 
-      <div
-        id="options"
-        className="px-3 flex-1 flex flex-col"
-      >
+      <div id="options" className="px-3 flex-1 flex flex-col">
         <div className="flex flex-1 flex-row">
           <p className="text-lg border-b-2 font-semibold">Respuestas</p>
           <LuAsterisk className="mt-1" size={12} />
@@ -96,19 +101,20 @@ export const TestForm = ({ numQuestion, optionAnswer}) => {
             <ErrorAlert message="Las respuestas no pueden estar vacías" />
           )}
         </div>
-        <div className="overflow-y-auto custom-scrollbar max-h-[440px]">
-        {question.answers.map((answer, i) => (
-          <AnswerInput
-            key={i}
-            index={i}
-            answer={answer}
-            setAnswer={(updatedAnswer) => handleAnswerChange(i, updatedAnswer)}
-          />
-        ))}
+        <div className="overflow-y-auto custom-scrollbar max-h-[440px]" ref={lastAnswerRef}>
+          {question.answers.map((answer, i) => (
+            <AnswerInput
+              key={i}
+              index={i}
+              answer={answer}
+              setAnswer={(updatedAnswer) =>
+                handleAnswerChange(i, updatedAnswer)
+              }
+            />
+          ))}
         </div>
-      <PlusInput onClick={handleClick} />
+        <PlusInput onClick={handleClick} />
       </div>
-
 
       <div className="absolute top-1 right-2 flex">
         <div className="flex flex-row">

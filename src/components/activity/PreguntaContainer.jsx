@@ -6,13 +6,10 @@ import { RespuestaBody } from "./RespuestaBody";
 import { RespuestaHeader } from "./RespuestaHeader";
 
 export const PreguntaContainer = ({ activity, actualQuestion, next, prev }) => {
-  console.log("actualquesion container", actualQuestion);
   const [nextVisible, setNextVisible] = useState(true);
   const [prevVisible, setPrevVisible] = useState(false);
 
   useEffect(() => {
-    console.log("actualQuestion.id", actualQuestion.id);
-    console.log("activity.questions.length", activity.questions?.length);
     if (actualQuestion.id === activity.questions?.length) {
       setNextVisible(false);
     } else {

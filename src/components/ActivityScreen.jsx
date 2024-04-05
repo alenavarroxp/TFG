@@ -75,6 +75,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
         <div>
           <GridActivity
             questions={activity.questions}
+            actualQuestion={actualQuestion}
             setActualQuestion={setActualQuestion}
           />
           <EndActivity onClick={console.log("Terminar actividad")} />

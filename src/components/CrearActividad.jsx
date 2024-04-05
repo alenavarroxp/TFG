@@ -283,9 +283,9 @@ export const CrearActividad = ({ setCrearScreen }) => {
             Elabora una actividad para los estudiantes de tu clase. Selecciona
             los campos obligatorios para poder crearla.
           </div>
-          <div className="flex-1 flex-col flex bg-blue-500">
+          <div className="flex-1 flex-col flex ">
             <div id="form" className="w-full">
-              <div className="flex flex-col md:flex-row lg:flex-row bg-purple-400">
+              <div className="flex flex-col md:flex-row lg:flex-row">
                 <SelectInput
                   id="optionCourse"
                   value={course}
@@ -337,11 +337,11 @@ export const CrearActividad = ({ setCrearScreen }) => {
                 />
               </div>
             </div>
-            <div className="flex flex-1 flex-col md:flex-row bg-red-400">
-              <div className="lg:w-2/3 md:w-2/3 sm:w-full w-full flex flex-col bg-blue-100">
+            <div className="flex flex-1 flex-col md:flex-row">
+              <div className="lg:w-2/3 md:w-2/3 sm:w-full w-full flex flex-col ">
                 <div
                   id="questionContainer"
-                  className="border-2 flex-1 rounded-lg ml-5 mt-5 mr-5 bg-orange-300 flex flex-col"
+                  className="border-2 flex-1 rounded-lg ml-5 mt-5 mr-5  flex flex-col"
                 >
                   {optionQuestion === "Test" ? (
                     <TestForm
@@ -355,7 +355,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
                   )}
                 </div>
 
-                <div className="flex items-center justify-around w-full mt-4 mb-4 bg-yellow-300">
+                <div className="flex items-center justify-around w-full mt-4 mb-4">
                   <button
                     id="addQuestionBtn"
                     className="bg-white px-6 py-2 text-[#167563] font-semibold rounded-2xl"
