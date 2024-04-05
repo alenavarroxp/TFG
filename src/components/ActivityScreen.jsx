@@ -10,11 +10,14 @@ import { EndActivity } from "./activity/EndActivity";
 import { useEffect, useState } from "react";
 import { actualAnswerAtom } from "../context/atoms/actualAnswerAtom";
 import { useAtom } from "jotai";
+import { totalAnswersAtom } from "../context/atoms/totalAnswers";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
   const [activity, setActivity] = useState({});
   const [actualQuestion, setActualQuestion] = useState({});
-  const currentAnswer = useAtom(actualAnswerAtom);
+  const [currentAnswer] = useAtom(actualAnswerAtom);
+  const [answers] = useAtom(totalAnswersAtom);
+
 
   console.log("currentAnswer", currentAnswer);
 
@@ -48,7 +51,12 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     }
   };
 
-  const handleCheckAnswer = () => {};
+  const handleCheckAnswer = () => {
+    //TODO COMPARACIÓN DE RESPUESTAS CON LAS CORRECTAS
+    console.log("activity", activity.questions.map(question => question.correct));
+    console.log("CHECK ANSWER");
+    console.log("ANSWERS", answers.answers.map(answer => answer.answerOption));
+  };
 
   return (
     <div className="min-h-screen w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
