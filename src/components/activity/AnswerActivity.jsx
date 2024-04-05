@@ -1,19 +1,36 @@
 import { useState } from "react";
 import { IoCheckmarkCircle } from "react-icons/io5";
+import { actualAnswerAtom } from "../../context/atoms/actualAnswerAtom";
+import { useAtom } from "jotai";
 
 /* eslint-disable react/prop-types */
-export const AnswerActivity = ({ index, answer }) => {
+export const AnswerActivity = ({ index, answer, actualQuestion }) => {
   const optionId = `option-${index}`;
   const { answerText } = answer;
   const [isCorrect, setIsCorrect] = useState(false);
+  const [currentAnswer, setCurrentAnswer] = useAtom(actualAnswerAtom);
 
   const handleCheckboxChange = () => {
     setIsCorrect(!isCorrect);
+    if (!isCorrect) {
+      console.log("index", index + 1);
+      setCurrentAnswer({
+        ...currentAnswer,
+        id: actualQuestion.id,
+        answerOption: [...currentAnswer.answerOption, index + 1],
+      });
+    }else{
+      setCurrentAnswer({
+        ...currentAnswer,
+        id: actualQuestion.id,
+        answerOption:[...currentAnswer.answerOption.filter((option)=>option !== index + 1)]
+      })
+    }
   };
 
   return (
     <div className="flex mt-2 rounded-lg py-2.5 bg-white ">
-      <p className="px-4 font-medium">{index+1}.</p>
+      <p className="px-4 font-medium">{index + 1}.</p>
       <div className="mr-4  flex items-center">
         <input
           type="checkbox"

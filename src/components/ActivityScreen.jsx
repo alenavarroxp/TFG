@@ -8,10 +8,15 @@ import { UnderlinedText } from "./UnderlinedText";
 import { GridActivity } from "./activity/GridActivity";
 import { EndActivity } from "./activity/EndActivity";
 import { useEffect, useState } from "react";
+import { actualAnswerAtom } from "../context/atoms/actualAnswerAtom";
+import { useAtom } from "jotai";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
   const [activity, setActivity] = useState({});
   const [actualQuestion, setActualQuestion] = useState({});
+  const currentAnswer = useAtom(actualAnswerAtom);
+
+  console.log("currentAnswer", currentAnswer);
 
   const handleClickCerrar = () => {
     setActivityScreen(false);
@@ -42,6 +47,8 @@ export const ActivityScreen = ({ setActivityScreen }) => {
       setActualQuestion(activity.questions[index - 1]);
     }
   };
+
+  const handleCheckAnswer = () => {};
 
   return (
     <div className="min-h-screen w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
@@ -78,7 +85,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
             actualQuestion={actualQuestion}
             setActualQuestion={setActualQuestion}
           />
-          <EndActivity onClick={console.log("Terminar actividad")} />
+          <EndActivity onClick={handleCheckAnswer} />
         </div>
       </div>
     </div>
