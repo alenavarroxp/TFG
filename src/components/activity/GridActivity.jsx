@@ -17,7 +17,10 @@ export const GridActivity = ({
   const handleQuestionClick = (question) => {
     setActualQuestion(question);
     setSelectedQuestion(question);
+    console.group("Pregunta seleccionada con Respuestas")
     console.log(question);
+    console.log(answers);
+    console.groupEnd();
     saveAnswers(); // Guardar respuestas al cambiar de pregunta
   };
 
@@ -50,10 +53,6 @@ export const GridActivity = ({
       answerOption: [],
     });
   };
-
-  useEffect(() => {
-    console.log("Respuestas", answers);
-  }, [answers]);
 
   return (
     <div className="flex flex-col w-full ml-5">

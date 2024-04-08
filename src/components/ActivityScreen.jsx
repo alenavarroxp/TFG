@@ -55,14 +55,6 @@ export const ActivityScreen = ({ setActivityScreen }) => {
 
   const handleCheckAnswer = () => {
     setActualQuestion(activity.questions[0]);
-    console.log(
-      "activity",
-      activity.questions.map((q) => q.correct)
-    );
-    console.log(
-      "answers",
-      answers.map((a) => a.answerOption)
-    );
     // Verifica que haya preguntas y respuestas antes de realizar la comparación.
     if (activity.questions.length === 0 || answers.length === 0) {
       console.log("No hay preguntas o respuestas para comparar.");
@@ -75,15 +67,15 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     activity.questions.forEach((question) => {
       // Encuentra las respuestas del usuario que corresponden a la pregunta actual.
       const userAnswer = answers.find(
-        (answer) => answer.id === question.id
+        (answer) => answer.id === question.id - 1
       );
 
       // Verifica si todas las respuestas proporcionadas por el usuario son correctas.
-      const allUserAnswersCorrect =
-        userAnswer &&
-        userAnswer.answerOption.every((userOption) =>
-          question.correct.includes(userOption - 1)
-        );
+      const allUserAnswersCorrect = userAnswer.answerOption.every(
+        (userOption) => {
+          return question.correct.includes(userOption - 1);
+        }
+      );
 
       // Verifica si todas las respuestas correctas están incluidas en las respuestas del usuario.
       const allCorrectAnswersIncluded = question.correct.every(

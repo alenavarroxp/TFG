@@ -11,7 +11,7 @@ export const AnswerActivity = ({ index, answer, actualQuestion }) => {
   const [answers, setAnswers] = useAtom(totalAnswersAtom);
 
   useEffect(() => {
-    answers.map((answer) => {
+    answers.forEach((answer) => {
       if (answer.id === actualQuestion.id - 1) {
         if (answer.answerOption.includes(index + 1)) {
           setVisibleCorrect(true);
@@ -20,6 +20,10 @@ export const AnswerActivity = ({ index, answer, actualQuestion }) => {
         }
       }
     });
+
+    return () => {
+      setVisibleCorrect(false);
+    };
   }, [actualQuestion, answers, index]);
 
   // Función para manejar el cambio en la selección de la opción
