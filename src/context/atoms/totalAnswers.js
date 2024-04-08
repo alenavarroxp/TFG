@@ -1,5 +1,3 @@
-import {atom} from "jotai";
+import { atom } from "jotai";
 
-export const totalAnswersAtom = atom ({
-   answers: []
-})
+export const totalAnswersAtom = atom([]);

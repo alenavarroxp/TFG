@@ -1,85 +1,74 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { IoCheckmarkCircle } from "react-icons/io5";
-import { actualAnswerAtom } from "../../context/atoms/actualAnswerAtom";
 import { useAtom } from "jotai";
 import { totalAnswersAtom } from "../../context/atoms/totalAnswers";
 
-/* eslint-disable react/prop-types */
 export const AnswerActivity = ({ index, answer, actualQuestion }) => {
   const optionId = `option-${index}`;
   const { answerText } = answer;
   const [visibleCorrect, setVisibleCorrect] = useState(false);
-  const [currentAnswer, setCurrentAnswer] = useAtom(actualAnswerAtom);
   const [answers, setAnswers] = useAtom(totalAnswersAtom);
 
   useEffect(() => {
-    if (answers.answers[actualQuestion.id - 1]) {
-      if (
-        answers.answers[actualQuestion.id - 1].answerOption.includes(index + 1)
-      ) {
-        setVisibleCorrect(true);
-        return;
-      }
-    }
-    setVisibleCorrect(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actualQuestion]);
-
-  useEffect(() => {
-    // Solo actualiza si currentAnswer tiene una id y opciones de respuesta.
-    if (currentAnswer.id && currentAnswer.answerOption.length > 0) {
-      setAnswers((prevState) => {
-        // Encuentra el índice de la respuesta a actualizar.
-        const answerIndex = prevState.answers.findIndex(
-          (answer) => answer.id === currentAnswer.id
-        );
-
-        // Si se encuentra la respuesta, actualiza su 'answerOption'.
-        if (answerIndex !== -1) {
-          const updatedAnswers = [...prevState.answers];
-          updatedAnswers[answerIndex].answerOption = currentAnswer.answerOption;
-
-          // Retorna el estado actualizado.
-          return { ...prevState, answers: updatedAnswers };
+    answers.map((answer) => {
+      if (answer.id === actualQuestion.id - 1) {
+        if (answer.answerOption.includes(index + 1)) {
+          setVisibleCorrect(true);
+        } else {
+          setVisibleCorrect(false);
         }
+      }
+    });
+  }, [actualQuestion, answers, index]);
 
-        // Si no se necesita actualizar (o no se encuentra la respuesta, lo cual no debería ocurrir en este contexto), retorna el estado previo.
-        return prevState;
-      });
-    }
-  }, [currentAnswer, setAnswers]);
-
+  // Función para manejar el cambio en la selección de la opción
   const handleCheckboxChange = () => {
-    setVisibleCorrect(!visibleCorrect);
+    const newAnswer = {
+      id: actualQuestion.id - 1,
+      answerOption: [index + 1],
+    };
+
+    console.log("actualQuestion", actualQuestion);
+    const currentAnswers =
+      answers[actualQuestion.id - 1] &&
+      answers[actualQuestion.id - 1].answerOption;
+
     if (!visibleCorrect) {
-      const prevAnswers = answers.answers[actualQuestion.id - 1]
-        ? answers.answers[actualQuestion.id - 1].answerOption
-        : [];
+      if (!answers[actualQuestion.id - 1]) {
+        setAnswers([...answers, newAnswer]);
+      } else {
+        const updatedAnswers = answers.map((answer) => {
+          if (answer.id === actualQuestion.id - 1) {
+            return {
+              ...answer,
+              answerOption: currentAnswers.includes(index + 1)
+                ? currentAnswers.filter((option) => option !== index + 1)
+                : [...currentAnswers, index + 1],
+            };
+          }
+          return answer;
+        });
 
-      setCurrentAnswer({
-        ...currentAnswer,
-        id: actualQuestion.id,
-        answerOption: [...prevAnswers, index + 1],
-      });
+        setAnswers(updatedAnswers);
+      }
     } else {
-      const objAnswer = answers.answers[actualQuestion.id - 1]
-        ? answers.answers[actualQuestion.id - 1].answerOption.filter(
-            (answer) => answer !== index + 1
-          )
-        : [];
-
-      console.warn("objAnswer", objAnswer);
-      setCurrentAnswer({
-        ...currentAnswer,
-        id: actualQuestion.id,
-        answerOption: [...objAnswer],
+      const updatedAnswers = answers.map((answer) => {
+        if (answer.id === actualQuestion.id - 1) {
+          return {
+            ...answer,
+            answerOption: currentAnswers.includes(index + 1)
+              ? currentAnswers.filter((option) => option !== index + 1)
+              : [...currentAnswers, index + 1],
+          };
+        }
+        return answer;
       });
-    }
-    checkOldAnswers();
-  };
 
-  const checkOldAnswers = () => {
-    console.log("answers.answers[actualQuestion.id - 1]", answers.answers);
+      setAnswers(updatedAnswers);
+    }
+    setVisibleCorrect((prevVisibleCorrect) => !prevVisibleCorrect);
+    console.log("ANSWERS AFTER", answers);
   };
 
   return (

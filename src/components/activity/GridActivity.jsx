@@ -31,17 +31,17 @@ export const GridActivity = ({
     const actualAnswers = { ...currentAnswer };
 
     // console.log("Respuestas actuales", actualAnswers);
-    const oldAnswers = { ...answers };
+    const oldAnswers = [...answers]
     // console.log("oldAnswers", oldAnswers);
     if (actualAnswers.id != "") {
-      const existingIndex = oldAnswers.answers.findIndex(
+      const existingIndex = oldAnswers.findIndex(
         (answer) => answer.id === actualAnswers.id
       );
 
       if (existingIndex !== -1) {
-        oldAnswers.answers[existingIndex] = actualAnswers;
+        oldAnswers[existingIndex] = actualAnswers;
       } else {
-        oldAnswers.answers.push(actualAnswers);
+        oldAnswers.push(actualAnswers);
       }
     }
     setAnswers(oldAnswers);
