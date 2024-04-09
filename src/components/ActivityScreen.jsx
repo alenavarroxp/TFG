@@ -19,6 +19,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
   const [answers] = useAtom(totalAnswersAtom);
   const [confirmModal, setConfirmModal] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(false);
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
 
   const handleClickCerrar = () => {
     setActivityScreen(false);
@@ -95,6 +96,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     });
     console.groupEnd();
     setScoreVisible(true);
+    setFeedbackVisible(true);
   };
 
   return (
@@ -131,6 +133,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
             actualQuestion={actualQuestion}
             next={handleNextQuestion}
             prev={handlePrevQuestion}
+            feedbackVisible={feedbackVisible}
           />
         </div>
         <div>
