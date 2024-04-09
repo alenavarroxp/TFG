@@ -5,7 +5,13 @@ import { PreguntaHeader } from "./PreguntaHeader";
 import { RespuestaBody } from "./RespuestaBody";
 import { RespuestaHeader } from "./RespuestaHeader";
 
-export const PreguntaContainer = ({ activity, actualQuestion, next, prev, feedbackVisible }) => {
+export const PreguntaContainer = ({
+  activity,
+  actualQuestion,
+  next,
+  prev,
+  feedbackVisible,
+}) => {
   const [nextVisible, setNextVisible] = useState(true);
   const [prevVisible, setPrevVisible] = useState(false);
 
@@ -26,12 +32,18 @@ export const PreguntaContainer = ({ activity, actualQuestion, next, prev, feedba
   return (
     <div className="m-5 mb-0 mt-0 flex-col h-full">
       <div className="">
-        <PreguntaHeader actualQuestion={actualQuestion} />
+        <PreguntaHeader
+          actualQuestion={actualQuestion}
+          feedbackVisible={feedbackVisible}
+        />
         <PreguntaBody actualQuestion={actualQuestion} />
       </div>
       <div className="h-full mt-5 relative">
-        <RespuestaHeader actualQuestion={actualQuestion} />
-        <RespuestaBody actualQuestion={actualQuestion} feedbackVisible={feedbackVisible} />
+        <RespuestaHeader actualQuestion={actualQuestion} feedbackVisible={feedbackVisible}/>
+        <RespuestaBody
+          actualQuestion={actualQuestion}
+          feedbackVisible={feedbackVisible}
+        />
         {prevVisible && (
           <button
             className="absolute bottom-28 left  -4 rounded-full bg-white p-2 px-4 font-semibold text-[#167563] "

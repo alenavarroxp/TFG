@@ -16,7 +16,7 @@ export const AnswerActivity = ({
   const [visibleCorrect, setVisibleCorrect] = useState(false);
   const [answers, setAnswers] = useAtom(totalAnswersAtom);
   const [score, setScore] = useState(0);
-  const [feedback,] = useAtom(feedbackAtom);
+  const [feedback] = useAtom(feedbackAtom);
   const [visibleFeedback, setVisibleFeedback] = useState(false);
 
   useEffect(() => {
@@ -38,27 +38,9 @@ export const AnswerActivity = ({
     const correctsAnswers = questionFeedback?.corrects[0] || [];
     const wrongsAnswers = questionFeedback?.wrongs[0] || [];
 
-    console.log(
-      "questionScore",
-      questionScore,
-      " correctsAnswers",
-      correctsAnswers,
-      "wrongsAnswers",
-      wrongsAnswers
-    );
-
     // Verifica si el índice de la respuesta actual está en los arrays de respuestas correctas o incorrectas
     const isCorrectAnswer = correctsAnswers.includes(index + 1);
     const isWrongAnswer = wrongsAnswers.includes(index + 1);
-
-    console.log(
-      "INDEX",
-      index,
-      "isCorrectAnswer",
-      isCorrectAnswer,
-      "isWrongAnswer",
-      isWrongAnswer
-    );
 
     // Calcula el puntaje según la lógica establecida
     let score = 0;

@@ -141,6 +141,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
             questions={activity.questions}
             actualQuestion={actualQuestion}
             setActualQuestion={setActualQuestion}
+            feedbackVisible={feedbackVisible}
           />
           <EndActivity onClick={handleConfirmModal} />
           {scoreVisible && (
