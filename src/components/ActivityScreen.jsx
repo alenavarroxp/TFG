@@ -12,6 +12,7 @@ import { useAtom } from "jotai";
 import { totalAnswersAtom } from "../context/atoms/totalAnswers";
 import { ConfirmModal } from "./activity/ConfirmModal";
 import { FinalScore } from "./activity/FinalScore";
+import { TourComponent } from "./TourComponent";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
   const [activity, setActivity] = useState({});
@@ -20,6 +21,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
   const [confirmModal, setConfirmModal] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(false);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [tourVisible, setTourVisible] = useState(false);
 
   const handleClickCerrar = () => {
     setActivityScreen(false);
@@ -108,13 +110,14 @@ export const ActivityScreen = ({ setActivityScreen }) => {
           onConfirm={handleCheckAnswer}
         />
       )}
+      {tourVisible && (<TourComponent setTourVisible={setTourVisible}/>)}
       <div className="absolute top-2 right-3">
         <button onClick={handleClickCerrar}>
           <IoCloseOutline size={24} />
         </button>
       </div>
 
-      <div className="flex justify-center items-center w-fit mt-5">
+      <div className="flex justify-center items-center w-fit mt-5 tour-step1">
         <UnderlinedText
           text={`${activity.course} - ${activity.subject}`}
           style="text-3xl ml-5"
@@ -122,7 +125,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
         <AiFillInfoCircle
           size={16}
           className="ml-2 pointer-events-auto cursor-pointer border-b-0"
-          onClick={() => console.log("HELPING")}
+          onClick={() => setTourVisible(true)}
         />
       </div>
 

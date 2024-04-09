@@ -31,7 +31,7 @@ export const PreguntaContainer = ({
 
   return (
     <div className="m-5 mb-0 mt-0 flex-col h-full">
-      <div className="">
+      <div className="tour-step2">
         <PreguntaHeader
           actualQuestion={actualQuestion}
           feedbackVisible={feedbackVisible}

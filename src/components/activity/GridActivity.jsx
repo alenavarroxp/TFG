@@ -97,7 +97,7 @@ export const GridActivity = ({
   };
 
   return (
-    <div className="flex flex-col w-full ml-5">
+    <div className="flex flex-col w-full ml-5 tour-step8">
       <label className="font-semibold text-xl mb-2">
         <p className="border-b-2 w-fit">Todas las preguntas</p>
       </label>
@@ -111,7 +111,7 @@ export const GridActivity = ({
                   feedbackVisible ? customColor(question) : "bg-white"
                 } min-w-8 max-w-8 min-h-10 max-h-10 p-2 px-pointer-events-auto cursor-pointer rounded-md flex items-center justify-center ${
                   !feedbackVisible && selectedQuestion  === question
-                    ? "border-2  border-yellow-500"
+                    ? "border-2  border-yellow-500 tour-step9"
                     : feedbackVisible && selectedQuestion === question
                     ? "border-2 border-white"
                     : ""

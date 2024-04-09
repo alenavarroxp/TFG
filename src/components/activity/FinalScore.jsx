@@ -70,10 +70,14 @@ export const FinalScore = ({ scoreVisible, activity, answers }) => {
   };
 
   useEffect(() => {
-    if (totalScore != 0) {
-      setFinalScore((prev) => parseFloat((prev / totalScore) * 10).toFixed(2));
+    if (totalScore !== 0) {
+      setFinalScore((prev) => {
+        const newScore = parseFloat((prev / totalScore) * 10).toFixed(2);
+        return Math.max(newScore, 0).toFixed(2); // Asegurarse de que el puntaje final no sea negativo
+      });
     }
   }, [totalScore]);
+  
 
   const normalize = () => {
     //AQUI QUIERO QUE LOS ARRAYs DE RESPUESTAS CORRECTAS Y DE RESPUESTAS DADAS ESTÉN ORDENADOS DE MENOR A MAYOR
