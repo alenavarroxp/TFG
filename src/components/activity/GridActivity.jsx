@@ -113,8 +113,8 @@ export const GridActivity = ({
                   !feedbackVisible && selectedQuestion  === question
                     ? "border-2  border-yellow-500 tour-step9"
                     : feedbackVisible && selectedQuestion === question
-                    ? "border-2 border-white"
-                    : ""
+                    ? "border-2 border-white tour-step9"
+                    : "tour-step9"
                 }`}
                 onClick={() => handleQuestionClick(question)}
               >

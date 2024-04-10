@@ -54,7 +54,7 @@ export const PreguntaContainer = ({
         )}
         {nextVisible && (
           <button
-            className="absolute bottom-28 right-4 rounded-full bg-white p-2 px-4 font-semibold text-[#167563] "
+            className="absolute bottom-28 right-4 rounded-full bg-white p-2 px-4 font-semibold text-[#167563] botones"
             onClick={next}
           >
             <h1>Siguiente pregunta</h1>

@@ -1,63 +1,15 @@
 /* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 import Joyride from "react-joyride";
+import { generateSteps } from "../utils/steps";
 
-export const TourComponent = ({ setTourVisible }) => {
-  const steps = [
-    {
-      target: ".tour-step1",
-      content: "¡Hola! ¡Bienvenido al tour! Curso y asignatura",
-      placement: "bottom",
-      title: "Bienvenido",
-    },
-    {
-      target: ".tour-step2",
-      content: "Pregunta de la actividad",
-      placement: "bottom",
-      title: "Pregunta",
-    },
-    {
-      target: ".tour-step3",
-      content: "badge",
-      placement: "left",
-      title: "Badge",
-    },
-    {
-      target: ".tour-step4",
-      content: "Respuestas de la actividad",
-      placement: "bottom",
-      title: "Respuestas",
-    },
-    {
-      target: ".tour-step5",
-      content: "badge",
-      placement: "left",
-      title: "Badge",
-    },
-    {
-      target: ".tour-step6",
-      content: "Puntaje de la actividad",
-      placement: "bottom",
-      title: "Puntaje",
-    },
-    {
-      target: ".tour-step7",
-      content: "Respuestas de la actividad",
-      placement: "bottom",
-      title: "Respuestas",
-    },
-    {
-      target: ".tour-step8",
-      content: "Todas las preguntas de la actividad",
-      placement: "bottom",
-      title: "Todas las preguntas",
-    },
-    {
-      target: ".tour-step9",
-      content: "PRegunta actual de la actividad",
-      placement: "bottom",
-      title: "Pregunta actual",
-    }
-  ];
+export const TourComponent = ({ setTourVisible, questions }) => {
+  const [run, setRun] = useState(false);
+  const steps = generateSteps(questions.length)
+  useEffect(()=>{
+    setRun(true)
+  },[])
+  
 
   const handleJoyrideCallback = (data) => {
     if (
@@ -74,7 +26,7 @@ export const TourComponent = ({ setTourVisible }) => {
       <div>
         <Joyride
           steps={steps}
-          run={true}
+          run={run}
           continuous={true}
           showProgress={true}
           showSkipButton={true}
