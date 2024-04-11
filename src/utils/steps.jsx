@@ -52,9 +52,7 @@ export const generateSteps = (length) => {
       target: `.tour-step6`,
       content: (
         <TourContainer
-          text="Cada pregunta tiene su puntuación asignada. Asegúrate de responder correctamente para obtener la máxima puntuación."
-          puntuaciónExample={true}
-          style="overflow-y-auto h-72"
+          text="Cada pregunta tiene su puntuación asignada. Asegúrate de responder correctamente  para obtener la máxima puntuación."
         />
       ),
       placement: "right",
@@ -63,7 +61,7 @@ export const generateSteps = (length) => {
     {
       target: `.tour-step7`,
       content: (
-        <TourContainer text="Aquí se muestran todas las posibles respuestas de la pregunta actual." />
+        <TourContainer text="Aquí se muestran todas las posibles respuestas de la pregunta actual. Selecciona o rellena las respuestas correctas según el tipo de respuesta." />
       ),
       placement: "bottom",
       title: <TourTitle text="Respuestas de la actividad" />,

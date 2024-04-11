@@ -57,7 +57,7 @@ export const ScoreContainer = ({ actualQuestion, feedbackVisible }) => {
         wrongPercentage
       );
 
-      score = correctPercentage - wrongPercentage;
+      score = (correctPercentage - wrongPercentage).toFixed(2);
 
       console.log("Puntuación de la pregunta", score);
       setPuntuacion(score);

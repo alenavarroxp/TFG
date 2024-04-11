@@ -46,8 +46,8 @@ export const AnswerActivity = ({
     let score = 0;
     if (isCorrectAnswer || isWrongAnswer) {
       score = isCorrectAnswer
-        ? questionScore / actualQuestion.correct.length
-        : (questionScore / actualQuestion.correct.length) * 0.5;
+        ? (questionScore / actualQuestion.correct.length).toFixed(2)
+        : ((questionScore / actualQuestion.correct.length) * 0.5).toFixed(2);
       setScore(isCorrectAnswer ? `+${score}` : `-${score}`);
     } else {
       setScore("");

@@ -117,10 +117,10 @@ export const ActivityScreen = ({ setActivityScreen }) => {
         </button>
       </div>
 
-      <div className="flex justify-center items-center w-fit mt-5 tour-step1">
+      <div className="flex justify-center items-center w-fit mt-5 tour-step1 ml-5">
         <UnderlinedText
           text={`${activity.course} - ${activity.subject}`}
-          style="text-3xl ml-5"
+          style="text-3xl"
         />
         <AiFillInfoCircle
           size={16}
