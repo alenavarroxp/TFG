@@ -17,11 +17,13 @@ import { IoHome } from "react-icons/io5";
 import { JoyStickContainer } from "./JoyStickContainer";
 import { JumpButton } from "./JumpButton";
 import { CustomModal } from "./CustomModal";
+import { ActivityScreen } from "./ActivityScreen";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
   const [modal, setModal] = useState(false);
   const [crearScreen, setCrearScreen] = useState(false);
+  const [activityScreen, setActivityScreen] = useState(false);
   const getUser = useAtomValue(userAtom);
   const [chooseLocation] = useAtom(chooseLocationAtom);
   const [test] = useAtom(testAtom);
@@ -143,12 +145,14 @@ export const GUI = () => {
 
       {userModal && <UserModal />}
       {crearScreen && <CrearActividad setCrearScreen={setCrearScreen} />}
+      {activityScreen && <ActivityScreen setActivityScreen={setActivityScreen} />}
       {modal && (
         <CustomModal
           modal={modal}
           setModal={setModal}
           setCrearScreen={setCrearScreen}
           activityId = {activityId}
+          setActivityScreen={setActivityScreen}
         />
       )}
     </>

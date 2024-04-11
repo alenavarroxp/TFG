@@ -7,10 +7,12 @@ import { useAtom } from "jotai";
 import { questionAtom } from "../../context/atoms/questionAtom";
 import { errorsQuestionAtom } from "../../context/atoms/errorsQuestionAtom";
 import { ErrorAlert } from "../ErrorAlert";
+import { useEffect, useRef } from "react";
 
-export const TestForm = ({ numQuestion }) => {
+export const TestForm = ({ numQuestion, optionAnswer }) => {
+  const lastAnswerRef = useRef(null);
   const [question, setQuestion] = useAtom(questionAtom);
-  const [errors, setErrors] = useAtom(errorsQuestionAtom); // Utilizar el átomo errorsQuestionAtom
+  const [errors, setErrors] = useAtom(errorsQuestionAtom);
 
   const handleAnswerChange = (index, updatedAnswer) => {
     const newAnswers = question.answers.map((answer, i) => {
@@ -27,6 +29,8 @@ export const TestForm = ({ numQuestion }) => {
       id: numQuestion,
       answers: newAnswers,
       correct: newCorrectsIndex,
+      kindOfQuestion: "Test",
+      kindOfAnswer: optionAnswer,
     });
   };
 
@@ -36,7 +40,13 @@ export const TestForm = ({ numQuestion }) => {
       ...question,
       answers: [...question.answers, { answerText: "", isCorrect: false }],
     });
+    console.log(lastAnswerRef.current.scrollHeight)
   };
+
+  useEffect(()=>{
+    lastAnswerRef.current.scrollTop = lastAnswerRef.current.scrollHeight
+  
+  },[question.answers])
 
   const handleQuestionTextChange = (text) => {
     setErrors((prevErrors) => ({
@@ -47,7 +57,7 @@ export const TestForm = ({ numQuestion }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex-1">
       <div id="question" className="flex flex-col px-3">
         <div className="flex flex-row items-center">
           <p className="text-lg border-b-2 font-semibold">
@@ -74,11 +84,8 @@ export const TestForm = ({ numQuestion }) => {
         </div>
       </div>
 
-      <div
-        id="options"
-        className="px-3 max-h-40"
-      >
-        <div className="flex flex-row">
+      <div id="options" className="px-3 flex-1 flex flex-col">
+        <div className="flex flex-1 flex-row">
           <p className="text-lg border-b-2 font-semibold">Respuestas</p>
           <LuAsterisk className="mt-1" size={12} />
           {errors.answers && errors.correct && (
@@ -94,19 +101,20 @@ export const TestForm = ({ numQuestion }) => {
             <ErrorAlert message="Las respuestas no pueden estar vacías" />
           )}
         </div>
-        <div className="overflow-y-auto custom-scrollbar max-h-32 ">
-        {question.answers.map((answer, i) => (
-          <AnswerInput
-            key={i}
-            index={i}
-            answer={answer}
-            setAnswer={(updatedAnswer) => handleAnswerChange(i, updatedAnswer)}
-          />
-        ))}
+        <div className="overflow-y-auto custom-scrollbar max-h-[440px]" ref={lastAnswerRef}>
+          {question.answers.map((answer, i) => (
+            <AnswerInput
+              key={i}
+              index={i}
+              answer={answer}
+              setAnswer={(updatedAnswer) =>
+                handleAnswerChange(i, updatedAnswer)
+              }
+            />
+          ))}
         </div>
+        <PlusInput onClick={handleClick} />
       </div>
-
-      <PlusInput onClick={handleClick} />
 
       <div className="absolute top-1 right-2 flex">
         <div className="flex flex-row">
