@@ -1,9 +1,9 @@
 import { MandatoryText } from "../components/MandatoryText";
 
 /* eslint-disable react/prop-types */
-const SelectInput = ({ value, name, list, onChange }) => {
+const SelectInput = ({ value, name, list, onChange, style }) => {
   return (
-    <div className="ml-5 mr-10 mt-2">
+    <div className={`ml-5 mr-10 mt-2 ${style}`}>
       <MandatoryText text={name} />
       <select
         id={name}

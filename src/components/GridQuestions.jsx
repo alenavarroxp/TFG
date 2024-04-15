@@ -3,28 +3,26 @@ import { errorsTestAtom } from "../context/atoms/errorsTestAtom";
 import { ErrorAlert } from "./ErrorAlert";
 
 /* eslint-disable react/prop-types */
-export const GridQuestions = ({ questions, setQuestion }) => {
-  const [errorTest, ] = useAtom(errorsTestAtom); // Crear un nuevo estado con useAtom
-    const handleQuestionClick = (question) => {
-      console.log("question",question)
-      //SACAR EL INDICE DE LA PREGUNTA
-      console.log("indice",questions.indexOf(question))
-      setQuestion(question);
-    };
-     
-    return (
-      <div className="flex flex-col w-full ml-5">
-        <label className="font-semibold text-xl mb-2">
-          <p className="border-b-2 w-fit">
-          Preguntas añadidas
-          </p>
-          {errorTest.questions && (
-            <div className="w-fit mt-1">
-            <ErrorAlert message={"Debes añadir al menos una pregunta"}/>
-            </div>
-          )}
-        </label>
-        <div className="mr-6">
+export const GridQuestions = ({ questions, setQuestion, style }) => {
+  const [errorTest] = useAtom(errorsTestAtom); // Crear un nuevo estado con useAtom
+  const handleQuestionClick = (question) => {
+    console.log("question", question);
+    //SACAR EL INDICE DE LA PREGUNTA
+    console.log("indice", questions.indexOf(question));
+    setQuestion(question);
+  };
+
+  return (
+    <div className={`flex flex-col ml-5 mr-5 ${style}`}>
+      <label className="font-semibold text-xl mb-2">
+        <p className="border-b-2 w-fit">Preguntas guardadas</p>
+        {errorTest.questions && (
+          <div className="w-fit mt-1">
+            <ErrorAlert message={"Debes añadir al menos una pregunta"} />
+          </div>
+        )}
+      </label>
+      <div className="mr-6">
         {Array.isArray(questions) && questions.length > 0 ? (
           <div className="grid grid-cols-10 gap-2 overflow-y-auto max-h-36 custom-scrollbar overflow-x-hidden">
             {questions.map((question, index) => (
@@ -44,8 +42,7 @@ export const GridQuestions = ({ questions, setQuestion }) => {
             </p>
           </div>
         )}
-        </div>
       </div>
-    );
-  };
-  
+    </div>
+  );
+};

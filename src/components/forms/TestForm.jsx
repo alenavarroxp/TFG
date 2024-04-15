@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { LuAsterisk } from "react-icons/lu";
 import { PlusInput } from "../../inputs/plusInput";
@@ -8,6 +9,7 @@ import { questionAtom } from "../../context/atoms/questionAtom";
 import { errorsQuestionAtom } from "../../context/atoms/errorsQuestionAtom";
 import { ErrorAlert } from "../ErrorAlert";
 import { useEffect, useRef } from "react";
+import { QuestionBadge } from "../activity/QuestionBadge";
 
 export const TestForm = ({ numQuestion, optionAnswer }) => {
   const lastAnswerRef = useRef(null);
@@ -15,6 +17,7 @@ export const TestForm = ({ numQuestion, optionAnswer }) => {
   const [errors, setErrors] = useAtom(errorsQuestionAtom);
 
   const handleAnswerChange = (index, updatedAnswer) => {
+    console.log("index", index, " -> updatedAnswer", updatedAnswer);
     const newAnswers = question.answers.map((answer, i) => {
       if (i === index) return updatedAnswer;
       return answer;
@@ -40,13 +43,11 @@ export const TestForm = ({ numQuestion, optionAnswer }) => {
       ...question,
       answers: [...question.answers, { answerText: "", isCorrect: false }],
     });
-    console.log(lastAnswerRef.current.scrollHeight)
   };
 
-  useEffect(()=>{
-    lastAnswerRef.current.scrollTop = lastAnswerRef.current.scrollHeight
-  
-  },[question.answers])
+  useEffect(() => {
+    lastAnswerRef.current.scrollTop = lastAnswerRef.current.scrollHeight;
+  }, [question.answers]);
 
   const handleQuestionTextChange = (text) => {
     setErrors((prevErrors) => ({
@@ -56,22 +57,44 @@ export const TestForm = ({ numQuestion, optionAnswer }) => {
     setQuestion({ ...question, id: numQuestion, questionText: text });
   };
 
+  const handleDeleteAnswer = (index) => {
+    const newAnswers = question.answers.filter((answer, i) => i !== index);
+    const newCorrectsIndex = newAnswers
+      .map((answer, i) => (answer.isCorrect ? i : -1))
+      .filter((index) => index !== -1);
+
+    setQuestion({
+      ...question,
+      id: numQuestion,
+      answers: newAnswers,
+      correct: newCorrectsIndex,
+      kindOfQuestion: "Test",
+      kindOfAnswer: optionAnswer,
+    });
+  };
+
   return (
-    <div className="relative flex-1">
+    <div className="relative flex-1 overflow-y-auto custom-scrollbar">
       <div id="question" className="flex flex-col px-3">
         <div className="flex flex-row items-center">
-          <p className="text-lg border-b-2 font-semibold">
-            {question ? `Pregunta ${numQuestion}` : ""}
-          </p>
-          <LuAsterisk className="mb-2" size={12} />
-          {errors.questionText && (
-            <ErrorAlert
-              message="La pregunta no puede estar vacía"
-              style={{ marginLeft: "0.5em" }}
-            />
-          )}
+          <div className="flex tourP-step5">
+            <p className="text-lg border-b-2 font-semibold ">
+              {question ? `Pregunta ${numQuestion}` : ""}
+            </p>
+            <LuAsterisk className="mb-2" size={12} />
+          </div>
+          <div className="tourP-step6">
+            {errors.questionText ? (
+              <ErrorAlert
+                message="La pregunta no puede estar vacía"
+                style={{ marginLeft: "0.5em" }}
+              />
+            ) : (
+              <QuestionBadge text="Pregunta actual" style="ml-2" />
+            )}
+          </div>
         </div>
-        <div className="mt-2">
+        <div className="mt-2 tourP-step7">
           <textarea
             className={`text-[#167563] bg-white text-sm placeholder-[#167563] placeholder-opacity-80 font-medium focus:outline-none px-3 py-2 rounded-xl w-full custom-scrollbar ${
               errors.questionText ? "border-2 border-red-500" : ""
@@ -84,7 +107,7 @@ export const TestForm = ({ numQuestion, optionAnswer }) => {
         </div>
       </div>
 
-      <div id="options" className="px-3 flex-1 flex flex-col">
+      <div id="options" className="px-3 flex-1 flex flex-col tourP-step9">
         <div className="flex flex-1 flex-row">
           <p className="text-lg border-b-2 font-semibold">Respuestas</p>
           <LuAsterisk className="mt-1" size={12} />
@@ -101,7 +124,10 @@ export const TestForm = ({ numQuestion, optionAnswer }) => {
             <ErrorAlert message="Las respuestas no pueden estar vacías" />
           )}
         </div>
-        <div className="overflow-y-auto custom-scrollbar max-h-[440px]" ref={lastAnswerRef}>
+        <div
+          className="overflow-y-auto custom-scrollbar max-h-[28vh]"
+          ref={lastAnswerRef}
+        >
           {question.answers.map((answer, i) => (
             <AnswerInput
               key={i}
@@ -110,13 +136,16 @@ export const TestForm = ({ numQuestion, optionAnswer }) => {
               setAnswer={(updatedAnswer) =>
                 handleAnswerChange(i, updatedAnswer)
               }
+              deleteAnswer={() => {
+                handleDeleteAnswer(i);
+              }}
             />
           ))}
         </div>
         <PlusInput onClick={handleClick} />
       </div>
 
-      <div className="absolute top-1 right-2 flex">
+      <div className="absolute top-1 right-2 flex tourP-step8">
         <div className="flex flex-row">
           {errors.score && (
             <ErrorAlert

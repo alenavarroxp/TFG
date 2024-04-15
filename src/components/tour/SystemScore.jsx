@@ -2,7 +2,6 @@ export const SystemScore = () => {
   return (
     <div className="mt-2 text-left font-normal text-xs bg-gray-800 rounded-lg text-white p-1">
       <div>
-        El sistema de puntuación es el siguiente:
         <div className=" w-full flex justify-center items-center">
           <div className="mr-2">
             <p>Puntuación</p>

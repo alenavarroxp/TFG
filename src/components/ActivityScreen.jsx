@@ -110,7 +110,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
           onConfirm={handleCheckAnswer}
         />
       )}
-      {tourVisible && (<TourComponent setTourVisible={setTourVisible} questions ={activity.questions}/>)}
+      {tourVisible && (<TourComponent setTourVisible={setTourVisible} questions ={activity.questions} isProfessor={false}/>)}
       <div className="absolute top-2 right-3">
         <button onClick={handleClickCerrar}>
           <IoCloseOutline size={24} />
