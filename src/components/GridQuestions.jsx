@@ -1,16 +1,21 @@
 import { useAtom } from "jotai";
 import { errorsTestAtom } from "../context/atoms/errorsTestAtom";
 import { ErrorAlert } from "./ErrorAlert";
+import { useEffect, useState } from "react";
 
 /* eslint-disable react/prop-types */
-export const GridQuestions = ({ questions, setQuestion, style }) => {
+export const GridQuestions = ({ questions, question, setQuestion, style }) => {
   const [errorTest] = useAtom(errorsTestAtom); // Crear un nuevo estado con useAtom
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
+
   const handleQuestionClick = (question) => {
-    console.log("question", question);
-    //SACAR EL INDICE DE LA PREGUNTA
-    console.log("indice", questions.indexOf(question));
     setQuestion(question);
+    setSelectedQuestion(question);
   };
+
+  useEffect(() => {
+    setSelectedQuestion(question);
+  }, [question]);
 
   return (
     <div className={`flex flex-col ml-5 mr-5 ${style}`}>
@@ -24,11 +29,15 @@ export const GridQuestions = ({ questions, setQuestion, style }) => {
       </label>
       <div className="mr-6">
         {Array.isArray(questions) && questions.length > 0 ? (
-          <div className="grid grid-cols-10 gap-2 overflow-y-auto max-h-36 custom-scrollbar overflow-x-hidden">
+          <div className="grid grid-cols-10 gap-3  overflow-y-auto lg:max-h-60vw custom-scrollbar overflow-x-hidden">
             {questions.map((question, index) => (
               <div
                 key={index}
-                className="bg-white py-2 px-pointer-events-auto cursor-pointer rounded-md flex items-center justify-center"
+                className={`min-w-8 max-w-8 min-h-10 max-h-10 p-2 border-2 pointer-events-auto cursor-pointer rounded-md flex items-center justify-center bg-white ${
+                  selectedQuestion === question
+                    ? "border-yellow-500"
+                    : "border-white"
+                }`}
                 onClick={() => handleQuestionClick(question)}
               >
                 <p className="text-[#167563] font-semibold">{`${index + 1}`}</p>

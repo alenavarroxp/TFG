@@ -212,7 +212,7 @@ export const generateSteps = (isProfessor, length) => {
       {
         target: `.tourP-step12`,
         content: (
-          <TourContainer text="Al pulsar este botón" />
+          <TourContainer text="Al pulsar este botón podrás crear una nueva pregunta. Ten en cuenta que si tienes una pregunta si guardar se borrará la información." />
         ),
         placement: "top",
         title: <TourTitle text="Botón de nueva pregunta" />,
@@ -220,7 +220,7 @@ export const generateSteps = (isProfessor, length) => {
       {
         target: `.tourP-step13`,
         content: (
-          <TourContainer text=" Aquí debes seleccionar el tipo de respuesta para la pregunta actual. Asegúrate de seleccionar el tipo correcto para la pregunta." />
+          <TourContainer text="Al pulsar este botón la pregunta se guardará en la sección Preguntas guardadas. Ten en cuenta que para guardar una pregunta debes rellenar los campos obligatorios." />
         ),
         placement: "top",
         title: <TourTitle text="Botón de guardar pregunta actual" />,
@@ -228,7 +228,7 @@ export const generateSteps = (isProfessor, length) => {
       {
         target: `.tourP-step14`,
         content: (
-          <TourContainer text=" Aquí debes seleccionar el tipo de respuesta para la pregunta actual. Asegúrate de seleccionar el tipo correcto para la pregunta." />
+          <TourContainer text="Al pulsar este botón se borrará la pregunta actual. Ten cuidado, si borras una pregunta no podrás recuperarla." />
         ),
         placement: "top",
         title: <TourTitle text="Botón de borrar pregunta actual" />,
@@ -236,7 +236,7 @@ export const generateSteps = (isProfessor, length) => {
       {
         target: `.tourP-step15`,
         content: (
-          <TourContainer text=" Aquí debes seleccionar el tipo de respuesta para la pregunta actual. Asegúrate de seleccionar el tipo correcto para la pregunta." />
+          <TourContainer text="En esta sección se guardarán todas las preguntas. Cuando guardes una pregunta se añadirá a este contenedor y podrás acceder pulsando sobre el cuadrado de la pregunta." />
         ),
         placement: "top",
         title: <TourTitle text="Preguntas guardadas" />,
@@ -244,7 +244,7 @@ export const generateSteps = (isProfessor, length) => {
       {
         target: `.tourP-step16`,
         content: (
-          <TourContainer text=" Aquí debes seleccionar el tipo de respuesta para la pregunta actual. Asegúrate de seleccionar el tipo correcto para la pregunta." />
+          <TourContainer text="Aquí debes seleccionar la ubicación de la actividad. Si eliges Posición actual, se creará en la posición donde te encuentres. Si quieres cambiar la ubicación pulsa en Elegir ubicación en el mapa." />
         ),
         placement: "top",
         title: <TourTitle text="Ubicación de la actividad" />,
@@ -252,7 +252,7 @@ export const generateSteps = (isProfessor, length) => {
       {
         target: `.tourP-step17`,
         content: (
-          <TourContainer text=" Aquí debes seleccionar el tipo de respuesta para la pregunta actual. Asegúrate de seleccionar el tipo correcto para la pregunta." />
+          <TourContainer text="Al pulsar este botón se creará la actividad en el mundo y todos los alumnos podrán verla y realizarla. " />
         ),
         placement: "top",
         title: <TourTitle text="Botón de crear actividad" />,

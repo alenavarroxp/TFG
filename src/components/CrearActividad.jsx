@@ -409,8 +409,8 @@ export const CrearActividad = ({ setCrearScreen }) => {
             los campos obligatorios para poder crearla.
           </div>
           <div className="flex-1 flex-col flex ">
-            <div id="form" className="w-full">
-              <div className="flex flex-col md:flex-row lg:flex-row">
+            <div id="form" className="w-4/6">
+              <div className="flex flex-col md:flex-row lg:flex-row w-full">
                 <SelectInput
                   id="optionCourse"
                   value={course}
@@ -424,7 +424,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
                   onChange={(e) => {
                     setCourse(e.target.value);
                   }}
-                  style="tourP-step1"
+                  style="tourP-step1 lg:w-1/2 md:w-1/2 w-full"
                 />
                 <SelectInput
                   id="optionSubject"
@@ -434,7 +434,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
                   onChange={(e) => {
                     setSubject(e.target.value);
                   }}
-                  style="tourP-step2"
+                  style="tourP-step2 lg:w-1/2 md:w-1/2 w-full"
                 />
               </div>
             </div>
@@ -449,7 +449,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
                     para la pregunta actual.
                   </p>
                   <div className="flex items-center mb-6 flex-col md:flex-row lg:flex-row ">
-                    <div className="w-1/2 sm:w-full">
+                    <div className="lg:w-1/2 md:w-1/2 w-full">
                       <SelectInput
                         id="optionQuestion"
                         value={optionQuestion}
@@ -465,7 +465,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
                         style="tourP-step3"
                       />
                     </div>
-                    <div className="w-1/2 sm:w-full">
+                    <div className="lg:w-1/2 md:w-1/2 w-full">
                       <SelectInput
                         id="optionAnswer"
                         value={optionAnswer}
@@ -536,6 +536,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
               <div className="lg:w-1/3 md:w-1/3 sm:w-full flex flex-1 flex-col relative mt-5">
                 <GridQuestions
                   questions={questions}
+                  question={question}
                   setQuestion={setQuestion}
                   style="tourP-step15"
                 />
