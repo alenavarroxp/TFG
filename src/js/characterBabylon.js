@@ -264,18 +264,19 @@ export class Character {
         0.5
       );
       this.mesh.position = avoidancePosition;
-      //TODO: Check Y COLLISION (Probably modifying keys)
+      //TODO: Check "Y" COLLISION (Probably modifying keys)
+      
     } else if (collisionResult.collisionType === "activity_collision") {
       console.log("Colisión con actividad");
       const avoidancePosition = BABYLON.Vector3.Lerp(
         newPosition,
         this.oldPosition,
-        0.5
+        2
       );
       this.mesh.position = avoidancePosition;
-      socket.emit("NoMove");
-
+      
       socket.emit("modalActivity", collisionResult.activityId);
+      socket.emit("NoMove");
     }
   }
 
