@@ -45,10 +45,7 @@ export function initScene(canvas, user) {
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
   const cameraInitialPosition = camera.position.clone();
-
-  camera.onCollide = function (collidedMesh) {
-    console.log("Colisión con: ", collidedMesh);
-  };
+  
   // Crear una luz
   // eslint-disable-next-line no-unused-vars
   const light = new BABYLON.HemisphericLight(
@@ -200,12 +197,6 @@ export function initScene(canvas, user) {
       cameraMode = "followPlayer";
     } else {
       cameraMode = "default";
-
-      // Llamar a animateCameraProperty para cada propiedad que quieres animar
-      // animateCameraProperty("position", cameraInitialPosition);
-      // animateCameraProperty("radius", 7);
-      // animateCameraProperty("alpha", -Math.PI / 2);
-      // animateCameraProperty("beta", Math.PI / 4);
 
       // Sin animacion
       camera.position = cameraInitialPosition;

@@ -19,6 +19,8 @@ export class Character {
     this.jumpSpeed = 0;
     this.isColliding = false;
     this.oldPosition = new BABYLON.Vector3();
+    this.distanceFromPlayer = 0.35;
+    this.staticCollision = false;
 
     console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
@@ -265,7 +267,6 @@ export class Character {
       );
       this.mesh.position = avoidancePosition;
       //TODO: Check "Y" COLLISION (Probably modifying keys)
-      
     } else if (collisionResult.collisionType === "activity_collision") {
       console.log("Colisión con actividad");
       const avoidancePosition = BABYLON.Vector3.Lerp(
@@ -274,7 +275,7 @@ export class Character {
         2
       );
       this.mesh.position = avoidancePosition;
-      
+
       socket.emit("modalActivity", collisionResult.activityId);
       socket.emit("NoMove");
     }
@@ -353,51 +354,73 @@ export class Character {
   }
 
   moveCamera(scene, camera, keys, escenario) {
-    const lerpFactor = 0.3;
-    const distanceFromPlayer = 0.35; // Ajusta esto para cambiar la distancia de la cámara al jugador
+    if (!this.mesh) return;
 
-    if (keys["W"] || keys["A"] || keys["S"] || keys["D"]) {
+    const moveKeysPressed = keys["W"] || keys["A"] || keys["S"] || keys["D"];
+
+    if (moveKeysPressed) {
       const cameraOffset = new BABYLON.Vector3(
-        -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
+        -this.distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
         0.175,
-        -distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
+        -this.distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
       );
       const targetPosition = this.mesh.position.add(cameraOffset);
 
-      // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
       // eslint-disable-next-line no-undef
+      if (!this.checkCollisionsCamera(targetPosition, escenario)) {
+        camera.position = BABYLON.Vector3.Lerp(
+          camera.position,
+          targetPosition,
+          0.3
+        );
+        camera.lowerRadiusLimit = 0.85;
+        camera.upperRadiusLimit = 0.85;
+      } else {
+        camera.lowerRadiusLimit = 0.5;
+        camera.upperRadiusLimit = 0.5;
+      }
+    }
 
+    // Mira al jugador
+    if (this.checkCollisionsCamera(camera.position, escenario)) {
+      this.staticCollision = true;
+      console.log("cameralowerRadiusLimit", camera.upperRadiusLimit);
+    } else {
       camera.position = BABYLON.Vector3.Lerp(
         camera.position,
-        targetPosition,
-        lerpFactor
+        this.mesh.position,
+        0.45
       );
+      camera.lowerRadiusLimit = 0.85;
+      camera.upperRadiusLimit = 0.85;
     }
-    // Mira al jugador
-    if (this.checkCollisionsCamera(scene, camera, escenario)) {
-      console.log("Colisión con el escenario");
-    }
-    camera.position = BABYLON.Vector3.Lerp(
-      camera.position,
-      this.mesh.position,
-      lerpFactor
-    );
 
+    if (this.staticCollision) {
+      camera.position = BABYLON.Vector3.Lerp(
+        camera.position,
+        new BABYLON.Vector3(
+          this.mesh.position.x,
+          this.mesh.position.y + 5,
+          this.mesh.position.z
+        ),
+        0.1
+      );
+      setTimeout(() => {
+        this.staticCollision = false;
+      }, 600);
+    }
     camera.setTarget(this.mesh.position);
   }
 
-  checkCollisionsCamera(scene, camera, escenario) {
-    const direction = this.mesh.position.subtract(camera.position).normalize();
-    const maxDistance = this.mesh.position.subtract(camera.position).length();
-    const ray = new BABYLON.Ray(camera.position, direction, maxDistance);
+  checkCollisionsCamera(position, escenario) {
+    if (!this.mesh || !position) return false;
+    const direction = this.mesh.position.subtract(position).normalize();
+    const maxDistance = this.mesh.position.subtract(position).length();
+    const ray = new BABYLON.Ray(position, direction, maxDistance);
 
     const intersectedMeshes = ray.intersectsMeshes(escenario.elements);
 
-    if (intersectedMeshes.length > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return intersectedMeshes.length > 0;
   }
 
   increaseSpeed() {
