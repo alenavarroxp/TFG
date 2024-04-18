@@ -215,6 +215,7 @@ export class Character {
   }
 
   move(keys, characters, escenario, scene, activities, socket) {
+    if (!this.mesh) return;
     let computedRotation = this.mesh.rotation.z;
     let computedMovement = new BABYLON.Vector3();
 
@@ -266,7 +267,11 @@ export class Character {
         0.5
       );
       this.mesh.position = avoidancePosition;
-      //TODO: Check "Y" COLLISION (Probably modifying keys)
+      // TODO: Check "Y" COLLISION (Probably modifying keys)
+
+      keys["W"] = false;
+      keys["A"] = false;
+      keys["D"] = false;
     } else if (collisionResult.collisionType === "activity_collision") {
       console.log("Colisión con actividad");
       const avoidancePosition = BABYLON.Vector3.Lerp(
@@ -436,7 +441,7 @@ export class Character {
       // Evitar que el personaje salte mientras ya está en el aire
       this.isJumping = true;
 
-      var jumpImpulse = new CANNON.Vec3(0, 25, 0); // Ajusta este valor según sea necesario
+      var jumpImpulse = new CANNON.Vec3(0, 30, 0); // Ajusta este valor según sea necesario
       this.mesh.physicsImpostor.physicsBody.applyImpulse(
         jumpImpulse,
         this.mesh.physicsImpostor.physicsBody.position

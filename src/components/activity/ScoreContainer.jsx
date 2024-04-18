@@ -66,7 +66,7 @@ export const ScoreContainer = ({ actualQuestion, feedbackVisible }) => {
 
   return (
     <div className="flex font-semibold items-center tour-step6">
-      <h1 className="text-xl text-white mr-1">
+      <h1 className="lg:text-xl md:text-md text-white mr-1">
         {!feedbackVisible
           ? "Puntuación de la pregunta:"
           : "Puntuación obtenida de la pregunta:"}

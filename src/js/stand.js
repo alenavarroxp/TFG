@@ -6,6 +6,7 @@ export class Stand {
     this.stand = null;
     this.exclamation = null;
     this.display = null;
+    this.standPlane = null;
   }
 
   createStand(position, fileName, elements) {
@@ -52,27 +53,53 @@ export class Stand {
         this.createDisplayInfo("No tienes actividades pendientes");
       }
     );
+
+    //Quiero que metas un plano arriba del stand que cubra toda su superficie de arriba
+    this.createPlaneSurface(position);
+  }
+
+  createPlaneSurface(position) {
+    this.standPlane = BABYLON.MeshBuilder.CreateBox(
+      "standPlane",
+      { width: 0.175  , height: 0.225, depth: 0.25 },
+      this.scene
+    );
+
+    this.standPlane.position = new BABYLON.Vector3(
+      position._x,
+      position._y + 0.1,
+      position._z
+    );
+
+    this.standPlane.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+
+    this.standPlane.physicsImpostor = new BABYLON.PhysicsImpostor(
+      this.standPlane,
+      BABYLON.PhysicsImpostor.BoxImpostor,
+      { mass: 0, restitution: 0 },
+      this.scene
+    );
   }
 
   createDisplayInfo(text) {
     // Eliminar el plano existente si ya existe
     if (this.displayInfo) {
-        this.displayInfo.dispose(); // Eliminar el plano existente
+      this.displayInfo.dispose(); // Eliminar el plano existente
     }
 
     // Crear un plano según las dimensiones del this.display
     this.displayInfo = BABYLON.MeshBuilder.CreatePlane(
-        "displayInfo",
-        { width: 0.135, height: 0.115 },
-        this.scene
+      "displayInfo",
+      { width: 0.135, height: 0.115 },
+      this.scene
     );
 
     // Crear una textura dinámica
     var dynamicTexture = new BABYLON.DynamicTexture(
-        "dynamic texture",
-        512,
-        this.scene,
-        true
+      "dynamic texture",
+      512,
+      this.scene,
+      true
     );
     dynamicTexture.hasAlpha = true;
 
@@ -96,16 +123,16 @@ export class Stand {
     const startingY = 256 - ((lines.length - 1) * lineHeight) / 2; // Centrar verticalmente
 
     lines.forEach((line, index) => {
-        ctx.fillText(line, 256, startingY + index * lineHeight);
+      ctx.fillText(line, 256, startingY + index * lineHeight);
     });
-    
+
     // Actualizar la textura
     dynamicTexture.update();
 
     // Crear un material a partir de la textura
     var planeMaterial = new BABYLON.StandardMaterial(
-        "plane material",
-        this.scene
+      "plane material",
+      this.scene
     );
     planeMaterial.diffuseTexture = dynamicTexture;
     planeMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
@@ -118,18 +145,18 @@ export class Stand {
 
     // Mantener el plano enfocado hacia la cámara
     this.displayInfo.position = new BABYLON.Vector3(
-        this.stand.position.x,
-        this.stand.position.y + 0.177,
-        this.stand.position.z
+      this.stand.position.x,
+      this.stand.position.y + 0.177,
+      this.stand.position.z
     );
 
     this.displayInfo.rotation = new BABYLON.Vector3(
-        //37.5 grados
-        Math.PI / 3.43,
-        Math.PI / 2 + Math.PI,
-        0
+      //37.5 grados
+      Math.PI / 3.43,
+      Math.PI / 2 + Math.PI,
+      0
     );
-}
+  }
 
   wrapText(text, ctx, maxWidth) {
     const words = text.split(" ");

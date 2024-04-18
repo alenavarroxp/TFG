@@ -45,7 +45,7 @@ export function initScene(canvas, user) {
   camera.upperBetaLimit = Math.PI / 2.15; // Límite superior
 
   const cameraInitialPosition = camera.position.clone();
-  
+
   // Crear una luz
   // eslint-disable-next-line no-unused-vars
   const light = new BABYLON.HemisphericLight(
@@ -219,6 +219,11 @@ export function initScene(canvas, user) {
 
     if (keys.W || keys.A || keys.S || keys.D) {
       character.move(keys, characters, escenario, scene, activities, socket);
+      // character.mesh.physicsImpostor.physicsBody.position.copy(character.mesh.position);
+      // character.mesh.physicsImpostor.physicsBody.velocity = new CANNON.Vec3(0, 0, 0);
+      // character.mesh.physicsImpostor.physicsBody.quaternion = new CANNON.Quaternion(0, 0, 0, 0); 
+      // character.mesh.physicsImpostor.physicsBody.force = new CANNON.Vec3(0, 0, 0);
+      // character.mesh.physicsImpostor.physicsBody.torque = new CANNON.Vec3(0, 0, 0);
     }
 
     if (character) {
@@ -257,6 +262,10 @@ export function initScene(canvas, user) {
     if (cameraMode === "followPlayer") {
       character.moveCamera(scene, camera, keys, escenario);
     }
+
+    scene.onBeforeRenderObservable.add(() => {
+      scene.getPhysicsEngine().setTimeStep(1 / 60);
+    });
 
     scene.render();
   });
@@ -301,13 +310,12 @@ export function initScene(canvas, user) {
           socket.emit("recuperarPersonajes", socket.id);
           socket.emit("recuperarActividades");
 
-          // Ajusta el radio de la esfera según las dimensiones de tu personaje
-          const sphereRadius = 0.5;
+          const sphereSize = 0.5;
 
           character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
             character.mesh,
             BABYLON.PhysicsImpostor.SphereImpostor,
-            { mass: 10, radius: sphereRadius },
+            { mass: 10, radius: sphereSize, restitution: 0, friction: 1},
             scene
           );
 
@@ -442,6 +450,7 @@ export function initScene(canvas, user) {
   });
 
   const createExclamation = () => {
+    if (infoStand.exclamation) return;
     infoStand.createExclamation();
   };
 

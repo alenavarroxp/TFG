@@ -23,7 +23,7 @@ export const PreguntaHeader = ({ actualQuestion }) => {
           <QuestionBadge
             text={actualQuestion?.kindOfQuestion}
             icon={<RxReader />}
-            style=""
+            style="tour-step3"
           />
         )}
       </div>
