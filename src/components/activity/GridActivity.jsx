@@ -23,24 +23,6 @@ export const GridActivity = ({
       const correctsAnswers = questionFeedback?.corrects[0] || [];
       const wrongsAnswers = questionFeedback?.wrongs[0] || [];
 
-      console.log(
-        "correctsAnswers,wrongAnswers",
-        correctsAnswers,
-        wrongsAnswers
-      );
-      console.log(
-        "correctsAnswers.length",
-        correctsAnswers.length,
-        "questions",
-        questions,
-        "actualQuestion.id",
-        actualQuestion.id,
-        "questions[actualQuestion.id - 1].correct",
-        questions[actualQuestion.id - 1].correct,
-        "questions[actualQuestion.id - 1].correct.length",
-        questions[actualQuestion.id - 1].correct.length
-      );
-
       if (
         correctsAnswers.length === questions[question.id - 1].correct.length &&
         wrongsAnswers.length === 0
@@ -59,11 +41,7 @@ export const GridActivity = ({
   const handleQuestionClick = (question) => {
     setActualQuestion(question);
     setSelectedQuestion(question);
-    console.group("Pregunta seleccionada con Respuestas");
-    console.log(question);
-    console.log(answers);
-    console.groupEnd();
-    saveAnswers(); // Guardar respuestas al cambiar de pregunta
+    saveAnswers();
   };
 
   useEffect(() => {
@@ -109,9 +87,9 @@ export const GridActivity = ({
                 key={index}
                 className={`${
                   feedbackVisible ? customColor(question) : "bg-white"
-                } min-w-8 max-w-8 min-h-10 max-h-10 p-2 px-pointer-events-auto cursor-pointer rounded-md flex items-center justify-center ${
-                  !feedbackVisible && selectedQuestion  === question
-                    ? "border-2  border-yellow-500 tour-step9"
+                } min-w-8 max-w-8 min-h-10 max-h-10 p-2 pointer-events-auto cursor-pointer rounded-md flex items-center justify-center ${
+                  !feedbackVisible && selectedQuestion === question
+                    ? "border-2 border-yellow-500 tour-step9"
                     : feedbackVisible && selectedQuestion === question
                     ? "border-2 border-white tour-step9"
                     : "tour-step9"

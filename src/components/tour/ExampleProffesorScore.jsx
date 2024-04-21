@@ -1,8 +1,8 @@
 export const ExampleProffesorScore = () => {
   return (
-    <div className="mt-2 text-left font-normal text-xs bg-gray-800 rounded-lg text-white p-2">
+    <div className="mt-2 text-justify font-normal text-xs bg-gray-800 rounded-lg text-white p-2 px-3">
               Si tenemos una pregunta con puntuación 1 y 5 respuestas de las
-              cuales 2 opciones correctas y marcamos las 2 opciones correctas y
+              cuales 2 opciones son correctas y marcamos las 2 opciones correctas y
               1 opción incorrecta:
               <div>
                 <div className=" w-full flex justify-center items-center">

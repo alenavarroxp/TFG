@@ -3,13 +3,12 @@ import { useEffect, useState } from "react";
 import Joyride from "react-joyride";
 import { generateSteps } from "../utils/steps";
 
-export const TourComponent = ({ setTourVisible, questions }) => {
+export const TourComponent = ({ setTourVisible, questions, isProfessor }) => {
   const [run, setRun] = useState(false);
-  const steps = generateSteps(questions.length)
-  useEffect(()=>{
-    setRun(true)
-  },[])
-  
+  const steps = generateSteps(isProfessor, questions.length);
+  useEffect(() => {
+    setRun(true);
+  }, []);
 
   const handleJoyrideCallback = (data) => {
     if (
@@ -23,30 +22,28 @@ export const TourComponent = ({ setTourVisible, questions }) => {
 
   return (
     <>
-      <div>
-        <Joyride
-          steps={steps}
-          run={run}
-          continuous={true}
-          showProgress={true}
-          showSkipButton={true}
-          disableOverlayClose={true}
-          disableScrolling={true}
-          spotlightPadding={4}
-          callback={handleJoyrideCallback}
-          styles={{
-            options: {
-              primaryColor: "#1890ff",
-            },
-          }}
-          locale={{
-            last: "Finalizar",
-            next: "Siguiente",
-            skip: "Saltar",
-            back: "Atrás",
-          }}
-        />
-      </div>
+      <Joyride
+        steps={steps}
+        run={run}
+        continuous={true}
+        showProgress={true}
+        showSkipButton={true}
+        disableOverlayClose={true}
+        disableScrolling={true}
+        spotlightPadding={4}
+        callback={handleJoyrideCallback}
+        styles={{
+          options: {
+            primaryColor: "#1890ff",
+          },
+        }}
+        locale={{
+          last: "Finalizar",
+          next: "Siguiente",
+          skip: "Saltar",
+          back: "Atrás",
+        }}
+      />
     </>
   );
 };

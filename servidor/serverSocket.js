@@ -169,6 +169,15 @@ export default function WebSocketServer() {
       socket.on("startActivity", (obj) => {
         socket.emit("startActivity", obj);
       });
+
+      socket.on("feedbackScene", (score) => {
+        socket.emit("feedbackScene",score);
+      });
+
+      socket.on("debug", () => {
+        socket.emit("debug");
+        // socket.emit("feedbackScene");
+      });
     });
   };
 }

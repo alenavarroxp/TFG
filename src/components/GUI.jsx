@@ -18,6 +18,7 @@ import { JoyStickContainer } from "./JoyStickContainer";
 import { JumpButton } from "./JumpButton";
 import { CustomModal } from "./CustomModal";
 import { ActivityScreen } from "./ActivityScreen";
+import { CgDebug } from "react-icons/cg";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -94,6 +95,11 @@ export const GUI = () => {
     window.location.reload();
   };
 
+  const handleDebugClick = () => {
+    socket.emit("debug");
+    setActivityScreen(true);
+  };
+
   return (
     <>
       {!chooseLocation.isChoosing && !modal ? (
@@ -134,6 +140,13 @@ export const GUI = () => {
               onClick={handleChangeCameraClick}
               onKeyDown={handleKeyDown}
               icon={<HiVideoCamera size={22} />}
+              props="mb-6 mr-6"
+            />
+            <GUIButton
+              id="debugBtn"
+              onClick={handleDebugClick}
+              onKeyDown={handleKeyDown}
+              icon={<CgDebug size={22} />}
               props="mb-6 mr-6"
             />
             <JumpButton />
