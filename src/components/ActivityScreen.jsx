@@ -22,6 +22,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
   const [scoreVisible, setScoreVisible] = useState(false);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
   const [tourVisible, setTourVisible] = useState(false);
+  const [score, setScore] = useState(0);
 
   const handleClickCerrar = () => {
     setActivityScreen(false);
@@ -101,8 +102,24 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     setFeedbackVisible(true);
   };
 
+  useEffect(() => {
+    if (scoreVisible) {
+      socket.emit("feedbackScene", score);
+    }
+  }, [score, scoreVisible]);
+
+  useEffect(() => {
+    // Escuchar el evento "debug"
+    socket.on("debug", () => {
+      console.log("DEBUG");
+      setScoreVisible(true);
+      socket.emit("feedbackScene");
+    });
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Lista de dependencias vacía para ejecutar el efecto solo una vez al montar el componente
+
   return (
-    <div className="min-h-screen w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
+    <div className="min-h-full w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
       {confirmModal && (
         <ConfirmModal
           confirmModal={confirmModal}
@@ -110,7 +127,13 @@ export const ActivityScreen = ({ setActivityScreen }) => {
           onConfirm={handleCheckAnswer}
         />
       )}
-      {tourVisible && (<TourComponent setTourVisible={setTourVisible} questions ={activity.questions} isProfessor={false}/>)}
+      {tourVisible && (
+        <TourComponent
+          setTourVisible={setTourVisible}
+          questions={activity.questions}
+          isProfessor={false}
+        />
+      )}
       <div className="absolute top-2 right-3">
         <button onClick={handleClickCerrar}>
           <IoCloseOutline size={24} />
@@ -148,11 +171,18 @@ export const ActivityScreen = ({ setActivityScreen }) => {
           />
           <EndActivity onClick={handleConfirmModal} />
           {scoreVisible && (
-            <FinalScore
-              scoreVisible={scoreVisible}
-              activity={activity}
-              answers={answers}
-            />
+            <>
+              <FinalScore
+                score={score}
+                setScore={setScore}
+                scoreVisible={scoreVisible}
+                activity={activity}
+                answers={answers}
+              />
+              <div className="flex mt-12 bg-white h-[calc(100vh - 12rem)]">
+                <canvas id="feedbackScene" className="h-96 w-full"></canvas>
+              </div>
+            </>
           )}
         </div>
       </div>

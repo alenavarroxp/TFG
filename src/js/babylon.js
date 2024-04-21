@@ -221,7 +221,7 @@ export function initScene(canvas, user) {
       character.move(keys, characters, escenario, scene, activities, socket);
       // character.mesh.physicsImpostor.physicsBody.position.copy(character.mesh.position);
       // character.mesh.physicsImpostor.physicsBody.velocity = new CANNON.Vec3(0, 0, 0);
-      // character.mesh.physicsImpostor.physicsBody.quaternion = new CANNON.Quaternion(0, 0, 0, 0); 
+      // character.mesh.physicsImpostor.physicsBody.quaternion = new CANNON.Quaternion(0, 0, 0, 0);
       // character.mesh.physicsImpostor.physicsBody.force = new CANNON.Vec3(0, 0, 0);
       // character.mesh.physicsImpostor.physicsBody.torque = new CANNON.Vec3(0, 0, 0);
     }
@@ -315,7 +315,7 @@ export function initScene(canvas, user) {
           character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
             character.mesh,
             BABYLON.PhysicsImpostor.SphereImpostor,
-            { mass: 10, radius: sphereSize, restitution: 0, friction: 1},
+            { mass: 10, radius: sphereSize, restitution: 0, friction: 1 },
             scene
           );
 
@@ -539,5 +539,70 @@ export function initScene(canvas, user) {
       console.log("ACTIVITY", activity);
       activity.element.updatePosition(obj.location);
     }
+  });
+
+  socket.on("feedbackScene", (score) => {
+    feedbackScene(character,score);
+  });
+}
+
+function feedbackScene(character,score) {
+  console.log("EL CHARACTER ES: ", character);
+  // Crear una escena de babylonJS
+  const canvas = document.getElementById("feedbackScene");
+  const engine = new BABYLON.Engine(canvas, true);
+  const scene = new BABYLON.Scene(engine);
+
+  scene.clearColor = new BABYLON.Color4(0.0863, 0.4588, 0.3882, 1);
+
+  // Crear y configurar la cámara
+  const camera = new BABYLON.ArcRotateCamera(
+    "camera",
+    -Math.PI / 2,
+    Math.PI / 2,
+    0.01,
+    new BABYLON.Vector3(0, 0.1, 0),
+    scene
+  );
+  camera.minZ = 0.1;
+  camera.maxZ = 100;
+  camera.lowerRadiusLimit = 0.3;
+  camera.upperRadiusLimit = 0.3;
+  camera.attachControl(canvas, true);
+
+  const user = {
+    userName: character.user.userName,
+    isProfessor: character.user.isProfessor,
+  };
+
+  // Crear un personaje
+  const characterCopy = new Character(
+    "characterCopy",
+    new BABYLON.Vector3(0, 0, 0),
+    new BABYLON.Vector3(0, 0, 0),
+    user,
+    scene,
+    (character) => {
+      console.log("characterCopy", character);
+      camera.setTarget(
+        character.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
+      );
+      character.doFeedbackAnimation(score);
+      
+    }
+  );
+
+  console.log("characterCopy", characterCopy);
+  // Añadir una luz hemisférica a la escena
+  new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 10, 0), scene);
+
+  // Renderizar la escena
+  engine.runRenderLoop(() => {
+    scene.render();
+  });
+
+  // Manejar el redimensionamiento de la ventana
+  window.addEventListener("resize", () => {
+    engine.resize();
   });
 }

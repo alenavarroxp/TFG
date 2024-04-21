@@ -4,15 +4,21 @@ import { UnderlinedText } from "../UnderlinedText";
 import { useAtom } from "jotai";
 import { feedbackAtom } from "../../context/atoms/feedbackAtom";
 
-export const FinalScore = ({ scoreVisible, activity, answers }) => {
-  const [finalScore, setFinalScore] = useState(0);
+export const FinalScore = ({
+  score,
+  setScore,
+  scoreVisible,
+  activity,
+  answers,
+}) => {
+  
   const [totalScore, setTotalScore] = useState(0);
   const [feedback, setFeedback] = useAtom(feedbackAtom);
 
   useEffect(() => {
     console.log("Calculando puntuación");
     // if (scoreVisible)
-    calculateScore();
+    calculateScore(); 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scoreVisible]);
 
@@ -39,7 +45,7 @@ export const FinalScore = ({ scoreVisible, activity, answers }) => {
       score -= (wrongs.length / correct.length) * 0.5;
 
       score *= activity.questions[i].score;
-      setFinalScore((prev) => prev + score);
+      setScore((prev) => prev + score);
       console.log("Puntaje de pregunta", score);
       updateFeedback(i, corrects, wrongs);
     }
@@ -71,13 +77,13 @@ export const FinalScore = ({ scoreVisible, activity, answers }) => {
 
   useEffect(() => {
     if (totalScore !== 0) {
-      setFinalScore((prev) => {
+      setScore((prev) => {
         const newScore = parseFloat((prev / totalScore) * 10).toFixed(2);
         return Math.max(newScore, 0).toFixed(2); // Asegurarse de que el puntaje final no sea negativo
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalScore]);
-  
 
   const normalize = () => {
     //AQUI QUIERO QUE LOS ARRAYs DE RESPUESTAS CORRECTAS Y DE RESPUESTAS DADAS ESTÉN ORDENADOS DE MENOR A MAYOR
@@ -96,7 +102,7 @@ export const FinalScore = ({ scoreVisible, activity, answers }) => {
   return (
     <div className="flex items-center mt-4">
       <UnderlinedText text="Puntuación final:" style="text-xl ml-4" />
-      <p className="ml-2 font-semibold text-xl">{finalScore} / 10.00</p>
+      <p className="ml-2 font-semibold text-xl">{score} / 10.00</p>
     </div>
   );
 };

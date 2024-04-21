@@ -2,6 +2,7 @@
 import "babylonjs-loaders";
 export class Character {
   constructor(id, position, rotation, user, scene, callback) {
+    this.scene = scene;
     this.id = id;
     this.user = user;
     this.mesh = null;
@@ -21,6 +22,7 @@ export class Character {
     this.oldPosition = new BABYLON.Vector3();
     this.distanceFromPlayer = 0.35;
     this.staticCollision = false;
+    this.reward = null;
 
     console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
@@ -181,13 +183,15 @@ export class Character {
       },
       scene
     );
-    var ellipsoidMaterial = new BABYLON.StandardMaterial(
-      "ellipsoidMaterial",
-      scene
-    );
-    ellipsoidMaterial.wireframe = true;
-    this.capsule.material = ellipsoidMaterial;
+    //VER CAPSULA
+    // var ellipsoidMaterial = new BABYLON.StandardMaterial(
+    //   "ellipsoidMaterial",
+    //   scene
+    // );
+    // ellipsoidMaterial.wireframe = true;
+    // this.capsule.material = ellipsoidMaterial;
     this.capsule.checkCollisions = true;
+    this.capsule.isVisible = false;
 
     scene.registerBeforeRender(() => {
       this.capsule.position = new BABYLON.Vector3(
@@ -461,4 +465,61 @@ export class Character {
     this.capsule.dispose();
     this.displayName.dispose();
   }
+
+  doFeedbackAnimation(score) {
+    let animations = [];
+    if (score >= 5) {
+      // animations.push("CharacterArmature|Wave");
+      // animations.push("CharacterArmature|Wave");
+      // animations.push("CharacterArmature|Yes");
+      // animations.push("CharacterArmature|Yes");
+      animations.push("CharacterArmature|Idle_Gun");
+      animations.push("CharacterArmature|Idle_Gun");
+      animations.push("CharacterArmature|Idle_Gun");
+      animations.push("CharacterArmature|Idle_Gun");
+    } else {
+      animations.push("CharacterArmature|No");
+      animations.push("CharacterArmature|Death");
+      animations.push("CharacterArmature|Duck");
+      animations.push("CharacterArmature|Idle");
+    }
+
+    let i = 0;
+    setInterval(() => {
+      if (animations[i] == "CharacterArmature|Idle_Gun") {
+        this.createReward();
+      }
+      this.playAnimation(animations[i]);
+      i++;
+      if (i >= animations.length) {
+        i = 0; // Reset the index to start from the beginning
+      }
+    }, 2000);
+  }
+
+  createReward = () => {
+    if (this.reward) return;
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "models/",
+      "coin.glb",
+      this.scene,
+      (newMeshes) => {
+        // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.reward = newMeshes[0];
+        this.reward.position = new BABYLON.Vector3(
+          this.mesh.position.x + 0.035,
+          this.mesh.position.y + 0.07,
+          this.mesh.position.z - 0.05
+        );
+        this.reward.scaling.set(0.04, 0.04, 0.04);
+
+        console.log("REWARD", this.reward);
+        this.scene.registerBeforeRender(() => {
+          if (this.reward)
+            this.reward.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);
+        });
+      }
+    );
+  };
 }
