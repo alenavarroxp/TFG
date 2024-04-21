@@ -16,20 +16,40 @@ import GUIButton from "../inputs/GUIButton";
 import { IoHome } from "react-icons/io5";
 import { JoyStickContainer } from "./JoyStickContainer";
 import { JumpButton } from "./JumpButton";
+import { CustomModal } from "./CustomModal";
+import { ActivityScreen } from "./ActivityScreen";
+import { CgDebug } from "react-icons/cg";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
+  const [modal, setModal] = useState(false);
   const [crearScreen, setCrearScreen] = useState(false);
+  const [activityScreen, setActivityScreen] = useState(false);
   const getUser = useAtomValue(userAtom);
   const [chooseLocation] = useAtom(chooseLocationAtom);
   const [test] = useAtom(testAtom);
   const [tests, setTests] = useState({});
+  const [activityId, setActivityId] = useState("");
 
   const crearUuid = () => {
     return uuidv4();
   };
 
   useEffect(() => {
+    socket.on("modalActivity", (obj) => {
+      modalActivity(obj);
+    });
+  }, []);
+
+  const modalActivity = (obj) => {
+    console.log("GUI obj", obj, "tests[obj.id]", tests[obj.id]);
+    setModal(true);
+    setActivityId(obj);
+    setUserModal(false);
+  };
+
+  useEffect(() => {
+    if (!test) return;
     if (test.creador != "") {
       const testUuid = crearUuid();
 
@@ -38,13 +58,18 @@ export const GUI = () => {
         [testUuid]: { ...test },
       }));
 
+      socket.emit("updateActivity", { id: testUuid, test: test });
+
       setCrearScreen(false);
       socket.emit("move");
     }
   }, [test]);
 
   useEffect(() => {
-    if (Object.keys(tests).length > 0) socket.emit("createPointer", tests);
+    if (Object.keys(tests).length > 0) {
+      console.log("CREAR POINTER");
+      socket.emit("createPointer", tests);
+    }
   }, [tests]);
 
   useEffect(() => {
@@ -67,13 +92,17 @@ export const GUI = () => {
   };
 
   const handleHomeClick = () => {
-    //Recargar la página
     window.location.reload();
+  };
+
+  const handleDebugClick = () => {
+    socket.emit("debug");
+    setActivityScreen(true);
   };
 
   return (
     <>
-      {!chooseLocation.isChoosing ? (
+      {!chooseLocation.isChoosing && !modal ? (
         <div
           id="GUI"
           className="absolute w-full h-full flex flex-row pointer-events-none"
@@ -113,6 +142,13 @@ export const GUI = () => {
               icon={<HiVideoCamera size={22} />}
               props="mb-6 mr-6"
             />
+            <GUIButton
+              id="debugBtn"
+              onClick={handleDebugClick}
+              onKeyDown={handleKeyDown}
+              icon={<CgDebug size={22} />}
+              props="mb-6 mr-6"
+            />
             <JumpButton />
           </div>
         </div>
@@ -122,6 +158,16 @@ export const GUI = () => {
 
       {userModal && <UserModal />}
       {crearScreen && <CrearActividad setCrearScreen={setCrearScreen} />}
+      {activityScreen && <ActivityScreen setActivityScreen={setActivityScreen} />}
+      {modal && (
+        <CustomModal
+          modal={modal}
+          setModal={setModal}
+          setCrearScreen={setCrearScreen}
+          activityId = {activityId}
+          setActivityScreen={setActivityScreen}
+        />
+      )}
     </>
   );
 };

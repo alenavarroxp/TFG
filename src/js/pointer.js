@@ -21,13 +21,19 @@ export class Pointer {
           position._z
         );
         if (fileName === "pointer") this.pointer.scaling.set(0.05, 0.05, 0.05);
-        else {this.pointer.scaling.set(0.15, 0.15, 0.15);
-        this.pointer.position.y= 0.075}
+        else {
+          this.pointer.scaling.set(0.15, 0.15, 0.15);
+          this.pointer.position.y = 0.075;
+        }
         this.pointer.name = fileName;
 
         this.scene.registerBeforeRender(() => {
           if (this.pointer)
             this.pointer.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);
+        });
+
+        this.meshes.forEach((mesh) => {
+          mesh.showBoundingBox = true;
         });
       }
     );
@@ -38,6 +44,15 @@ export class Pointer {
       this.pointer.position = new BABYLON.Vector3(
         position._x,
         position._y,
+        position._z
+      );
+  }
+
+  updatePosition(position) {
+    if (this.pointer)
+      this.pointer.position = new BABYLON.Vector3(
+        position._x,
+        0.075,
         position._z
       );
   }

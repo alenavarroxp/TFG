@@ -2,6 +2,7 @@
 import "babylonjs-loaders";
 export class Character {
   constructor(id, position, rotation, user, scene, callback) {
+    this.scene = scene;
     this.id = id;
     this.user = user;
     this.mesh = null;
@@ -19,6 +20,9 @@ export class Character {
     this.jumpSpeed = 0;
     this.isColliding = false;
     this.oldPosition = new BABYLON.Vector3();
+    this.distanceFromPlayer = 0.35;
+    this.staticCollision = false;
+    this.reward = null;
 
     console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
@@ -179,13 +183,15 @@ export class Character {
       },
       scene
     );
-    var ellipsoidMaterial = new BABYLON.StandardMaterial(
-      "ellipsoidMaterial",
-      scene
-    );
-    ellipsoidMaterial.wireframe = true;
-    this.capsule.material = ellipsoidMaterial;
+    //VER CAPSULA
+    // var ellipsoidMaterial = new BABYLON.StandardMaterial(
+    //   "ellipsoidMaterial",
+    //   scene
+    // );
+    // ellipsoidMaterial.wireframe = true;
+    // this.capsule.material = ellipsoidMaterial;
     this.capsule.checkCollisions = true;
+    this.capsule.isVisible = false;
 
     scene.registerBeforeRender(() => {
       this.capsule.position = new BABYLON.Vector3(
@@ -212,7 +218,8 @@ export class Character {
     }
   }
 
-  move(keys, characters, escenario, scene, activities) {
+  move(keys, characters, escenario, scene, activities, socket) {
+    if (!this.mesh) return;
     let computedRotation = this.mesh.rotation.z;
     let computedMovement = new BABYLON.Vector3();
 
@@ -264,11 +271,22 @@ export class Character {
         0.5
       );
       this.mesh.position = avoidancePosition;
-      //TODO: Check Y COLLISION (Probably modifying keys)
-    } else if (collisionResult === "activity_collision") {
+      // TODO: Check "Y" COLLISION (Probably modifying keys)
+
+      keys["W"] = false;
+      keys["A"] = false;
+      keys["D"] = false;
+    } else if (collisionResult.collisionType === "activity_collision") {
       console.log("Colisión con actividad");
-      this.oldPosition = this.mesh.position.clone(); // Actualizamos la posición anterior
-      this.mesh.position = newPosition;
+      const avoidancePosition = BABYLON.Vector3.Lerp(
+        newPosition,
+        this.oldPosition,
+        2
+      );
+      this.mesh.position = avoidancePosition;
+
+      socket.emit("modalActivity", collisionResult.activityId);
+      socket.emit("NoMove");
     }
   }
 
@@ -331,7 +349,8 @@ export class Character {
 
     for (const activity of activities) {
       if (activity.element.pointer.intersectsMesh(this.capsule, true)) {
-        return "activity_collision";
+        console.log("Colisión con actividad", activity);
+        return { collisionType: "activity_collision", activityId: activity.id };
       }
     }
     // Verificar colisiones con el escenario pero solo si el personaje se está moviendo. No quiero que me lo deje atrapado en el intersectsMesh
@@ -344,51 +363,73 @@ export class Character {
   }
 
   moveCamera(scene, camera, keys, escenario) {
-    const lerpFactor = 0.3;
-    const distanceFromPlayer = 0.35; // Ajusta esto para cambiar la distancia de la cámara al jugador
+    if (!this.mesh) return;
 
-    if (keys["W"] || keys["A"] || keys["S"] || keys["D"]) {
+    const moveKeysPressed = keys["W"] || keys["A"] || keys["S"] || keys["D"];
+
+    if (moveKeysPressed) {
       const cameraOffset = new BABYLON.Vector3(
-        -distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
+        -this.distanceFromPlayer * Math.sin(this.mesh.rotation.z + Math.PI),
         0.175,
-        -distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
+        -this.distanceFromPlayer * Math.cos(this.mesh.rotation.z + Math.PI)
       );
       const targetPosition = this.mesh.position.add(cameraOffset);
 
-      // Aplica la interpolación (lerp) para suavizar el seguimiento del jugador
       // eslint-disable-next-line no-undef
+      if (!this.checkCollisionsCamera(targetPosition, escenario)) {
+        camera.position = BABYLON.Vector3.Lerp(
+          camera.position,
+          targetPosition,
+          0.3
+        );
+        camera.lowerRadiusLimit = 0.85;
+        camera.upperRadiusLimit = 0.85;
+      } else {
+        camera.lowerRadiusLimit = 0.5;
+        camera.upperRadiusLimit = 0.5;
+      }
+    }
 
+    // Mira al jugador
+    if (this.checkCollisionsCamera(camera.position, escenario)) {
+      this.staticCollision = true;
+      console.log("cameralowerRadiusLimit", camera.upperRadiusLimit);
+    } else {
       camera.position = BABYLON.Vector3.Lerp(
         camera.position,
-        targetPosition,
-        lerpFactor
+        this.mesh.position,
+        0.45
       );
+      camera.lowerRadiusLimit = 0.85;
+      camera.upperRadiusLimit = 0.85;
     }
-    // Mira al jugador
-    if (this.checkCollisionsCamera(scene, camera, escenario)) {
-      console.log("Colisión con el escenario");
-    }
-    camera.position = BABYLON.Vector3.Lerp(
-      camera.position,
-      this.mesh.position,
-      lerpFactor
-    );
 
+    if (this.staticCollision) {
+      camera.position = BABYLON.Vector3.Lerp(
+        camera.position,
+        new BABYLON.Vector3(
+          this.mesh.position.x,
+          this.mesh.position.y + 5,
+          this.mesh.position.z
+        ),
+        0.1
+      );
+      setTimeout(() => {
+        this.staticCollision = false;
+      }, 600);
+    }
     camera.setTarget(this.mesh.position);
   }
 
-  checkCollisionsCamera(scene, camera, escenario) {
-    const direction = this.mesh.position.subtract(camera.position).normalize();
-    const maxDistance = this.mesh.position.subtract(camera.position).length();
-    const ray = new BABYLON.Ray(camera.position, direction, maxDistance);
+  checkCollisionsCamera(position, escenario) {
+    if (!this.mesh || !position) return false;
+    const direction = this.mesh.position.subtract(position).normalize();
+    const maxDistance = this.mesh.position.subtract(position).length();
+    const ray = new BABYLON.Ray(position, direction, maxDistance);
 
     const intersectedMeshes = ray.intersectsMeshes(escenario.elements);
 
-    if (intersectedMeshes.length > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return intersectedMeshes.length > 0;
   }
 
   increaseSpeed() {
@@ -404,7 +445,7 @@ export class Character {
       // Evitar que el personaje salte mientras ya está en el aire
       this.isJumping = true;
 
-      var jumpImpulse = new CANNON.Vec3(0, 25, 0); // Ajusta este valor según sea necesario
+      var jumpImpulse = new CANNON.Vec3(0, 30, 0); // Ajusta este valor según sea necesario
       this.mesh.physicsImpostor.physicsBody.applyImpulse(
         jumpImpulse,
         this.mesh.physicsImpostor.physicsBody.position
@@ -424,4 +465,61 @@ export class Character {
     this.capsule.dispose();
     this.displayName.dispose();
   }
+
+  doFeedbackAnimation(score) {
+    let animations = [];
+    if (score >= 5) {
+      // animations.push("CharacterArmature|Wave");
+      // animations.push("CharacterArmature|Wave");
+      // animations.push("CharacterArmature|Yes");
+      // animations.push("CharacterArmature|Yes");
+      animations.push("CharacterArmature|Idle_Gun");
+      animations.push("CharacterArmature|Idle_Gun");
+      animations.push("CharacterArmature|Idle_Gun");
+      animations.push("CharacterArmature|Idle_Gun");
+    } else {
+      animations.push("CharacterArmature|No");
+      animations.push("CharacterArmature|Death");
+      animations.push("CharacterArmature|Duck");
+      animations.push("CharacterArmature|Idle");
+    }
+
+    let i = 0;
+    setInterval(() => {
+      if (animations[i] == "CharacterArmature|Idle_Gun") {
+        this.createReward();
+      }
+      this.playAnimation(animations[i]);
+      i++;
+      if (i >= animations.length) {
+        i = 0; // Reset the index to start from the beginning
+      }
+    }, 2000);
+  }
+
+  createReward = () => {
+    if (this.reward) return;
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "models/",
+      "coin.glb",
+      this.scene,
+      (newMeshes) => {
+        // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.reward = newMeshes[0];
+        this.reward.position = new BABYLON.Vector3(
+          this.mesh.position.x + 0.035,
+          this.mesh.position.y + 0.07,
+          this.mesh.position.z - 0.05
+        );
+        this.reward.scaling.set(0.04, 0.04, 0.04);
+
+        console.log("REWARD", this.reward);
+        this.scene.registerBeforeRender(() => {
+          if (this.reward)
+            this.reward.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);
+        });
+      }
+    );
+  };
 }

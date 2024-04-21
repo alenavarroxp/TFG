@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { RadioLocation } from "../inputs/radioLocation";
 import { MandatoryText } from "./MandatoryText";
@@ -9,7 +10,7 @@ import { locationOptionAtom } from "../context/atoms/locationOptionAtom";
 import { errorsTestAtom } from "../context/atoms/errorsTestAtom";
 import { ErrorAlert } from "./ErrorAlert";
 
-export const LocationPicker = () => {
+export const LocationPicker = ({ style }) => {
   const [location, setLocation] = useAtom(locationAtom);
   const [, setChooseLocation] = useAtom(chooseLocationAtom);
   const [option, setOption] = useAtom(locationOptionAtom);
@@ -56,7 +57,7 @@ export const LocationPicker = () => {
   }, [location, setOption]);
 
   return (
-    <div className="ml-5 mt-4 mr-8 mb-2">
+    <div className={`ml-5 mt-4 mr-8 mb-2 ${style}`}>
       <MandatoryText text={"Ubicación de la actividad"} />
       {errorsTest.position && (
         <div className="w-fit mb-2">
