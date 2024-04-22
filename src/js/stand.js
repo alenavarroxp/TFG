@@ -79,6 +79,8 @@ export class Stand {
       { mass: 0, restitution: 0 },
       this.scene
     );
+
+    this.standPlane.isVisible = false;
   }
 
   createDisplayInfo(text) {

@@ -203,6 +203,8 @@ export function initScene(canvas, user) {
       camera.radius = 7;
       camera.alpha = -Math.PI / 2;
       camera.beta = Math.PI / 4;
+      camera.lowerRadiusLimit = 1;
+      camera.upperRadiusLimit = 22.5;
 
       // Mira hacia el objetivo (ajusta según sea necesario)
       camera.setTarget(BABYLON.Vector3.Zero());
@@ -332,7 +334,7 @@ export function initScene(canvas, user) {
 
   socket.on("newCharacter", (obj) => {
     const object = characters.find((character) => character.id === obj.id);
-    console.log("CHARACTER EN NEW CHARACTER", object);
+    // console.log("CHARACTER EN NEW CHARACTER", object);
     if (!object) {
       const character = new Character(
         obj.id,
@@ -341,7 +343,7 @@ export function initScene(canvas, user) {
         obj.user,
         scene
       );
-      console.log("Se ha creado el personaje: ", character);
+      // console.log("Se ha creado el personaje: ", character);
       characters.push(character);
     }
   });
@@ -362,7 +364,7 @@ export function initScene(canvas, user) {
   });
 
   socket.on("recuperarPersonajes", () => {
-    console.log("Recuperando personajes...");
+    // console.log("Recuperando personajes...");
     for (const character of characters) {
       try {
         socket.emit("newCharacter", {
@@ -378,10 +380,10 @@ export function initScene(canvas, user) {
   });
 
   socket.on("recuperarActividades", () => {
-    console.log("Recuperando actividades...");
+    // console.log("Recuperando actividades...");
     for (const activity of activities) {
       try {
-        console.log("activity", activity);
+        // console.log("activity", activity);
         socket.emit("newActivity", {
           id: activity.id,
           location: activity.element.pointer._position,
@@ -494,7 +496,7 @@ export function initScene(canvas, user) {
   });
 
   socket.on("newActivity", (obj) => {
-    console.log("Nueva actividad en babylonJS", obj);
+    // console.log("Nueva actividad en babylonJS", obj);
     createPointer(obj);
   });
 
@@ -536,18 +538,17 @@ export function initScene(canvas, user) {
   socket.on("updatePointer", (obj) => {
     const activity = activities.find((activity) => activity.id === obj.id);
     if (activity) {
-      console.log("ACTIVITY", activity);
+      // console.log("ACTIVITY", activity);
       activity.element.updatePosition(obj.location);
     }
   });
 
   socket.on("feedbackScene", (score) => {
-    feedbackScene(character,score);
+    feedbackScene(character, score);
   });
 }
 
-function feedbackScene(character,score) {
-  console.log("EL CHARACTER ES: ", character);
+function feedbackScene(character, score) {
   // Crear una escena de babylonJS
   const canvas = document.getElementById("feedbackScene");
   const engine = new BABYLON.Engine(canvas, true);
@@ -568,7 +569,6 @@ function feedbackScene(character,score) {
   camera.maxZ = 100;
   camera.lowerRadiusLimit = 0.3;
   camera.upperRadiusLimit = 0.3;
-  camera.attachControl(canvas, true);
 
   const user = {
     userName: character.user.userName,
@@ -576,23 +576,20 @@ function feedbackScene(character,score) {
   };
 
   // Crear un personaje
-  const characterCopy = new Character(
+  new Character(
     "characterCopy",
     new BABYLON.Vector3(0, 0, 0),
     new BABYLON.Vector3(0, 0, 0),
     user,
     scene,
     (character) => {
-      console.log("characterCopy", character);
       camera.setTarget(
         character.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
       );
       character.doFeedbackAnimation(score);
-      
     }
   );
 
-  console.log("characterCopy", characterCopy);
   // Añadir una luz hemisférica a la escena
   new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 10, 0), scene);
 

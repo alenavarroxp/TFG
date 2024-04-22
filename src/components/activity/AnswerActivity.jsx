@@ -79,7 +79,6 @@ export const AnswerActivity = ({
       answerOption: [index + 1],
     };
 
-    console.log("actualQuestion", actualQuestion);
     const currentAnswers =
       answers[actualQuestion.id - 1] &&
       answers[actualQuestion.id - 1].answerOption;
@@ -118,7 +117,6 @@ export const AnswerActivity = ({
       setAnswers(updatedAnswers);
     }
     setVisibleCorrect((prevVisibleCorrect) => !prevVisibleCorrect);
-    console.log("ANSWERS AFTER", answers);
   };
 
   return (

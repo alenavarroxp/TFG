@@ -10,15 +10,13 @@ export const FinalScore = ({
   scoreVisible,
   activity,
   answers,
+  debug,
 }) => {
-  
   const [totalScore, setTotalScore] = useState(0);
-  const [feedback, setFeedback] = useAtom(feedbackAtom);
+  const [, setFeedback] = useAtom(feedbackAtom);
 
   useEffect(() => {
-    console.log("Calculando puntuación");
-    // if (scoreVisible)
-    calculateScore(); 
+    if (!debug) calculateScore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scoreVisible]);
 
@@ -28,7 +26,6 @@ export const FinalScore = ({
     for (let i = 0; i < correctAnswers.length; i++) {
       const correct = correctAnswers[i];
       const given = givenAnswers[i];
-      console.log("Comparando", correct, given);
       let corrects = [];
 
       for (let j = 0; j < correct.length; j++) {
@@ -36,9 +33,7 @@ export const FinalScore = ({
           corrects.push(correct[j]);
         }
       }
-      // console.log("Correctas", corrects);
       let wrongs = given.filter((answer) => !corrects.includes(answer));
-      // console.log("Incorrectas", wrongs);
 
       //CALCULAR PUNTAJE
       let score = corrects.length / correct.length;
@@ -46,7 +41,6 @@ export const FinalScore = ({
 
       score *= activity.questions[i].score;
       setScore((prev) => prev + score);
-      console.log("Puntaje de pregunta", score);
       updateFeedback(i, corrects, wrongs);
     }
 
@@ -65,10 +59,6 @@ export const FinalScore = ({
     });
   };
 
-  useEffect(() => {
-    console.log("Feedback", feedback);
-  }, [feedback]);
-
   const outOfTen = () => {
     activity.questions.forEach((question) => {
       setTotalScore((prev) => prev + parseFloat(question.score));
@@ -82,7 +72,7 @@ export const FinalScore = ({
         return Math.max(newScore, 0).toFixed(2); // Asegurarse de que el puntaje final no sea negativo
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalScore]);
 
   const normalize = () => {
@@ -94,8 +84,6 @@ export const FinalScore = ({
 
     const givenAnswers = answers.map((answer) => answer.answerOption.sort());
 
-    console.log("Respuestas correctas ordenadas", correctAnswers);
-    console.log("Respuestas dadas ordenadas", givenAnswers);
     return { correctAnswers, givenAnswers };
   };
 

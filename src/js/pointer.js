@@ -32,9 +32,9 @@ export class Pointer {
             this.pointer.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);
         });
 
-        this.meshes.forEach((mesh) => {
-          mesh.showBoundingBox = true;
-        });
+        // this.meshes.forEach((mesh) => {
+        //   mesh.showBoundingBox = true;
+        // });
       }
     );
   }

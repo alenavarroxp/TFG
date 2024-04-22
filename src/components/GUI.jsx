@@ -42,7 +42,6 @@ export const GUI = () => {
   }, []);
 
   const modalActivity = (obj) => {
-    console.log("GUI obj", obj, "tests[obj.id]", tests[obj.id]);
     setModal(true);
     setActivityId(obj);
     setUserModal(false);
@@ -67,7 +66,6 @@ export const GUI = () => {
 
   useEffect(() => {
     if (Object.keys(tests).length > 0) {
-      console.log("CREAR POINTER");
       socket.emit("createPointer", tests);
     }
   }, [tests]);

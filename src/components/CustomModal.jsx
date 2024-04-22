@@ -30,7 +30,6 @@ export const CustomModal = ({
 
   useEffect(() => {
     socket.on("getActivity", (obj) => {
-      console.log("ACTIVITY Nidak", obj);
       setActivity(obj.activity);
     });
   }, []);
@@ -42,10 +41,6 @@ export const CustomModal = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activity]);
-
-  useEffect(() => {
-    console.log("KIND QUESTION", kindQuestion);
-  }, [kindQuestion]);
 
   const handleOk = () => {
     setModalText(
@@ -59,10 +54,8 @@ export const CustomModal = ({
 
       if (getUser.isProfessor) {
         setCrearScreen(true);
-        console.log("activityId", activityId);
         socket.emit("getActivity", { id: activityId });
       } else {
-        console.log("Realizando actividad...");
         setActivityScreen(true);
         socket.emit("NoMove");
         socket.emit("startActivity", { id: activityId, activity: activity });
