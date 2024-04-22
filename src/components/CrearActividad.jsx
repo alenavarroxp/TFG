@@ -64,7 +64,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
   useEffect(() => {
     socket.on("getActivity", (obj) => {
-      console.log("GET ACTIVITY", obj);
       // eslint-disable-next-line react-hooks/exhaustive-deps
       setActivityId(obj.id);
       setQuestions(obj.activity.questions);
@@ -90,7 +89,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
   };
 
   const resetErrors = ({ tour }) => {
-    console.log("tour", tour);
     setErrors({
       questionText: false,
       answers: false,
@@ -255,15 +253,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
 
   const updateTest = () => {
     if (confirmTest()) {
-      console.log(
-        "ACTUALIZAR TEST",
-        activityId,
-        location.id,
-        questions,
-        location.position,
-        course,
-        subject
-      );
       socket.emit("setActivity", {
         id: activityId,
         creador: location.id,

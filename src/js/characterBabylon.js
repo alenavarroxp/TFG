@@ -24,7 +24,7 @@ export class Character {
     this.staticCollision = false;
     this.reward = null;
 
-    console.log("USER en crear personaje", this.user);
+    // console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
 
     BABYLON.SceneLoader.ImportMesh(
@@ -277,7 +277,7 @@ export class Character {
       keys["A"] = false;
       keys["D"] = false;
     } else if (collisionResult.collisionType === "activity_collision") {
-      console.log("Colisión con actividad");
+      // console.log("Colisión con actividad");
       const avoidancePosition = BABYLON.Vector3.Lerp(
         newPosition,
         this.oldPosition,
@@ -349,7 +349,7 @@ export class Character {
 
     for (const activity of activities) {
       if (activity.element.pointer.intersectsMesh(this.capsule, true)) {
-        console.log("Colisión con actividad", activity);
+        // console.log("Colisión con actividad", activity);
         return { collisionType: "activity_collision", activityId: activity.id };
       }
     }
@@ -393,7 +393,7 @@ export class Character {
     // Mira al jugador
     if (this.checkCollisionsCamera(camera.position, escenario)) {
       this.staticCollision = true;
-      console.log("cameralowerRadiusLimit", camera.upperRadiusLimit);
+      // console.log("cameralowerRadiusLimit", camera.upperRadiusLimit);
     } else {
       camera.position = BABYLON.Vector3.Lerp(
         camera.position,
@@ -514,7 +514,6 @@ export class Character {
         );
         this.reward.scaling.set(0.04, 0.04, 0.04);
 
-        console.log("REWARD", this.reward);
         this.scene.registerBeforeRender(() => {
           if (this.reward)
             this.reward.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);

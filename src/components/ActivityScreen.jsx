@@ -23,6 +23,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
   const [feedbackVisible, setFeedbackVisible] = useState(false);
   const [tourVisible, setTourVisible] = useState(false);
   const [score, setScore] = useState(0);
+  const [debug, setDebug] = useState(false);
 
   const handleClickCerrar = () => {
     setActivityScreen(false);
@@ -112,6 +113,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     // Escuchar el evento "debug"
     socket.on("debug", () => {
       console.log("DEBUG");
+      setDebug(true);
       setScoreVisible(true);
       socket.emit("feedbackScene");
     });
@@ -178,6 +180,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
                 scoreVisible={scoreVisible}
                 activity={activity}
                 answers={answers}
+                debug={debug}
               />
               <div className="flex mt-12 bg-white h-[calc(100vh - 12rem)]">
                 <canvas id="feedbackScene" className="h-96 w-full"></canvas>

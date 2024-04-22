@@ -17,7 +17,6 @@ export const TestForm = ({ numQuestion, optionAnswer }) => {
   const [errors, setErrors] = useAtom(errorsQuestionAtom);
 
   const handleAnswerChange = (index, updatedAnswer) => {
-    console.log("index", index, " -> updatedAnswer", updatedAnswer);
     const newAnswers = question.answers.map((answer, i) => {
       if (i === index) return updatedAnswer;
       return answer;

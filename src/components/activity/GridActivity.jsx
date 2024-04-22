@@ -50,12 +50,10 @@ export const GridActivity = ({
   }, [actualQuestion]);
 
   const saveAnswers = () => {
-    // console.log("Guardando respuestas");
     const actualAnswers = { ...currentAnswer };
 
-    // console.log("Respuestas actuales", actualAnswers);
     const oldAnswers = [...answers];
-    // console.log("oldAnswers", oldAnswers);
+
     if (actualAnswers.id != "") {
       const existingIndex = oldAnswers.findIndex(
         (answer) => answer.id === actualAnswers.id

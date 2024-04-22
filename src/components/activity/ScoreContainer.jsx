@@ -20,46 +20,24 @@ export const ScoreContainer = ({ actualQuestion, feedbackVisible }) => {
     const correctsAnswers = questionFeedback?.corrects[0] || [];
     const wrongsAnswers = questionFeedback?.wrongs[0] || [];
 
-    console.log("wrongsAnswers.length", wrongsAnswers.length);
-
     if (correctsAnswers && wrongsAnswers) {
-      console.log(
-        "actualQuestion.score",
-        actualQuestion.score,
-        "actualQuestion.correct.length",
-        actualQuestion.correct.length,
-        "correctsAnswers.length",
-        correctsAnswers.length,
-        "wrongsAnswers.length",
-        wrongsAnswers.length
-      );
       const correctPercentage =
         actualQuestion.correct.length > 1
           ? (actualQuestion.score / actualQuestion.correct.length) *
             correctsAnswers.length
           : actualQuestion.score / actualQuestion.correct.length;
 
-          
-      const incorrects =
-        wrongsAnswers.length > 1 ? wrongsAnswers.length : 1;
-        
-      console.log("incorrects", incorrects, "wrongsAnswers.length", wrongsAnswers.length)
+      const incorrects = wrongsAnswers.length > 1 ? wrongsAnswers.length : 1;
+
       const wrongPercentage =
         incorrects >= 1
           ? (actualQuestion.score / actualQuestion.correct.length) *
             0.5 *
-            wrongsAnswers.length 
-          : 0 ;
-      console.log(
-        "Porcentaje de correctas",
-        correctPercentage,
-        "Porcentaje de incorrectas",
-        wrongPercentage
-      );
+            wrongsAnswers.length
+          : 0;
 
       score = (correctPercentage - wrongPercentage).toFixed(2);
 
-      console.log("Puntuación de la pregunta", score);
       setPuntuacion(score);
     }
   };
@@ -71,7 +49,11 @@ export const ScoreContainer = ({ actualQuestion, feedbackVisible }) => {
           ? "Puntuación de la pregunta:"
           : "Puntuación obtenida de la pregunta:"}
       </h1>
-      <div className="rounded-full text-xl font-semibold">{feedbackVisible ? `${puntuacion} / ${actualQuestion.score}` : actualQuestion.score}</div>
+      <div className="rounded-full text-xl font-semibold">
+        {feedbackVisible
+          ? `${puntuacion} / ${actualQuestion.score}`
+          : actualQuestion.score}
+      </div>
     </div>
   );
 };
