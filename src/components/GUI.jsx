@@ -19,6 +19,7 @@ import { JumpButton } from "./JumpButton";
 import { CustomModal } from "./CustomModal";
 import { ActivityScreen } from "./ActivityScreen";
 import { CgDebug } from "react-icons/cg";
+import { GiPaintBrush } from "react-icons/gi";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -98,6 +99,10 @@ export const GUI = () => {
     setActivityScreen(true);
   };
 
+  const handleCustomizeClick = () => {
+    console.log("Customize");
+  };
+
   return (
     <>
       {!chooseLocation.isChoosing && !modal ? (
@@ -105,13 +110,29 @@ export const GUI = () => {
           id="GUI"
           className="absolute w-full h-full flex flex-row pointer-events-none"
         >
-          <div className="items-start justify-start flex w-full">
+          <div className="items-start justify-between h-1/3 flex flex-col w-full">
             <GUIButton
               id="homeBtn"
               onClick={handleHomeClick}
               onKeyDown={handleKeyDown}
               icon={<IoHome size={22} />}
+              label="Inicio"
               props="mt-6 ml-6"
+              labelProps="px-4 p-1.5 translate-x-10"
+            />
+            <GUIButton
+              id="customizeBtn"
+              onClick={handleCustomizeClick}
+              onKeyDown={handleKeyDown}
+              icon={
+                <GiPaintBrush
+                  size={22}
+                  style={{ transform: "rotate(90deg)" }}
+                />
+              }
+              label="Personalizar avatar"
+              props="mt-6 ml-6"
+              labelProps="px-4 p-1.5 translate-x-10"
             />
             <JoyStickContainer />
           </div>
@@ -121,7 +142,9 @@ export const GUI = () => {
               onClick={handleUserModalClick}
               onKeyDown={handleKeyDown}
               icon={<FaUsers size={22} />}
+              label="Lista de usuarios"
               props="mt-6 mr-6"
+              labelProps="px-4 p-1.5 -translate-x-40"
             />
 
             {getUser.isProfessor && (
@@ -130,7 +153,9 @@ export const GUI = () => {
                 onClick={handleCrearScreenClick}
                 onKeyDown={handleKeyDown}
                 icon={<HiMiniSquaresPlus size={22} />}
-                props="mr-6"
+                label="Crear una actividad"
+              props="mr-6"
+              labelProps="px-4 p-1.5 -translate-x-44"
               />
             )}
             <GUIButton
@@ -138,7 +163,9 @@ export const GUI = () => {
               onClick={handleChangeCameraClick}
               onKeyDown={handleKeyDown}
               icon={<HiVideoCamera size={22} />}
-              props="mb-6 mr-6"
+              label="Cambio de cámara"
+              props=" mr-6"
+              labelProps="px-4 p-1.5 -translate-x-44"
             />
             <GUIButton
               id="debugBtn"
@@ -156,13 +183,15 @@ export const GUI = () => {
 
       {userModal && <UserModal />}
       {crearScreen && <CrearActividad setCrearScreen={setCrearScreen} />}
-      {activityScreen && <ActivityScreen setActivityScreen={setActivityScreen} />}
+      {activityScreen && (
+        <ActivityScreen setActivityScreen={setActivityScreen} />
+      )}
       {modal && (
         <CustomModal
           modal={modal}
           setModal={setModal}
           setCrearScreen={setCrearScreen}
-          activityId = {activityId}
+          activityId={activityId}
           setActivityScreen={setActivityScreen}
         />
       )}
