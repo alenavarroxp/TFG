@@ -20,12 +20,14 @@ import { CustomModal } from "./CustomModal";
 import { ActivityScreen } from "./ActivityScreen";
 import { CgDebug } from "react-icons/cg";
 import { GiPaintBrush } from "react-icons/gi";
+import { CustomizeScreen } from "./customize/CustomizeScreen";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
   const [modal, setModal] = useState(false);
   const [crearScreen, setCrearScreen] = useState(false);
   const [activityScreen, setActivityScreen] = useState(false);
+  const [customizeScreen, setCustomizeScreen] = useState(false);
   const getUser = useAtomValue(userAtom);
   const [chooseLocation] = useAtom(chooseLocationAtom);
   const [test] = useAtom(testAtom);
@@ -100,7 +102,8 @@ export const GUI = () => {
   };
 
   const handleCustomizeClick = () => {
-    console.log("Customize");
+    setCustomizeScreen(true);
+    socket.emit("NoMove");
   };
 
   return (
@@ -154,8 +157,8 @@ export const GUI = () => {
                 onKeyDown={handleKeyDown}
                 icon={<HiMiniSquaresPlus size={22} />}
                 label="Crear una actividad"
-              props="mr-6"
-              labelProps="px-4 p-1.5 -translate-x-44"
+                props="mr-6"
+                labelProps="px-4 p-1.5 -translate-x-44"
               />
             )}
             <GUIButton
@@ -185,6 +188,12 @@ export const GUI = () => {
       {crearScreen && <CrearActividad setCrearScreen={setCrearScreen} />}
       {activityScreen && (
         <ActivityScreen setActivityScreen={setActivityScreen} />
+      )}
+      {customizeScreen && (
+        <CustomizeScreen
+          customizeScreen={customizeScreen}
+          setCustomizeScreen={setCustomizeScreen}
+        />
       )}
       {modal && (
         <CustomModal

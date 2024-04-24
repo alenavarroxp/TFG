@@ -83,8 +83,10 @@ export class Character {
         this.mesh.getChildMeshes().forEach((object) => {
           if (partsToColor.includes(object.name)) {
             object.material = characterMaterial;
+            console.log("object", object);
           }
         });
+
         // this.mesh.checkCollisions = true;
         this.mesh.applyGravity = true;
 
@@ -517,6 +519,88 @@ export class Character {
         this.scene.registerBeforeRender(() => {
           if (this.reward)
             this.reward.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);
+        });
+      }
+    );
+  };
+
+  deleteMeshes() {
+    if (this.meshes) {
+      this.meshes.forEach((mesh) => {
+        mesh.dispose();
+      });
+      this.meshes = null;
+    }
+    if (this.mesh) {
+      this.mesh.dispose();
+      this.mesh = null;
+    }
+
+    if(this.animations){
+      this.animations = {}
+    }
+  }
+
+  changeColor = (hexColor, scene) => {
+    console.log("hezColor", hexColor);
+    this.deleteMeshes();
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "models/",
+      "character.glb",
+      scene,
+      (newMeshes) => {
+        // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.meshes = newMeshes;
+        this.mesh = newMeshes[0];
+
+        scene.animationGroups.forEach((animation) => {
+          this.animations[animation.name] = animation;
+          animation.stop();
+        });
+
+        var animating = true;
+        const idleAnimation = scene.getAnimationGroupByName(
+          "CharacterArmature|Idle"
+        );
+
+
+        if (animating)
+          idleAnimation.start(
+            true,
+            1.0,
+            idleAnimation.from,
+            idleAnimation.to,
+            false
+          );
+        // Posición y rotación
+        this.mesh.position.set(0, 0, 0);
+        this.mesh.rotation.set(0, 0, 0);
+        this.mesh.scaling.set(0.05, 0.05, 0.05);
+        this.mesh.name = "customizedCharacter";
+
+        // Cambiar el color de las partes del personaje
+        // eslint-disable-next-line no-undef
+        const characterMaterial = new BABYLON.StandardMaterial(
+          "characterMaterial",
+          scene
+        );
+        // eslint-disable-next-line no-undef
+        characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
+          hexColor
+        );
+
+        const partsToColor = [
+          "Body_primitive0",
+          "Body_primitive2",
+          "Ears",
+          "Arms_primitive0",
+          "Head_primitive0",
+        ];
+        this.mesh.getChildMeshes().forEach((object) => {
+          if (partsToColor.includes(object.name)) {
+            object.material = characterMaterial;
+          }
         });
       }
     );

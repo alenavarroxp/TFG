@@ -546,6 +546,10 @@ export function initScene(canvas, user) {
   socket.on("feedbackScene", (score) => {
     feedbackScene(character, score);
   });
+
+  socket.on("renderCustomizeScene", () => {
+    customizeScene(character);
+  });
 }
 
 function feedbackScene(character, score) {
@@ -576,17 +580,17 @@ function feedbackScene(character, score) {
   };
 
   // Crear un personaje
-  new Character(
+  const feedbackCharacter = new Character(
     "characterCopy",
     new BABYLON.Vector3(0, 0, 0),
     new BABYLON.Vector3(0, 0, 0),
     user,
     scene,
-    (character) => {
+    (characterCallback) => {
       camera.setTarget(
-        character.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
+        characterCallback.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
       );
-      character.doFeedbackAnimation(score);
+      characterCallback.doFeedbackAnimation(score);
     }
   );
 
@@ -601,5 +605,69 @@ function feedbackScene(character, score) {
   // Manejar el redimensionamiento de la ventana
   window.addEventListener("resize", () => {
     engine.resize();
+  });
+}
+
+function customizeScene(character) {
+  // Crear una escena de babylonJS
+  const canvas = document.getElementById("customizeScene");
+  const engine = new BABYLON.Engine(canvas, true);
+  const scene = new BABYLON.Scene(engine);
+
+  scene.clearColor = new BABYLON.Color4(0.0863, 0.4588, 0.3882, 1);
+
+  // Crear y configurar la cámara
+  const camera = new BABYLON.ArcRotateCamera(
+    "camera",
+    -Math.PI / 2,
+    Math.PI / 2,
+    0.01,
+    new BABYLON.Vector3(0, 0.1, 0),
+    scene
+  );
+  camera.minZ = 0.1;
+  camera.maxZ = 100;
+  camera.lowerRadiusLimit = 0.3;
+  camera.upperRadiusLimit = 0.3;
+
+  const user = {
+    userName: character.user.userName,
+    isProfessor: character.user.isProfessor,
+  };
+
+  // Crear un personaje
+  const copyCharacter = new Character(
+    "characterCopy",
+    new BABYLON.Vector3(0, 0, 0),
+    new BABYLON.Vector3(0, 0, 0),
+    user,
+    scene,
+    (characterCallback) => {
+      camera.setTarget(
+        characterCallback.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
+      );
+      console.log("dharacter", characterCallback);
+    }
+  );
+
+  // Añadir una luz hemisférica a la escena
+  new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 10, 0), scene);
+
+  // Renderizar la escena
+  engine.runRenderLoop(() => {
+    if (copyCharacter) {
+      copyCharacter.playAnimation("CharacterArmature|Idle");
+    }
+    scene.render();
+  });
+
+  // Manejar el redimensionamiento de la ventana
+  window.addEventListener("resize", () => {
+    engine.resize();
+  });
+
+  socket.on("customizeCharacter", (color) => {
+    console.log("¡CUSTOMIZARIZACIÓN!");
+    copyCharacter.changeColor(color, scene);
   });
 }

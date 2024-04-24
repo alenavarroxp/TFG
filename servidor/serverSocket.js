@@ -178,6 +178,15 @@ export default function WebSocketServer() {
         socket.emit("debug");
         // socket.emit("feedbackScene");
       });
+
+      socket.on("renderCustomizeScene", () => {
+        socket.emit("renderCustomizeScene");
+      });
+
+      socket.on("customizeCharacter",(obj)=>{
+        console.log("asdas")
+        socket.emit("customizeCharacter",obj);
+      })
     });
   };
 }
