@@ -1,3 +1,5 @@
+import { socket } from "../../utils/socket";
+
 export const AccesorioComponent = ({
   accesorios,
   selectedItem,
@@ -9,6 +11,11 @@ export const AccesorioComponent = ({
 
   const handleCustomizeCharacter = (obj) => {
     console.log("¡CUSTOMIZAR ACCESORIOS!", obj);
+    const objSend ={
+        type: "accessory",
+        accessory: obj
+    }
+    socket.emit("customizeCharacter", objSend);
   };
   return accesorios.map((accesorio, index) => (
     <button
@@ -16,7 +23,7 @@ export const AccesorioComponent = ({
       className="flex justify-center items-center flex-col"
       onClick={() => {
         handleAccesorioSelection(accesorio);
-        handleCustomizeCharacter(accesorio);
+        handleCustomizeCharacter(accesorio.id);
       }}
     >
       <img

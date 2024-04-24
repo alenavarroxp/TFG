@@ -630,6 +630,7 @@ function customizeScene(character) {
   camera.maxZ = 100;
   camera.lowerRadiusLimit = 0.3;
   camera.upperRadiusLimit = 0.3;
+  camera.attachControl(canvas, true);
 
   const user = {
     userName: character.user.userName,
@@ -667,8 +668,10 @@ function customizeScene(character) {
     engine.resize();
   });
 
-  socket.on("customizeCharacter", (color) => {
-    console.log("¡CUSTOMIZARIZACIÓN!");
-    copyCharacter.changeColor(color, scene);
+  socket.on("customizeCharacter", (obj) => {
+    console.log("¡CUSTOMIZARIZACIÓN!", obj);
+    if (obj.type === "color") copyCharacter.changeColor(obj.color, scene);
+    if (obj.type === "accessory")
+      copyCharacter.changeAccessory(obj.accessory, scene);
   });
 }

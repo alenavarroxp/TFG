@@ -23,6 +23,7 @@ export class Character {
     this.distanceFromPlayer = 0.35;
     this.staticCollision = false;
     this.reward = null;
+    this.headAccessory = null;
 
     // console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
@@ -157,11 +158,12 @@ export class Character {
 
     // Mantener el plano enfocado hacia la cámara
     scene.registerBeforeRender(() => {
-      this.displayName.position = new BABYLON.Vector3(
-        mesh.position.x,
-        mesh.position.y + 0.2,
-        mesh.position.z
-      );
+      if (!this.headAccessory)
+        this.displayName.position = new BABYLON.Vector3(
+          mesh.position.x,
+          mesh.position.y + 0.2,
+          mesh.position.z
+        );
 
       var camera = scene.activeCamera;
       if (camera) {
@@ -536,8 +538,8 @@ export class Character {
       this.mesh = null;
     }
 
-    if(this.animations){
-      this.animations = {}
+    if (this.animations) {
+      this.animations = {};
     }
   }
 
@@ -563,7 +565,6 @@ export class Character {
         const idleAnimation = scene.getAnimationGroupByName(
           "CharacterArmature|Idle"
         );
-
 
         if (animating)
           idleAnimation.start(
@@ -601,6 +602,41 @@ export class Character {
           if (partsToColor.includes(object.name)) {
             object.material = characterMaterial;
           }
+        });
+      }
+    );
+  };
+
+  changeAccessory = (accessoryName, scene) => {
+    if (this.headAccessory) {
+      this.headAccessory.dispose();
+    }
+
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "models/",
+      `${accessoryName}.glb`,
+      scene,
+      (newMeshes) => {
+        // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.headAccessory = newMeshes[0];
+        switch (accessoryName) {
+          case "sheriffAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.1275,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.04, 0.04, 0.04);
+        }
+
+        scene.registerBeforeRender(() => {
+          if (this.headAccessory && this.mesh)
+            this.displayName.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.213,
+              this.mesh.position.z
+            );
         });
       }
     );

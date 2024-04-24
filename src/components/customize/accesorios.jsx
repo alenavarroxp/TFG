@@ -2,18 +2,21 @@ import { MoneyComponent } from "./MoneyComponent";
 
 export const accesorios = [
   {
-    img: "../../../public/img/sheriffAccessory.png",
+    id:"sheriffAccessory",
+    img: "/img/sheriffAccessory.png",
     title: "Sombrero de Sheriff",
     label: <div className="text-lg font-semibold">Obtenido</div>,
   },
   {
-    img: "",
-    title: "Sombrero vaquero",
+    id: "kidAccessory",
+    img: "/img/kidAccessory.png",
+    title: "Gorrocóptero",
     label: <div className="text-lg font-semibold">Gratis</div>,
   },
   {
-    img: "",
-    title: "Sombrero vaquero",
+    id: "pirateAccessory",
+    img: "/img/pirateAccessory.png",
+    title: "Sombrero de Pirata",
     label: <MoneyComponent style="text-2xl font-semibold" />,
   },
   

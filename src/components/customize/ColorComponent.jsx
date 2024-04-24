@@ -8,7 +8,11 @@ export const ColorComponent = ({colors, selectedItem, setSelectedItem}) => {
     
       const handleCustomizeCharacter = (color) => {
         console.log("¡CUSTOMIZAR!");
-        socket.emit("customizeCharacter", color);
+        const objSend ={
+            type: "color",
+            color: color
+        }
+        socket.emit("customizeCharacter", objSend);
       };
 
   return (
