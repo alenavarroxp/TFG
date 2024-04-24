@@ -84,7 +84,6 @@ export class Character {
         this.mesh.getChildMeshes().forEach((object) => {
           if (partsToColor.includes(object.name)) {
             object.material = characterMaterial;
-            console.log("object", object);
           }
         });
 
@@ -628,6 +627,25 @@ export class Character {
               this.mesh.position.z
             );
             this.headAccessory.scaling.set(0.04, 0.04, 0.04);
+            break;
+          case "kidAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.13,
+              this.mesh.position.z - 0.02
+            );
+            this.headAccessory.scaling.set(0.0115, 0.0115, 0.0115);
+            break;
+          case "pirateAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.14,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.0115, 0.0115, 0.0115);
+            break;
+          default:
+            break;
         }
 
         scene.registerBeforeRender(() => {
