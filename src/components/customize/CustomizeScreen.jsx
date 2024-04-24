@@ -4,10 +4,11 @@ import { IoCloseOutline } from "react-icons/io5";
 import { UnderlinedText } from "../UnderlinedText";
 import { CustomizeHeader } from "./CustomizeHeader";
 import { CustomizeBody } from "./CustomizeBody";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "../../utils/socket";
 
 export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
+  const [selectedTab, setSelectedTab] = useState("Colores");
   const handleClickCerrar = () => {
     setCustomizeScreen(false);
   };
@@ -42,8 +43,8 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
 
       <div className="flex items-start justify-between flex-1">
         <div className="w-2/3 ml-5 h-full">
-          <CustomizeHeader />
-          <CustomizeBody />
+          <CustomizeHeader selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+          <CustomizeBody selectedTab={selectedTab}/>
         </div>
         <div className="w-1/3 flex flex-col h-[515px] items-center justify-center px-16">
           <p className="font-semibold text-2xl">Tu avatar</p>

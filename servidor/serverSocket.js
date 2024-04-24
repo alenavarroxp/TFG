@@ -184,7 +184,6 @@ export default function WebSocketServer() {
       });
 
       socket.on("customizeCharacter",(obj)=>{
-        console.log("asdas")
         socket.emit("customizeCharacter",obj);
       })
     });

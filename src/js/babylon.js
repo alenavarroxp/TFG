@@ -580,6 +580,7 @@ function feedbackScene(character, score) {
   };
 
   // Crear un personaje
+  // eslint-disable-next-line no-unused-vars
   const feedbackCharacter = new Character(
     "characterCopy",
     new BABYLON.Vector3(0, 0, 0),
