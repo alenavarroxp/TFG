@@ -11,7 +11,7 @@ import { userAtom } from "../../context/atoms/userAtom";
 import { useAtomValue } from "jotai";
 import { SaveModal } from "./SaveModal";
 
-export const CustomizeBody = ({ selectedTab }) => {
+export const CustomizeBody = ({ selectedTab, onOk }) => {
   const user = useAtomValue(userAtom);
   const [selectedColorItem, setSelectedColorItem] = useState(
     user.isProfessor ? "#00FF47" : "#0094FF"
@@ -28,6 +28,7 @@ export const CustomizeBody = ({ selectedTab }) => {
   const handleSaveChanges = () => {
     setSaveModal(true);
   };
+  
 
   return (
     <>
@@ -39,6 +40,7 @@ export const CustomizeBody = ({ selectedTab }) => {
             setSaveModal={setSaveModal}
             selectedColorItem={selectedColorItem}
             selectedAccessoryItem={selectedAccessoryItem}
+            onOk={onOk}
           />
         )}
         <div className="flex justify-center items-center px-6 py-3">

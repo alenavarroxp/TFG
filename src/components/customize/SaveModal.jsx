@@ -7,8 +7,19 @@ export const SaveModal = ({
   setSaveModal,
   selectedColorItem,
   selectedAccessoryItem,
+  onOk
 }) => {
-  const [modalTitle] = useState("¿Deseas guardar los cambios?");
+  const [modalTitle] = useState(
+    !selectedAccessoryItem && !selectedColorItem
+      ? "No se pueden guardar los cambios"
+      : "¿Deseas guardar los cambios?"
+  );
+
+  const handleOk = () => {
+    onOk();
+    setSaveModal(false);
+  };
+
   const modalFooter = (
     <div className="flex justify-evenly items-center">
       <button
@@ -21,16 +32,12 @@ export const SaveModal = ({
       <button
         key="ok"
         className="bg-blue-500 text-white py-1.5 px-10 rounded-full"
-        onClick={() => onOk()}
+        onClick={() => handleOk()}
       >
         Sí
       </button>
     </div>
   );
-
-  const onOk = () => {
-    setSaveModal(false);
-  };
 
   const onCancel = () => {
     setSaveModal(false);
@@ -40,47 +47,64 @@ export const SaveModal = ({
     <Modal
       title={modalTitle}
       open={saveModal}
-      onOk={() => onOk()}
+      onOk={() => handleOk()}
       onCancel={() => onCancel()}
       centered={true}
       okButtonProps={{ className: "bg-blue-500" }}
-      footer={modalFooter}
+      footer={!selectedAccessoryItem && !selectedColorItem ? null : modalFooter}
     >
-      <p className="mb-1">Los cambios que se guardarán serán:</p>
-      <div>
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th className="px-4 py-1 text-center text-lg font-semibold">Color del avatar</th>
-                {selectedAccessoryItem && (
-                  <th className="px-4 py-1 text-center text-lg font-semibold">
-                    Accesorio para el avatar
-                  </th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="px-4 py-1">
-                  <div
-                    className="w-32 h-32 rounded-full border-[2px] border-gray-700 mx-auto"
-                    style={{ backgroundColor: selectedColorItem }}
-                  />
-                </td>
-                <td className="flex items-center justify-center">
-                  {selectedAccessoryItem && (
-                    <img
-                      src={`${selectedAccessoryItem.img}`}
-                      className="w-32 h-32 rounded-full"
-                    />
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {!selectedAccessoryItem && !selectedColorItem ? (
+        <p className="mb-1">
+          No has realizado ningún cambio en tu avatar. Por favor, realiza un
+          cambio para poder guardar.
+        </p>
+      ) : (
+        <>
+          <p className="mb-1">Los cambios que se guardarán serán:</p>
+          <div>
+            <div className="flex items-center justify-center">
+              <table>
+                <thead>
+                  <tr className="text-md">
+                    {selectedColorItem && (
+                      <th className="px-4 py-1 text-center  font-semibold">
+                        Color del avatar
+                      </th>
+                    )}
+
+                    {selectedAccessoryItem && (
+                      <th className="px-4 py-1 text-center font-semibold">
+                        Accesorio para el avatar
+                      </th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {selectedColorItem && (
+                      <td className="px-1 py-1">
+                        <div
+                          className="w-20 h-20 rounded-full border-[2px] border-gray-700 mx-auto"
+                          style={{ backgroundColor: selectedColorItem }}
+                        />
+                      </td>
+                    )}
+                    {selectedAccessoryItem && (
+                      <td className="flex items-center justify-center">
+                        <img
+                          src={`${selectedAccessoryItem.img}`}
+                          className="w-20 h-20 rounded-full pointer-events-none select-none"
+                          alt={`${selectedAccessoryItem.title}`}
+                        />
+                      </td>
+                    )}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
     </Modal>
   );
 };

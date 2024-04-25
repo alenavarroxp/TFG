@@ -24,7 +24,7 @@ export const AccesorioComponent = ({
   return accesorios.map((accesorio, index) => (
     <button
       key={index}
-      className="flex justify-center items-center flex-col"
+      className="flex justify-center items-center flex-col select-none"
       onClick={() => {
         handleAccesorioSelection(accesorio);
         handleCustomizeCharacter(accesorio.id);
@@ -32,7 +32,7 @@ export const AccesorioComponent = ({
     >
       <img
         src={accesorio.img}
-        className="border-2 bg-white rounded-xl w-40 h-40 flex justify-center items-center"
+        className="border-2 bg-white rounded-xl w-40 h-40 flex justify-center items-center pointer-events-auto select-none"
         style={{
           border:
             selectedAccessoryItem === accesorio

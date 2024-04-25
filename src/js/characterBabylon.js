@@ -611,6 +611,11 @@ export class Character {
       this.headAccessory.dispose();
     }
 
+    if (this.headAccessory && this.headAccessory.name === accessoryName) {
+      this.headAccessory = null;
+      return;
+    }
+
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
@@ -619,6 +624,7 @@ export class Character {
       (newMeshes) => {
         // El modelo GLB contiene varios meshes, pero solo queremos el primero
         this.headAccessory = newMeshes[0];
+        this.headAccessory.name = accessoryName;
         switch (accessoryName) {
           case "sheriffAccessory":
             this.headAccessory.position = new BABYLON.Vector3(

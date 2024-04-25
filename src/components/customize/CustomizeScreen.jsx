@@ -6,6 +6,7 @@ import { CustomizeHeader } from "./CustomizeHeader";
 import { CustomizeBody } from "./CustomizeBody";
 import { useEffect, useState } from "react";
 import { socket } from "../../utils/socket";
+import { toast, Toaster } from "sonner";
 
 export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
   const [selectedTab, setSelectedTab] = useState("Colores");
@@ -17,8 +18,27 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
     console.log("HOA");
     if (customizeScreen) socket.emit("renderCustomizeScene");
   }, [customizeScreen]);
+
+  const handleOk = () => {
+    console.log("¡GUARDAR CAMBIOS!");
+    
+    const promise = () =>
+      new Promise((resolve) =>
+        setTimeout(() => resolve({ name: "Sonner" }), 2000)
+      );
+  
+    toast.promise(promise(), {
+      loading: "Guardando...",
+      success: () => {
+        return `Los cambios se han guardado correctamente.`;
+      },
+      error: "Error al guardar los cambios. Inténtalo de nuevo.",
+    });
+  };
+
   return (
     <div className="min-h-full w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
+      <Toaster position="top-right"/>
       <div className="flex justify-center items-center w-fit mt-5">
         <UnderlinedText text={"Personaliza tu avatar"} style="text-2xl ml-5" />
         <AiFillInfoCircle
@@ -47,7 +67,7 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
           />
-          <CustomizeBody selectedTab={selectedTab} />
+          <CustomizeBody selectedTab={selectedTab} onOk={handleOk} />
         </div>
         <div className="w-1/3 flex flex-col h-[515px] items-center justify-center px-16">
           <p className="font-semibold text-2xl">Tu avatar</p>
