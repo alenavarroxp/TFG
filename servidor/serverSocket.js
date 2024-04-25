@@ -171,7 +171,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("feedbackScene", (score) => {
-        socket.emit("feedbackScene",score);
+        socket.emit("feedbackScene", score);
       });
 
       socket.on("debug", () => {
@@ -183,9 +183,17 @@ export default function WebSocketServer() {
         socket.emit("renderCustomizeScene");
       });
 
-      socket.on("customizeCharacter",(obj)=>{
-        socket.emit("customizeCharacter",obj);
-      })
+      socket.on("customizeCharacter", (obj) => {
+        socket.emit("customizeCharacter", obj);
+      });
+
+      socket.on("saveCustomizeCharacter", () => {
+        socket.emit("saveCustomizeCharacter");
+      });
+
+      socket.on("reloadCustomizeCharacter", (obj) => {
+        socket.emit("reloadCustomizeCharacter", obj);
+      });
     });
   };
 }

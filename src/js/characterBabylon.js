@@ -24,6 +24,8 @@ export class Character {
     this.staticCollision = false;
     this.reward = null;
     this.headAccessory = null;
+    this.accessoryName = null;
+    this.hexColor = null;
 
     // console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
@@ -157,7 +159,7 @@ export class Character {
 
     // Mantener el plano enfocado hacia la cámara
     scene.registerBeforeRender(() => {
-      if (!this.headAccessory)
+      if (!this.headAccessory && this.mesh && this.displayName)
         this.displayName.position = new BABYLON.Vector3(
           mesh.position.x,
           mesh.position.y + 0.2,
@@ -165,7 +167,7 @@ export class Character {
         );
 
       var camera = scene.activeCamera;
-      if (camera) {
+      if (camera && this.displayName) {
         this.displayName.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
         this.displayName.rotation.y = camera.rotation.y;
         this.displayName.rotation.x = camera.rotation.x;
@@ -194,14 +196,15 @@ export class Character {
     // ellipsoidMaterial.wireframe = true;
     // this.capsule.material = ellipsoidMaterial;
     this.capsule.checkCollisions = true;
-    this.capsule.isVisible = false;
+    // this.capsule.isVisible = false;
 
     scene.registerBeforeRender(() => {
-      this.capsule.position = new BABYLON.Vector3(
-        mesh.position.x,
-        mesh.position.y + 0.075,
-        mesh.position.z
-      );
+      if (this.mesh && this.capsule)
+        this.capsule.position = new BABYLON.Vector3(
+          mesh.position.x,
+          mesh.position.y + 0.075,
+          mesh.position.z
+        );
     });
   }
 
@@ -223,6 +226,7 @@ export class Character {
 
   move(keys, characters, escenario, scene, activities, socket) {
     if (!this.mesh) return;
+    console.log("this.mesh.rotation", this.mesh.rotation);
     let computedRotation = this.mesh.rotation.z;
     let computedMovement = new BABYLON.Vector3();
 
@@ -340,6 +344,7 @@ export class Character {
   ) {
     // Verificar colisiones con otras cápsulas de personajes
     for (const character of characters) {
+      if (!character.capsule.position) continue;
       if (character.id !== this.id && character.capsule.position) {
         const distanceVector = newPosition.subtract(character.capsule.position);
         const distance = distanceVector.length();
@@ -472,10 +477,6 @@ export class Character {
   doFeedbackAnimation(score) {
     let animations = [];
     if (score >= 5) {
-      // animations.push("CharacterArmature|Wave");
-      // animations.push("CharacterArmature|Wave");
-      // animations.push("CharacterArmature|Yes");
-      // animations.push("CharacterArmature|Yes");
       animations.push("CharacterArmature|Idle_Gun");
       animations.push("CharacterArmature|Idle_Gun");
       animations.push("CharacterArmature|Idle_Gun");
@@ -543,7 +544,6 @@ export class Character {
   }
 
   changeColor = (hexColor, scene) => {
-    console.log("hezColor", hexColor);
     this.deleteMeshes();
     BABYLON.SceneLoader.ImportMesh(
       "",
@@ -552,6 +552,7 @@ export class Character {
       scene,
       (newMeshes) => {
         // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.hexColor = hexColor;
         this.meshes = newMeshes;
         this.mesh = newMeshes[0];
 
@@ -623,6 +624,7 @@ export class Character {
       scene,
       (newMeshes) => {
         // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.accessoryName = accessoryName;
         this.headAccessory = newMeshes[0];
         this.headAccessory.name = accessoryName;
         switch (accessoryName) {
@@ -664,5 +666,28 @@ export class Character {
         });
       }
     );
+  };
+
+  reloadColor = (hexColor) => {
+    // eslint-disable-next-line no-undef
+    const characterMaterial = new BABYLON.StandardMaterial(
+      "characterMaterial",
+      this.scene
+    );
+    // eslint-disable-next-line no-undef
+    characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(hexColor);
+
+    const partsToColor = [
+      "Body_primitive0",
+      "Body_primitive2",
+      "Ears",
+      "Arms_primitive0",
+      "Head_primitive0",
+    ];
+    this.mesh.getChildMeshes().forEach((object) => {
+      if (partsToColor.includes(object.name)) {
+        object.material = characterMaterial;
+      }
+    });
   };
 }

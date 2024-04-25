@@ -550,6 +550,11 @@ export function initScene(canvas, user) {
   socket.on("renderCustomizeScene", () => {
     customizeScene(character);
   });
+
+  socket.on("reloadCustomizeCharacter", (obj) => {
+    if (obj.color) character.reloadColor(obj.color);
+    if (obj.accessory) character.changeAccessory(obj.accessory, scene);
+  });
 }
 
 function feedbackScene(character, score) {
@@ -670,5 +675,12 @@ function customizeScene(character) {
     if (obj.type === "color") copyCharacter.changeColor(obj.color, scene);
     if (obj.type === "accessory")
       copyCharacter.changeAccessory(obj.accessory, scene);
+  });
+
+  socket.on("saveCustomizeCharacter", () => {
+    socket.emit("reloadCustomizeCharacter", {
+      color: copyCharacter.hexColor,
+      accessory: copyCharacter.accessoryName,
+    });
   });
 }

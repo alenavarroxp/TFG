@@ -12,6 +12,7 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
   const [selectedTab, setSelectedTab] = useState("Colores");
   const handleClickCerrar = () => {
     setCustomizeScreen(false);
+    socket.emit("move")
   };
 
   useEffect(() => {
@@ -21,12 +22,12 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
 
   const handleOk = () => {
     console.log("¡GUARDAR CAMBIOS!");
-    
+
     const promise = () =>
       new Promise((resolve) =>
-        setTimeout(() => resolve({ name: "Sonner" }), 2000)
+        setTimeout(() => resolve({ name: "Guardando" }), 2000)
       );
-  
+
     toast.promise(promise(), {
       loading: "Guardando...",
       success: () => {
@@ -34,11 +35,12 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
       },
       error: "Error al guardar los cambios. Inténtalo de nuevo.",
     });
+    socket.emit("saveCustomizeCharacter");
   };
 
   return (
     <div className="min-h-full w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
-      <Toaster position="top-right"/>
+      <Toaster position="top-right" />
       <div className="flex justify-center items-center w-fit mt-5">
         <UnderlinedText text={"Personaliza tu avatar"} style="text-2xl ml-5" />
         <AiFillInfoCircle
