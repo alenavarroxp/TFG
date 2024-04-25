@@ -73,7 +73,11 @@ export class Character {
         );
         // eslint-disable-next-line no-undef
         characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
-          this.user.isProfessor ? "#00FF47" : "#0094FF"
+          !this.hexColor
+            ? this.user.isProfessor
+              ? "#00FF47"
+              : "#0094FF"
+            : this.hexColor
         );
 
         const partsToColor = [
@@ -95,6 +99,10 @@ export class Character {
         this.showBoundingCapsule(scene, this.mesh);
 
         this.createDisplayName(scene, this.mesh);
+
+        if (this.headAccessory) {
+          this.changeAccessory(this.headAccessory.name, scene);
+        }
 
         if (callback) {
           callback(this);
@@ -196,7 +204,7 @@ export class Character {
     // ellipsoidMaterial.wireframe = true;
     // this.capsule.material = ellipsoidMaterial;
     this.capsule.checkCollisions = true;
-    // this.capsule.isVisible = false;
+    this.capsule.isVisible = false;
 
     scene.registerBeforeRender(() => {
       if (this.mesh && this.capsule)
@@ -226,7 +234,7 @@ export class Character {
 
   move(keys, characters, escenario, scene, activities, socket) {
     if (!this.mesh) return;
-    console.log("this.mesh.rotation", this.mesh.rotation);
+
     let computedRotation = this.mesh.rotation.z;
     let computedMovement = new BABYLON.Vector3();
 
@@ -295,6 +303,47 @@ export class Character {
       socket.emit("modalActivity", collisionResult.activityId);
       socket.emit("NoMove");
     }
+
+    if (this.headAccessory) {
+      this.moveAccessory();
+    }
+  }
+
+  moveAccessory() {
+    this.scene.registerBeforeRender(() => {
+      if (this.headAccessory && this.mesh) {
+        switch (this.accessoryName) {
+          case "sheriffAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.1275,
+              this.mesh.position.z
+            );
+            break;
+          case "kidAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.13,
+              this.mesh.position.z - 0.02
+            );
+            break;
+          case "pirateAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.14,
+              this.mesh.position.z
+            );
+            break;
+          default:
+            break;
+        }
+        this.headAccessory.rotation = new BABYLON.Vector3(
+          this.mesh.rotation.x,
+          this.mesh.rotation.z + Math.PI,
+          this.mesh.rotation.y
+        );
+      }
+    });
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -609,10 +658,12 @@ export class Character {
 
   changeAccessory = (accessoryName, scene) => {
     if (this.headAccessory) {
+      console.log("ELIMINAR ACCESORIO");
       this.headAccessory.dispose();
     }
 
     if (this.headAccessory && this.headAccessory.name === accessoryName) {
+      console.log("ELIMINAR ACCESORIO (null)");
       this.headAccessory = null;
       return;
     }

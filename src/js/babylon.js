@@ -553,7 +553,7 @@ export function initScene(canvas, user) {
 
   socket.on("reloadCustomizeCharacter", (obj) => {
     if (obj.color) character.reloadColor(obj.color);
-    if (obj.accessory) character.changeAccessory(obj.accessory, scene);
+    if (obj.accessory) character.changeAccessory(obj.accessory, character.scene);
   });
 }
 
