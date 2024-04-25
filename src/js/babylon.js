@@ -657,9 +657,6 @@ function customizeScene(character) {
 
   // Renderizar la escena
   engine.runRenderLoop(() => {
-    if (copyCharacter) {
-      copyCharacter.playAnimation("CharacterArmature|Idle");
-    }
     scene.render();
   });
 

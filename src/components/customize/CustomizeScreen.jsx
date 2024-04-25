@@ -43,8 +43,11 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
 
       <div className="flex items-start justify-between flex-1">
         <div className="w-2/3 ml-5 h-full">
-          <CustomizeHeader selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-          <CustomizeBody selectedTab={selectedTab}/>
+          <CustomizeHeader
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+          />
+          <CustomizeBody selectedTab={selectedTab} />
         </div>
         <div className="w-1/3 flex flex-col h-[515px] items-center justify-center px-16">
           <p className="font-semibold text-2xl">Tu avatar</p>

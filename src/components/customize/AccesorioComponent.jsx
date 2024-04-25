@@ -2,11 +2,15 @@ import { socket } from "../../utils/socket";
 
 export const AccesorioComponent = ({
   accesorios,
-  selectedItem,
-  setSelectedItem,
+  selectedAccessoryItem,
+  setSelectedAccessoryItem,
 }) => {
   const handleAccesorioSelection = (obj) => {
-    setSelectedItem(obj);
+    if (selectedAccessoryItem === obj) {
+      setSelectedAccessoryItem(null);
+      return;
+    }
+    setSelectedAccessoryItem(obj);
   };
 
   const handleCustomizeCharacter = (obj) => {
@@ -31,7 +35,7 @@ export const AccesorioComponent = ({
         className="border-2 bg-white rounded-xl w-40 h-40 flex justify-center items-center"
         style={{
           border:
-            selectedItem === accesorio
+            selectedAccessoryItem === accesorio
               ? "4px solid gold"
               : "4px solid transparent",
         }}

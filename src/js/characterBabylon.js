@@ -71,7 +71,7 @@ export class Character {
         );
         // eslint-disable-next-line no-undef
         characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
-          this.user.isProfessor ? "#148A1A" : "#1481BA"
+          this.user.isProfessor ? "#00FF47" : "#0094FF"
         );
 
         const partsToColor = [
