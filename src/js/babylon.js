@@ -221,11 +221,6 @@ export function initScene(canvas, user) {
 
     if (keys.W || keys.A || keys.S || keys.D) {
       character.move(keys, characters, escenario, scene, activities, socket);
-      // character.mesh.physicsImpostor.physicsBody.position.copy(character.mesh.position);
-      // character.mesh.physicsImpostor.physicsBody.velocity = new CANNON.Vec3(0, 0, 0);
-      // character.mesh.physicsImpostor.physicsBody.quaternion = new CANNON.Quaternion(0, 0, 0, 0);
-      // character.mesh.physicsImpostor.physicsBody.force = new CANNON.Vec3(0, 0, 0);
-      // character.mesh.physicsImpostor.physicsBody.torque = new CANNON.Vec3(0, 0, 0);
     }
 
     if (character) {
@@ -546,6 +541,20 @@ export function initScene(canvas, user) {
   socket.on("feedbackScene", (score) => {
     feedbackScene(character, score);
   });
+
+  socket.on("renderCustomizeScene", () => {
+    customizeScene(character);
+  });
+
+  socket.on("reloadCustomizeCharacter", (obj) => {
+    console.log("RELOAD CUSTOMIZE CHARACTER", obj);
+    if (obj.color) character.reloadColor(obj.color);
+
+    if (obj.accessory && !character.headAccessory)
+      character.changeAccessory(obj.accessory, scene);
+    else if (obj.accessory && character.headAccessory)
+      character.reloadAccessory(obj.accessory, scene);
+  });
 }
 
 function feedbackScene(character, score) {
@@ -576,17 +585,18 @@ function feedbackScene(character, score) {
   };
 
   // Crear un personaje
-  new Character(
+  // eslint-disable-next-line no-unused-vars
+  const feedbackCharacter = new Character(
     "characterCopy",
     new BABYLON.Vector3(0, 0, 0),
     new BABYLON.Vector3(0, 0, 0),
     user,
     scene,
-    (character) => {
+    (characterCallback) => {
       camera.setTarget(
-        character.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
+        characterCallback.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
       );
-      character.doFeedbackAnimation(score);
+      characterCallback.doFeedbackAnimation(score);
     }
   );
 
@@ -601,5 +611,79 @@ function feedbackScene(character, score) {
   // Manejar el redimensionamiento de la ventana
   window.addEventListener("resize", () => {
     engine.resize();
+  });
+}
+
+function customizeScene(character) {
+  // Crear una escena de babylonJS
+  const canvas = document.getElementById("customizeScene");
+  const engine = new BABYLON.Engine(canvas, true);
+  const scene = new BABYLON.Scene(engine);
+
+  scene.clearColor = new BABYLON.Color4(0.0863, 0.4588, 0.3882, 1);
+
+  // Crear y configurar la cámara
+  const camera = new BABYLON.ArcRotateCamera(
+    "camera",
+    -Math.PI / 2,
+    Math.PI / 2,
+    0.01,
+    new BABYLON.Vector3(0, 0.1, 0),
+    scene
+  );
+  camera.minZ = 0.1;
+  camera.maxZ = 100;
+  camera.lowerRadiusLimit = 0.3;
+  camera.upperRadiusLimit = 5;
+  camera.attachControl(canvas, true);
+
+  const user = {
+    userName: character.user.userName,
+    isProfessor: character.user.isProfessor,
+  };
+
+  // Crear un personaje
+  const copyCharacter = new Character(
+    "characterCopy",
+    new BABYLON.Vector3(0, 0, 0),
+    new BABYLON.Vector3(0, 0, 0),
+    user,
+    scene,
+    (characterCallback) => {
+      camera.setTarget(
+        characterCallback.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
+      );
+      console.log("dharacter", characterCallback);
+      characterCallback.playAnimation("CharacterArmature|Idle");
+      characterCallback.stopAnimation();
+    }
+  );
+
+  // Añadir una luz hemisférica a la escena
+  new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 10, 0), scene);
+
+  // Renderizar la escena
+  engine.runRenderLoop(() => {
+    scene.render();
+  });
+
+  // Manejar el redimensionamiento de la ventana
+  window.addEventListener("resize", () => {
+    engine.resize();
+  });
+
+  socket.on("customizeCharacter", (obj) => {
+    console.log("¡CUSTOMIZARIZACIÓN!", obj);
+    if (obj.type === "color") copyCharacter.changeColor(obj.color, scene);
+    if (obj.type === "accessory")
+      copyCharacter.changeAccessory(obj.accessory, scene);
+  });
+
+  // Desuscribirte del evento antes de suscribirte nuevamente
+  socket.off("saveCustomizeCharacter").on("saveCustomizeCharacter", (obj) => {
+    socket.emit("reloadCustomizeCharacter", {
+      color: obj.color,
+      accessory: obj.accessory,
+    });
   });
 }

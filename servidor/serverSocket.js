@@ -171,12 +171,28 @@ export default function WebSocketServer() {
       });
 
       socket.on("feedbackScene", (score) => {
-        socket.emit("feedbackScene",score);
+        socket.emit("feedbackScene", score);
       });
 
       socket.on("debug", () => {
         socket.emit("debug");
         // socket.emit("feedbackScene");
+      });
+
+      socket.on("renderCustomizeScene", () => {
+        socket.emit("renderCustomizeScene");
+      });
+
+      socket.on("customizeCharacter", (obj) => {
+        socket.emit("customizeCharacter", obj);
+      });
+
+      socket.on("saveCustomizeCharacter", (obj) => {
+        socket.emit("saveCustomizeCharacter", obj);
+      });
+
+      socket.on("reloadCustomizeCharacter", (obj) => {
+        socket.emit("reloadCustomizeCharacter", obj);
       });
     });
   };

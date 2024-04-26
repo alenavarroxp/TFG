@@ -12,7 +12,11 @@ export const JumpButton = () => {
       className="absolute flex justify-center items-center bottom-10 right-10 rounded-full min-w-20 min-h-20 border-2 border-white pointer-events-auto cursor-pointer"
       onClick={sendJump}
     >
-      <FaAnglesDown size={40} color={"white"} style={{ transform: "rotate(180deg)" }} />
+      <FaAnglesDown
+        size={40}
+        color={"white"}
+        style={{ transform: "rotate(180deg)" }}
+      />
     </div>
   );
 };

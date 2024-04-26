@@ -23,6 +23,9 @@ export class Character {
     this.distanceFromPlayer = 0.35;
     this.staticCollision = false;
     this.reward = null;
+    this.headAccessory = null;
+    this.accessoryName = null;
+    this.hexColor = null;
 
     // console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
@@ -70,7 +73,11 @@ export class Character {
         );
         // eslint-disable-next-line no-undef
         characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
-          this.user.isProfessor ? "#148A1A" : "#1481BA"
+          !this.hexColor
+            ? this.user.isProfessor
+              ? "#00FF47"
+              : "#0094FF"
+            : this.hexColor
         );
 
         const partsToColor = [
@@ -85,6 +92,7 @@ export class Character {
             object.material = characterMaterial;
           }
         });
+
         // this.mesh.checkCollisions = true;
         this.mesh.applyGravity = true;
 
@@ -155,14 +163,15 @@ export class Character {
 
     // Mantener el plano enfocado hacia la cámara
     scene.registerBeforeRender(() => {
-      this.displayName.position = new BABYLON.Vector3(
-        mesh.position.x,
-        mesh.position.y + 0.2,
-        mesh.position.z
-      );
+      if (!this.headAccessory && this.mesh && this.displayName)
+        this.displayName.position = new BABYLON.Vector3(
+          mesh.position.x,
+          mesh.position.y + 0.2,
+          mesh.position.z
+        );
 
       var camera = scene.activeCamera;
-      if (camera) {
+      if (camera && this.displayName) {
         this.displayName.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
         this.displayName.rotation.y = camera.rotation.y;
         this.displayName.rotation.x = camera.rotation.x;
@@ -194,12 +203,19 @@ export class Character {
     this.capsule.isVisible = false;
 
     scene.registerBeforeRender(() => {
-      this.capsule.position = new BABYLON.Vector3(
-        mesh.position.x,
-        mesh.position.y + 0.075,
-        mesh.position.z
-      );
+      if (this.mesh && this.capsule)
+        this.capsule.position = new BABYLON.Vector3(
+          mesh.position.x,
+          mesh.position.y + 0.075,
+          mesh.position.z
+        );
     });
+  }
+
+  stopAnimation() {
+    if (this.currentAction) {
+      this.currentAction.stop();
+    }
   }
 
   playAnimation(animationName) {
@@ -208,9 +224,7 @@ export class Character {
       if (this.currentAction == action) return;
 
       // Detener la animación actual antes de reproducir la nueva
-      if (this.currentAction) {
-        this.currentAction.stop();
-      }
+      this.stopAnimation();
 
       action.start(true, 1.0, action.from, action.to, false);
       this.animationName = animationName;
@@ -220,6 +234,7 @@ export class Character {
 
   move(keys, characters, escenario, scene, activities, socket) {
     if (!this.mesh) return;
+
     let computedRotation = this.mesh.rotation.z;
     let computedMovement = new BABYLON.Vector3();
 
@@ -288,6 +303,47 @@ export class Character {
       socket.emit("modalActivity", collisionResult.activityId);
       socket.emit("NoMove");
     }
+
+    if (this.headAccessory) {
+      this.moveAccessory();
+    }
+  }
+
+  moveAccessory() {
+    this.scene.registerBeforeRender(() => {
+      if (this.headAccessory && this.mesh) {
+        switch (this.accessoryName) {
+          case "sheriffAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.1275,
+              this.mesh.position.z
+            );
+            break;
+          case "wizardAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.12,
+              this.mesh.position.z
+            );
+            break;
+          case "pirateAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.14,
+              this.mesh.position.z
+            );
+            break;
+          default:
+            break;
+        }
+        this.headAccessory.rotation = new BABYLON.Vector3(
+          this.mesh.rotation.x,
+          this.mesh.rotation.z + Math.PI,
+          this.mesh.rotation.y
+        );
+      }
+    });
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -337,6 +393,7 @@ export class Character {
   ) {
     // Verificar colisiones con otras cápsulas de personajes
     for (const character of characters) {
+      if (!character.capsule) continue;
       if (character.id !== this.id && character.capsule.position) {
         const distanceVector = newPosition.subtract(character.capsule.position);
         const distance = distanceVector.length();
@@ -469,10 +526,6 @@ export class Character {
   doFeedbackAnimation(score) {
     let animations = [];
     if (score >= 5) {
-      // animations.push("CharacterArmature|Wave");
-      // animations.push("CharacterArmature|Wave");
-      // animations.push("CharacterArmature|Yes");
-      // animations.push("CharacterArmature|Yes");
       animations.push("CharacterArmature|Idle_Gun");
       animations.push("CharacterArmature|Idle_Gun");
       animations.push("CharacterArmature|Idle_Gun");
@@ -518,6 +571,223 @@ export class Character {
           if (this.reward)
             this.reward.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.LOCAL);
         });
+      }
+    );
+  };
+
+  deleteMeshes() {
+    if (this.meshes) {
+      this.meshes.forEach((mesh) => {
+        mesh.dispose();
+      });
+      this.meshes = null;
+    }
+    if (this.mesh) {
+      this.mesh.dispose();
+      this.mesh = null;
+    }
+
+    if (this.animations) {
+      this.animations = {};
+    }
+  }
+
+  changeColor = (hexColor, scene) => {
+    this.deleteMeshes();
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "models/",
+      "character.glb",
+      scene,
+      (newMeshes) => {
+        // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.hexColor = hexColor;
+        this.meshes = newMeshes;
+        this.mesh = newMeshes[0];
+
+        scene.animationGroups.forEach((animation) => {
+          this.animations[animation.name] = animation;
+          animation.stop();
+        });
+
+        var animating = true;
+        const idleAnimation = scene.getAnimationGroupByName(
+          "CharacterArmature|Idle"
+        );
+
+        if (animating)
+          idleAnimation.start(
+            true,
+            1.0,
+            idleAnimation.from,
+            idleAnimation.to,
+            false
+          );
+        // Posición y rotación
+        this.mesh.position.set(0, 0, 0);
+        this.mesh.rotation.set(0, 0, 0);
+        this.mesh.scaling.set(0.05, 0.05, 0.05);
+        this.mesh.name = "customizedCharacter";
+
+        // Cambiar el color de las partes del personaje
+        // eslint-disable-next-line no-undef
+        const characterMaterial = new BABYLON.StandardMaterial(
+          "characterMaterial",
+          scene
+        );
+        // eslint-disable-next-line no-undef
+        characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
+          hexColor
+        );
+
+        const partsToColor = [
+          "Body_primitive0",
+          "Body_primitive2",
+          "Ears",
+          "Arms_primitive0",
+          "Head_primitive0",
+        ];
+        this.mesh.getChildMeshes().forEach((object) => {
+          if (partsToColor.includes(object.name)) {
+            object.material = characterMaterial;
+          }
+        });
+      }
+    );
+  };
+
+  changeAccessory = (accessoryName, scene) => {
+    if (this.headAccessory) {
+      console.log("ELIMINAR ACCESORIO");
+      this.headAccessory.dispose();
+    }
+
+    if (this.headAccessory && this.headAccessory.name === accessoryName) {
+      console.log("ELIMINAR ACCESORIO (null)");
+      this.headAccessory = null;
+      return;
+    }
+
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "models/",
+      `${accessoryName}.glb`,
+      scene,
+      (newMeshes) => {
+        // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.accessoryName = accessoryName;
+        this.headAccessory = newMeshes[0];
+        this.headAccessory.name = accessoryName;
+        switch (accessoryName) {
+          case "sheriffAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.1275,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.04, 0.04, 0.04);
+            break;
+          case "wizardAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.12,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.0265, 0.022, 0.0265);
+            break;
+          case "pirateAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.14,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.0115, 0.0115, 0.0115);
+            break;
+          default:
+            break;
+        }
+
+        scene.registerBeforeRender(() => {
+          if (this.headAccessory && this.mesh)
+            this.displayName.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.22,
+              this.mesh.position.z
+            );
+        });
+      }
+    );
+  };
+
+  reloadColor = (hexColor) => {
+    // eslint-disable-next-line no-undef
+    const characterMaterial = new BABYLON.StandardMaterial(
+      "characterMaterial",
+      this.scene
+    );
+    // eslint-disable-next-line no-undef
+    characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(hexColor);
+
+    const partsToColor = [
+      "Body_primitive0",
+      "Body_primitive2",
+      "Ears",
+      "Arms_primitive0",
+      "Head_primitive0",
+    ];
+    this.mesh.getChildMeshes().forEach((object) => {
+      if (partsToColor.includes(object.name)) {
+        object.material = characterMaterial;
+      }
+    });
+  };
+
+  reloadAccessory = (accessoryName) => {
+    if (this.accessoryName === accessoryName) return;
+    if (this.headAccessory) {
+      this.headAccessory.dispose();
+    }
+
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "models/",
+      `${accessoryName}.glb`,
+      this.scene,
+      (newMeshes) => {
+        // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.accessoryName = accessoryName;
+        this.headAccessory = newMeshes[0];
+        this.headAccessory.name = accessoryName;
+        switch (accessoryName) {
+          case "sheriffAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.1275,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.04, 0.04, 0.04);
+            break;
+          case "wizardAccessory":
+            tthis.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.12,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.0265, 0.022, 0.0265);
+            break;
+          case "pirateAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.14,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.0115, 0.0115, 0.0115);
+            break;
+          default:
+            break;
+        }
+
+        this.moveAccessory();
       }
     );
   };
