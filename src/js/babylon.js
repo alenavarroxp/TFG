@@ -221,11 +221,6 @@ export function initScene(canvas, user) {
 
     if (keys.W || keys.A || keys.S || keys.D) {
       character.move(keys, characters, escenario, scene, activities, socket);
-      // character.mesh.physicsImpostor.physicsBody.position.copy(character.mesh.position);
-      // character.mesh.physicsImpostor.physicsBody.velocity = new CANNON.Vec3(0, 0, 0);
-      // character.mesh.physicsImpostor.physicsBody.quaternion = new CANNON.Quaternion(0, 0, 0, 0);
-      // character.mesh.physicsImpostor.physicsBody.force = new CANNON.Vec3(0, 0, 0);
-      // character.mesh.physicsImpostor.physicsBody.torque = new CANNON.Vec3(0, 0, 0);
     }
 
     if (character) {
