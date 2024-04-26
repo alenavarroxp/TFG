@@ -187,8 +187,8 @@ export default function WebSocketServer() {
         socket.emit("customizeCharacter", obj);
       });
 
-      socket.on("saveCustomizeCharacter", () => {
-        socket.emit("saveCustomizeCharacter");
+      socket.on("saveCustomizeCharacter", (obj) => {
+        socket.emit("saveCustomizeCharacter", obj);
       });
 
       socket.on("reloadCustomizeCharacter", (obj) => {

@@ -552,8 +552,13 @@ export function initScene(canvas, user) {
   });
 
   socket.on("reloadCustomizeCharacter", (obj) => {
+    console.log("RELOAD CUSTOMIZE CHARACTER", obj);
     if (obj.color) character.reloadColor(obj.color);
-    if (obj.accessory) character.changeAccessory(obj.accessory, character.scene);
+
+    if (obj.accessory && !character.headAccessory)
+      character.changeAccessory(obj.accessory, scene);
+    else if (obj.accessory && character.headAccessory)
+      character.reloadAccessory(obj.accessory, scene);
   });
 }
 
@@ -677,10 +682,12 @@ function customizeScene(character) {
       copyCharacter.changeAccessory(obj.accessory, scene);
   });
 
-  socket.on("saveCustomizeCharacter", () => {
-    socket.emit("reloadCustomizeCharacter", {
-      color: copyCharacter.hexColor,
-      accessory: copyCharacter.accessoryName,
-    });
+  // Desuscribirte del evento antes de suscribirte nuevamente
+socket.off("saveCustomizeCharacter").on("saveCustomizeCharacter", (obj) => {
+  socket.emit("reloadCustomizeCharacter", {
+    color: obj.color,
+    accessory: obj.accessory,
   });
+});
+
 }

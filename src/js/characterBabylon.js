@@ -100,10 +100,6 @@ export class Character {
 
         this.createDisplayName(scene, this.mesh);
 
-        if (this.headAccessory) {
-          this.changeAccessory(this.headAccessory.name, scene);
-        }
-
         if (callback) {
           callback(this);
         }
@@ -740,5 +736,55 @@ export class Character {
         object.material = characterMaterial;
       }
     });
+  };
+
+  reloadAccessory = (accessoryName) => {
+    if (this.accessoryName === accessoryName) return;
+    if (this.headAccessory) {
+      this.headAccessory.dispose();
+    }
+
+    BABYLON.SceneLoader.ImportMesh(
+      "",
+      "models/",
+      `${accessoryName}.glb`,
+      this.scene,
+      (newMeshes) => {
+        // El modelo GLB contiene varios meshes, pero solo queremos el primero
+        this.accessoryName = accessoryName;
+        this.headAccessory = newMeshes[0];
+        this.headAccessory.name = accessoryName;
+        switch (accessoryName) {
+          case "sheriffAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.1275,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.04, 0.04, 0.04);
+            break;
+          case "kidAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.13,
+              this.mesh.position.z - 0.02
+            );
+            this.headAccessory.scaling.set(0.0115, 0.0115, 0.0115);
+            break;
+          case "pirateAccessory":
+            this.headAccessory.position = new BABYLON.Vector3(
+              this.mesh.position.x,
+              this.mesh.position.y + 0.14,
+              this.mesh.position.z
+            );
+            this.headAccessory.scaling.set(0.0115, 0.0115, 0.0115);
+            break;
+          default:
+            break;
+        }
+
+        this.moveAccessory();
+      }
+    );
   };
 }

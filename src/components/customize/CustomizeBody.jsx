@@ -11,13 +11,16 @@ import { userAtom } from "../../context/atoms/userAtom";
 import { useAtomValue } from "jotai";
 import { SaveModal } from "./SaveModal";
 
-export const CustomizeBody = ({ selectedTab, onOk }) => {
+export const CustomizeBody = ({
+  selectedTab,
+  onOk,
+  selectedColorItem,
+  setSelectedColorItem,
+  selectedAccessoryItem,
+  setSelectedAccessoryItem,
+}) => {
   const user = useAtomValue(userAtom);
-  const [selectedColorItem, setSelectedColorItem] = useState(
-    user.isProfessor ? "#00FF47" : "#0094FF"
-  );
   const oldColor = user.isProfessor ? "#00FF47" : "#0094FF";
-  const [selectedAccessoryItem, setSelectedAccessoryItem] = useState(null);
   const [modalCC, setModalCC] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
 
@@ -28,7 +31,6 @@ export const CustomizeBody = ({ selectedTab, onOk }) => {
   const handleSaveChanges = () => {
     setSaveModal(true);
   };
-  
 
   return (
     <>

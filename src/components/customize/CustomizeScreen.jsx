@@ -7,12 +7,19 @@ import { CustomizeBody } from "./CustomizeBody";
 import { useEffect, useState } from "react";
 import { socket } from "../../utils/socket";
 import { toast, Toaster } from "sonner";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../context/atoms/userAtom";
 
 export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
   const [selectedTab, setSelectedTab] = useState("Colores");
+  const user = useAtomValue(userAtom);
+  const [selectedColorItem, setSelectedColorItem] = useState(
+    user.isProfessor ? "#00FF47" : "#0094FF"
+  );
+  const [selectedAccessoryItem, setSelectedAccessoryItem] = useState(null);
   const handleClickCerrar = () => {
     setCustomizeScreen(false);
-    socket.emit("move")
+    socket.emit("move");
   };
 
   useEffect(() => {
@@ -35,7 +42,10 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
       },
       error: "Error al guardar los cambios. Inténtalo de nuevo.",
     });
-    socket.emit("saveCustomizeCharacter");
+    socket.emit("saveCustomizeCharacter", {
+      color: selectedColorItem,
+      accessory: selectedAccessoryItem ? selectedAccessoryItem.id : null,
+    });
   };
 
   return (
@@ -69,7 +79,14 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
           />
-          <CustomizeBody selectedTab={selectedTab} onOk={handleOk} />
+          <CustomizeBody
+            selectedTab={selectedTab}
+            onOk={handleOk}
+            selectedColorItem={selectedColorItem}
+            setSelectedColorItem={setSelectedColorItem}
+            selectedAccessoryItem={selectedAccessoryItem}
+            setSelectedAccessoryItem={setSelectedAccessoryItem}
+          />
         </div>
         <div className="w-1/3 flex flex-col h-[515px] items-center justify-center px-16">
           <p className="font-semibold text-2xl">Tu avatar</p>
