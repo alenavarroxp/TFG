@@ -23,7 +23,6 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
   };
 
   useEffect(() => {
-    console.log("HOA");
     if (customizeScreen) socket.emit("renderCustomizeScene");
   }, [customizeScreen]);
 
@@ -42,6 +41,10 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
       },
       error: "Error al guardar los cambios. Inténtalo de nuevo.",
     });
+    setTimeout(() => {
+      setCustomizeScreen(false);
+      socket.emit("move");
+    }, 4000);
     socket.emit("saveCustomizeCharacter", {
       color: selectedColorItem,
       accessory: selectedAccessoryItem ? selectedAccessoryItem.id : null,

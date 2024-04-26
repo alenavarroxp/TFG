@@ -212,15 +212,19 @@ export class Character {
     });
   }
 
+  stopAnimation() {
+    if (this.currentAction) {
+      this.currentAction.stop();
+    }
+  }
+
   playAnimation(animationName) {
     if (this.animations[animationName]) {
       const action = this.animations[animationName];
       if (this.currentAction == action) return;
 
       // Detener la animación actual antes de reproducir la nueva
-      if (this.currentAction) {
-        this.currentAction.stop();
-      }
+      this.stopAnimation();
 
       action.start(true, 1.0, action.from, action.to, false);
       this.animationName = animationName;
@@ -316,11 +320,11 @@ export class Character {
               this.mesh.position.z
             );
             break;
-          case "kidAccessory":
+          case "wizardAccessory":
             this.headAccessory.position = new BABYLON.Vector3(
               this.mesh.position.x,
-              this.mesh.position.y + 0.13,
-              this.mesh.position.z - 0.02
+              this.mesh.position.y + 0.12,
+              this.mesh.position.z
             );
             break;
           case "pirateAccessory":
@@ -389,7 +393,7 @@ export class Character {
   ) {
     // Verificar colisiones con otras cápsulas de personajes
     for (const character of characters) {
-      if (!character.capsule.position) continue;
+      if (!character.capsule) continue;
       if (character.id !== this.id && character.capsule.position) {
         const distanceVector = newPosition.subtract(character.capsule.position);
         const distance = distanceVector.length();
@@ -683,13 +687,13 @@ export class Character {
             );
             this.headAccessory.scaling.set(0.04, 0.04, 0.04);
             break;
-          case "kidAccessory":
+          case "wizardAccessory":
             this.headAccessory.position = new BABYLON.Vector3(
               this.mesh.position.x,
-              this.mesh.position.y + 0.13,
-              this.mesh.position.z - 0.02
+              this.mesh.position.y + 0.12,
+              this.mesh.position.z
             );
-            this.headAccessory.scaling.set(0.0115, 0.0115, 0.0115);
+            this.headAccessory.scaling.set(0.0265, 0.022, 0.0265);
             break;
           case "pirateAccessory":
             this.headAccessory.position = new BABYLON.Vector3(
@@ -707,7 +711,7 @@ export class Character {
           if (this.headAccessory && this.mesh)
             this.displayName.position = new BABYLON.Vector3(
               this.mesh.position.x,
-              this.mesh.position.y + 0.213,
+              this.mesh.position.y + 0.22,
               this.mesh.position.z
             );
         });
@@ -763,13 +767,13 @@ export class Character {
             );
             this.headAccessory.scaling.set(0.04, 0.04, 0.04);
             break;
-          case "kidAccessory":
-            this.headAccessory.position = new BABYLON.Vector3(
+          case "wizardAccessory":
+            tthis.headAccessory.position = new BABYLON.Vector3(
               this.mesh.position.x,
-              this.mesh.position.y + 0.13,
-              this.mesh.position.z - 0.02
+              this.mesh.position.y + 0.12,
+              this.mesh.position.z
             );
-            this.headAccessory.scaling.set(0.0115, 0.0115, 0.0115);
+            this.headAccessory.scaling.set(0.0265, 0.022, 0.0265);
             break;
           case "pirateAccessory":
             this.headAccessory.position = new BABYLON.Vector3(

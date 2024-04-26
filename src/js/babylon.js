@@ -639,7 +639,7 @@ function customizeScene(character) {
   camera.minZ = 0.1;
   camera.maxZ = 100;
   camera.lowerRadiusLimit = 0.3;
-  camera.upperRadiusLimit = 0.3;
+  camera.upperRadiusLimit = 5;
   camera.attachControl(canvas, true);
 
   const user = {
@@ -659,6 +659,8 @@ function customizeScene(character) {
         characterCallback.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
       );
       console.log("dharacter", characterCallback);
+      characterCallback.playAnimation("CharacterArmature|Idle");
+      characterCallback.stopAnimation();
     }
   );
 
@@ -683,11 +685,10 @@ function customizeScene(character) {
   });
 
   // Desuscribirte del evento antes de suscribirte nuevamente
-socket.off("saveCustomizeCharacter").on("saveCustomizeCharacter", (obj) => {
-  socket.emit("reloadCustomizeCharacter", {
-    color: obj.color,
-    accessory: obj.accessory,
+  socket.off("saveCustomizeCharacter").on("saveCustomizeCharacter", (obj) => {
+    socket.emit("reloadCustomizeCharacter", {
+      color: obj.color,
+      accessory: obj.accessory,
+    });
   });
-});
-
 }

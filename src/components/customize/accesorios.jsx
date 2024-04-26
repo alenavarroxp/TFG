@@ -8,9 +8,9 @@ export const accesorios = [
     label: <div className="text-lg font-semibold">Obtenido</div>,
   },
   {
-    id: "kidAccessory",
-    img: "/img/kidAccessory.png",
-    title: "Gorrocóptero",
+    id: "wizardAccessory",
+    img: "/img/wizardAccessory.png",
+    title: "Gorro de brujo",
     label: <div className="text-lg font-semibold">Gratis</div>,
   },
   {

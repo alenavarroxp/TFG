@@ -28,7 +28,6 @@ export class Stand {
         this.stand.name = fileName;
 
         this.meshes.forEach((mesh) => {
-          mesh.showBoundingBox = true;
           mesh.checkCollisions = true;
           mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
             mesh,

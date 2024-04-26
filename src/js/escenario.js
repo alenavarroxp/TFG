@@ -68,9 +68,6 @@ export class Escenario {
 
         this.meshes.forEach((mesh) => {
           if (visibleMeshNames.includes(mesh.name)) {
-            // console.log("Mesh name: ", mesh.name);
-            mesh.showBoundingBox = true;
-
             //Si el mesh.name termina en primitive4 o primitive 3 lo añade
             if (
               mesh.name.includes("primitive4") ||
