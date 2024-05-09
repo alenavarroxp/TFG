@@ -199,8 +199,8 @@ export class Character {
     // );
     // ellipsoidMaterial.wireframe = true;
     // this.capsule.material = ellipsoidMaterial;
-    this.capsule.checkCollisions = true;
     this.capsule.isVisible = false;
+    this.capsule.checkCollisions = true;
 
     scene.registerBeforeRender(() => {
       if (this.mesh && this.capsule)
@@ -304,12 +304,12 @@ export class Character {
       socket.emit("NoMove");
     }
 
-    if (this.headAccessory) {
-      this.moveAccessory();
+    if (this.headAccessory && keys) {
+      this.moveAccessory(keys);
     }
   }
 
-  moveAccessory() {
+  moveAccessory(keys) {
     this.scene.registerBeforeRender(() => {
       if (this.headAccessory && this.mesh) {
         switch (this.accessoryName) {
@@ -337,11 +337,33 @@ export class Character {
           default:
             break;
         }
-        this.headAccessory.rotation = new BABYLON.Vector3(
-          this.mesh.rotation.x,
-          this.mesh.rotation.z + Math.PI,
-          this.mesh.rotation.y
-        );
+        if (keys) {
+          if (
+            keys["A"] ||
+            keys["D"] ||
+            keys["W"] ||
+            keys["S"] ||
+            keys["SHIFT"]
+          ) {
+            const targetRotation = new BABYLON.Vector3(
+              this.mesh.rotation.x - Math.PI / 6,
+              this.mesh.rotation.z + Math.PI,
+              this.mesh.rotation.y
+            );
+            const lerpAmount = 0.5; // Adjust this value to control the smoothness of the rotation
+            this.headAccessory.rotation = BABYLON.Vector3.Lerp(
+              this.headAccessory.rotation,
+              targetRotation,
+              lerpAmount
+            );
+          } else {
+            this.headAccessory.rotation = new BABYLON.Vector3(
+              this.mesh.rotation.x,
+              this.mesh.rotation.z + Math.PI,
+              this.mesh.rotation.y
+            );
+          }
+        }
       }
     });
   }
@@ -768,7 +790,7 @@ export class Character {
             this.headAccessory.scaling.set(0.04, 0.04, 0.04);
             break;
           case "wizardAccessory":
-            tthis.headAccessory.position = new BABYLON.Vector3(
+            this.headAccessory.position = new BABYLON.Vector3(
               this.mesh.position.x,
               this.mesh.position.y + 0.12,
               this.mesh.position.z

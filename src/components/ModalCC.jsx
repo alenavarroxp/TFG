@@ -34,8 +34,8 @@ export const ModalCC = ({ modalCC, setModalCC }) => {
           Poly Pizza
         </div>
         <div>
-          <a href="https://poly.pizza/m/0vAOG_PcdNb">Propeller hat</a> by{" "}
-          <a href="https://poly.pizza/u/jeremy">jeremy</a> [
+          <a href="https://poly.pizza/m/7VVumyY7L_u">Wizard hat</a> by{" "}
+          <a href="https://poly.pizza/u/Poly%20by%20Google">Poly by Google</a> [
           <a href="https://creativecommons.org/licenses/by/3.0/">CC-BY</a>] via
           Poly Pizza
         </div>

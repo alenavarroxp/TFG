@@ -224,6 +224,11 @@ export function initScene(canvas, user) {
     }
 
     if (character) {
+      if (character.mesh && character.mesh.position.y < -2) {
+        character.mesh.position.x = 0;
+        character.mesh.position.y = 3;
+        character.mesh.position.z = 0;
+      }
       if (keys.SPACE) {
         character.playAnimation("CharacterArmature|Jump");
         character.jump();
@@ -634,7 +639,7 @@ function customizeScene(character) {
   camera.minZ = 0.1;
   camera.maxZ = 100;
   camera.lowerRadiusLimit = 0.3;
-  camera.upperRadiusLimit = 5;
+  camera.upperRadiusLimit = 0.3;
   camera.attachControl(canvas, true);
 
   const user = {
