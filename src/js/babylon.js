@@ -288,7 +288,7 @@ export function initScene(canvas, user) {
   }
 
   socket.on("init", () => {
-    console.log("Conectado al servidor con ID: ", socket.id);
+    console.log("Conectado al servidor con ID: ", socket.id, " hora: ", new Date().toLocaleTimeString());
     setTimeout(() => {
       character = new Character(
         socket.id,
