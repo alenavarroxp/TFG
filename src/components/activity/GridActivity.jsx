@@ -5,6 +5,7 @@ import { actualAnswerAtom } from "../../context/atoms/actualAnswerAtom";
 import { useAtom } from "jotai";
 import { totalAnswersAtom } from "../../context/atoms/totalAnswers";
 import { feedbackAtom } from "../../context/atoms/feedbackAtom";
+import { questionAnsweredAtom } from "../../context/atoms/questionAnsweredAtom";
 
 export const GridActivity = ({
   questions,
@@ -16,6 +17,11 @@ export const GridActivity = ({
   const [currentAnswer, setCurrentAnswer] = useAtom(actualAnswerAtom);
   const [answers, setAnswers] = useAtom(totalAnswersAtom);
   const [feedback] = useAtom(feedbackAtom);
+  const [questionsAnswered] = useAtom(questionAnsweredAtom);
+
+  useEffect(() => {
+    console.log("questionAnswered", questionsAnswered);
+  }, [questionsAnswered]);
 
   const customColor = (question) => {
     if (feedbackVisible) {
@@ -23,17 +29,25 @@ export const GridActivity = ({
       const correctsAnswers = questionFeedback?.corrects[0] || [];
       const wrongsAnswers = questionFeedback?.wrongs[0] || [];
 
+      console.log(
+        "idquestion, question, corrects and wrongs",
+        question.id,
+        questionFeedback,
+        correctsAnswers,
+        wrongsAnswers
+      );
+
       if (
         correctsAnswers.length === questions[question.id - 1].correct.length &&
         wrongsAnswers.length === 0
       ) {
-        return "bg-green-500 text-white"; // Todas las respuestas son correctas y no hay incorrectas
+        return "bg-green-500"; // Todas las respuestas son correctas y no hay incorrectas
       } else if (correctsAnswers.length > 0 && wrongsAnswers.length >= 0) {
-        return "bg-yellow-500 text-white"; // Al menos una respuesta es correcta y al menos una es incorrecta
+        return "bg-yellow-500"; // Al menos una respuesta es correcta y al menos una es incorrecta
       } else if (correctsAnswers.length === 0 && wrongsAnswers.length > 0) {
-        return "bg-red-500 text-white"; // No hay respuestas correctas, pero hay respuestas incorrectas
+        return "bg-red-500"; // No hay respuestas correctas, pero hay respuestas incorrectas
       } else {
-        return "bg-white text-white"; // No hay respuestas
+        return "bg-gray-500"; // No hay respuestas
       }
     }
   };
@@ -91,7 +105,7 @@ export const GridActivity = ({
                     : feedbackVisible && selectedQuestion === question
                     ? "border-2 border-white tour-step9"
                     : "tour-step9"
-                }`}
+                } ${questionsAnswered.includes(index) ? "opacity-75" : ""}`}
                 onClick={() => handleQuestionClick(question)}
               >
                 <p

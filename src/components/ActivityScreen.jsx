@@ -66,39 +66,11 @@ export const ActivityScreen = ({ setActivityScreen }) => {
       return;
     }
 
-    console.group("Comparación de respuestas:");
-
-    // Itera sobre cada pregunta.
-    activity.questions.forEach((question) => {
-      // Encuentra las respuestas del usuario que corresponden a la pregunta actual.
-      const userAnswer = answers.find(
-        (answer) => answer.id === question.id - 1
-      );
-
-      // Verifica si todas las respuestas proporcionadas por el usuario son correctas.
-      const allUserAnswersCorrect = userAnswer.answerOption.every(
-        (userOption) => {
-          return question.correct.includes(userOption - 1);
-        }
-      );
-
-      // Verifica si todas las respuestas correctas están incluidas en las respuestas del usuario.
-      const allCorrectAnswersIncluded = question.correct.every(
-        (correctAnswer) =>
-          userAnswer && userAnswer.answerOption.includes(correctAnswer + 1)
-      );
-
-      // Si alguna respuesta proporcionada por el usuario es incorrecta o falta alguna respuesta correcta, hay un error.
-      const isError = !allUserAnswersCorrect || !allCorrectAnswersIncluded;
-
-      // Si hay errores, los registra.
-      if (isError) {
-        console.log(`Pregunta ${question.id} tiene errores.`);
-      } else {
-        console.log(`Pregunta ${question.id} respondida correctamente.`);
-      }
-    });
-    console.groupEnd();
+    if(answers.length < activity.questions.length) {
+      console.log("Faltan responder preguntas");
+      return;
+    }
+    
     setScoreVisible(true);
     setFeedbackVisible(true);
   };

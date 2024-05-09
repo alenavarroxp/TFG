@@ -15,6 +15,7 @@ export default function WebSocketServer() {
       socket.on("init", () => {
         socket.emit("init");
       });
+      
       socket.on("disconnect", () => {
         console.log("Se ha desconectado el usuario", socket.id);
         console.log("USERS", this.users);

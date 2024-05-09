@@ -4,6 +4,7 @@ import { IoCheckmarkCircle } from "react-icons/io5";
 import { useAtom } from "jotai";
 import { totalAnswersAtom } from "../../context/atoms/totalAnswers";
 import { feedbackAtom } from "../../context/atoms/feedbackAtom";
+import { questionAnsweredAtom } from "../../context/atoms/questionAnsweredAtom";
 
 export const AnswerActivity = ({
   index,
@@ -18,6 +19,7 @@ export const AnswerActivity = ({
   const [score, setScore] = useState(0);
   const [feedback] = useAtom(feedbackAtom);
   const [visibleFeedback, setVisibleFeedback] = useState(false);
+  const [questionAnswered, setQuestionAnswered] = useAtom(questionAnsweredAtom);
 
   useEffect(() => {
     if (feedbackVisible) {
@@ -61,8 +63,16 @@ export const AnswerActivity = ({
       if (answer.id === actualQuestion.id - 1) {
         if (answer.answerOption.includes(index + 1)) {
           setVisibleCorrect(true);
+          if (!questionAnswered.includes(actualQuestion.id - 1)) {
+            setQuestionAnswered([...questionAnswered, actualQuestion.id - 1]);
+          }
         } else {
           setVisibleCorrect(false);
+            if (questionAnswered.includes(actualQuestion.id - 1) && answers[actualQuestion.id - 1]?.answerOption.length === 0) {
+            setQuestionAnswered(
+              questionAnswered.filter((id) => id !== actualQuestion.id - 1)
+            );
+            }
         }
       }
     });
@@ -70,6 +80,7 @@ export const AnswerActivity = ({
     return () => {
       setVisibleCorrect(false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actualQuestion, answers, index]);
 
   // Función para manejar el cambio en la selección de la opción

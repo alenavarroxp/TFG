@@ -29,17 +29,22 @@ export const FinalScore = ({
       let corrects = [];
 
       for (let j = 0; j < correct.length; j++) {
-        if (given.includes(correct[j])) {
+        if (given && given.includes(correct[j])) {
           corrects.push(correct[j]);
         }
       }
-      let wrongs = given.filter((answer) => !corrects.includes(answer));
+      let wrongs =
+        given && given.filter((answer) => !corrects.includes(answer));
 
       //CALCULAR PUNTAJE
-      let score = corrects.length / correct.length;
-      score -= (wrongs.length / correct.length) * 0.5;
+      let score = 0;
+      if (corrects && correct && wrongs) {
+        score = corrects.length / correct.length;
+        score -= (wrongs.length / correct.length) * 0.5;
 
-      score *= activity.questions[i].score;
+        score *= activity.questions[i].score;
+      }
+
       setScore((prev) => prev + score);
       updateFeedback(i, corrects, wrongs);
     }
