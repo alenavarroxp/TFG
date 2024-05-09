@@ -34,7 +34,7 @@ export const CustomizeBody = ({
 
   return (
     <>
-      <div className="bg-[#1E574B] rounded-r-xl rounded-b-xl flex h-[460px] flex-col">
+      <div className="bg-[#1E574B] rounded-r-xl rounded-b-xl flex h-[460px] flex-col tourC-step5">
         {modalCC && <ModalCC modalCC={modalCC} setModalCC={setModalCC} />}
         {saveModal && (
           <SaveModal

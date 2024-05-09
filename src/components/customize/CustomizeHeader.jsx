@@ -12,14 +12,16 @@ export const CustomizeHeader = ({ selectedTab, setSelectedTab }) => {
         icon={<MdOutlineColorLens />}
         selectedTab={selectedTab === "Colores"}
         onClick={() => setSelectedTab("Colores")}
+        style="tourC-step2"
       />
       <CustomizeTab
         text="Accesorios"
         icon={<LiaHatCowboySolid />}
         selectedTab={selectedTab === "Accesorios"}
         onClick={() => setSelectedTab("Accesorios")}
+        style="tourC-step3"
       />
-      <PurseComponent />
+      <PurseComponent style="tourC-step4" />
     </div>
   );
 };

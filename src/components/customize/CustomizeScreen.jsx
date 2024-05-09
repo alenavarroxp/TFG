@@ -9,6 +9,7 @@ import { socket } from "../../utils/socket";
 import { toast, Toaster } from "sonner";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../context/atoms/userAtom";
+import { CustomizeTourComponent } from "./CustomizeTourComponent";
 
 export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
   const [selectedTab, setSelectedTab] = useState("Colores");
@@ -21,6 +22,7 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
     setCustomizeScreen(false);
     socket.emit("move");
   };
+  const [customizeTourVisible, setCustomizeTourVisible] = useState(false);
 
   useEffect(() => {
     if (customizeScreen) socket.emit("renderCustomizeScene");
@@ -53,22 +55,28 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
 
   return (
     <div className="min-h-full w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
+      {customizeTourVisible && (
+        <CustomizeTourComponent setTourVisible={setCustomizeTourVisible} />
+      )}
       <Toaster position="top-right" />
-      <div className="flex justify-center items-center w-fit mt-5">
-        <UnderlinedText text={"Personaliza tu avatar"} style="text-2xl ml-5" />
-        <AiFillInfoCircle
-          size={16}
-          className="ml-2 pointer-events-auto cursor-pointer border-b-0"
-          onClick={() => {
-            console.log("Tour");
-            // setTourVisible(true);
-            // resetErrors({ tour: true });
-          }}
-        />
-      </div>
-      <div className="ml-5 mt-1">
-        Esta es la pantalla de personalización, donde puedes darle a tu avatar
-        un toque único y distintivo que refleje tu estilo y personalidad.
+      <div className="tourC-step1 w-fit">
+        <div className="flex justify-center items-center w-fit mt-5">
+          <UnderlinedText
+            text={"Personaliza tu avatar"}
+            style="text-2xl ml-5"
+          />
+          <AiFillInfoCircle
+            size={16}
+            className="ml-2 pointer-events-auto cursor-pointer border-b-0"
+            onClick={() => {
+              setCustomizeTourVisible(true);
+            }}
+          />
+        </div>
+        <div className="ml-5 mt-1">
+          Esta es la pantalla de personalización, donde puedes darle a tu avatar
+          un toque único y distintivo que refleje tu estilo y personalidad.
+        </div>
       </div>
       <div className="absolute top-2 right-3">
         <button onClick={handleClickCerrar}>
@@ -91,7 +99,7 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
             setSelectedAccessoryItem={setSelectedAccessoryItem}
           />
         </div>
-        <div className="w-1/3 flex flex-col h-[515px] items-center justify-center px-16">
+        <div className="w-1/3 flex flex-col h-[515px] items-center justify-center px-16 tourC-step7">
           <p className="font-semibold text-2xl">Tu avatar</p>
           <canvas
             id="customizeScene"
