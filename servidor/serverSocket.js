@@ -15,7 +15,7 @@ export default function WebSocketServer() {
       socket.on("init", () => {
         socket.emit("init");
       });
-      
+
       socket.on("disconnect", () => {
         console.log("Se ha desconectado el usuario", socket.id);
         console.log("USERS", this.users);
@@ -190,6 +190,7 @@ export default function WebSocketServer() {
 
       socket.on("saveCustomizeCharacter", (obj) => {
         socket.emit("saveCustomizeCharacter", obj);
+        socket.broadcast.emit("reloadAvatar", { id: socket.id, obj: obj });
       });
 
       socket.on("reloadCustomizeCharacter", (obj) => {

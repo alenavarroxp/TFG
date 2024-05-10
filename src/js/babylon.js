@@ -255,6 +255,7 @@ export function initScene(canvas, user) {
           position: character.mesh.position,
           rotation: character.mesh.rotation,
           animation: character.animationName,
+          keys: keys,
         });
       } catch (err) {
         // console.log(err);
@@ -288,7 +289,12 @@ export function initScene(canvas, user) {
   }
 
   socket.on("init", () => {
-    console.log("Conectado al servidor con ID: ", socket.id, " hora: ", new Date().toLocaleTimeString());
+    console.log(
+      "Conectado al servidor con ID: ",
+      socket.id,
+      " hora: ",
+      new Date().toLocaleTimeString()
+    );
     setTimeout(() => {
       character = new Character(
         socket.id,
@@ -357,6 +363,9 @@ export function initScene(canvas, user) {
           mesh.rotation.copyFrom(obj.rotation);
         });
         character.playAnimation(obj.animation);
+        if(character.headAccessory) {
+          character.moveAccessory(obj.keys)
+        }
       } catch (err) {
         // console.log(err);
       }
@@ -559,6 +568,18 @@ export function initScene(canvas, user) {
       character.changeAccessory(obj.accessory, scene);
     else if (obj.accessory && character.headAccessory)
       character.reloadAccessory(obj.accessory, scene);
+  });
+
+  socket.on("reloadAvatar", (obj) => {
+    const character = characters.find((character) => character.id === obj.id);
+    if (character) {
+      if (obj.obj.color) character.reloadColor(obj.obj.color);
+
+      if (obj.obj.accessory && !character.headAccessory)
+        character.changeAccessory(obj.obj.accessory, scene);
+      else if (obj.obj.accessory && character.headAccessory)
+        character.reloadAccessory(obj.obj.accessory, scene);
+    }
   });
 }
 

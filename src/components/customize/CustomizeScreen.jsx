@@ -29,8 +29,6 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
   }, [customizeScreen]);
 
   const handleOk = () => {
-    console.log("¡GUARDAR CAMBIOS!");
-
     const promise = () =>
       new Promise((resolve) =>
         setTimeout(() => resolve({ name: "Guardando" }), 2000)
