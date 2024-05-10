@@ -295,41 +295,82 @@ export function initScene(canvas, user) {
       " hora: ",
       new Date().toLocaleTimeString()
     );
-    setTimeout(() => {
-      character = new Character(
-        socket.id,
-        new BABYLON.Vector3(
-          Math.random() * (0.25 - -0.25) + -0.25,
-          10,
-          Math.random() * (0.25 - -0.25) + -0.25
-        ),
-        new BABYLON.Vector3(0, 0, 0),
-        user,
-        scene,
-        (character) => {
-          characters.push(character);
-          socket.emit("newCharacter", {
-            id: socket.id,
-            position: character.mesh.position,
-            rotation: character.mesh.rotation,
-            user: user,
-          });
+    socket.emit("getUser", user);
+  });
 
-          socket.emit("recuperarPersonajes", socket.id);
-          socket.emit("recuperarActividades");
-
-          const sphereSize = 0.5;
-
-          character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
-            character.mesh,
-            BABYLON.PhysicsImpostor.SphereImpostor,
-            { mass: 10, radius: sphereSize, restitution: 0, friction: 1 },
-            scene
+  function createCharacter(obj) {
+    let position =
+      obj && obj.position
+        ? new BABYLON.Vector3(obj.position.x, obj.position.y, obj.position.z)
+        : new BABYLON.Vector3(
+            Math.random() * (0.25 - -0.25) + -0.25,
+            10,
+            Math.random() * (0.25 - -0.25) + -0.25
           );
 
-          move = true;
-        }
-      );
+    let rotation =
+      obj && obj.rotation
+        ? new BABYLON.Vector3(obj.rotation.x, obj.rotation.y, obj.rotation.z)
+        : new BABYLON.Vector3(0, 0, 0);
+    let color =
+      obj && obj.color ? obj.color : user.isProfessor ? "#00FF47" : "#0094FF";
+
+      let accessoryName = obj && obj.accessoryName ? obj.accessoryName : null;
+
+    character = new Character(
+      socket.id,
+      position,
+      rotation,
+      user,
+      color,
+      accessoryName,
+      scene,
+      (character) => {
+        characters.push(character);
+        console.log("character.user", character.user);
+        let position = {
+          x: character.mesh.position.x,
+          y: character.mesh.position.y,
+          z: character.mesh.position.z,
+        };
+        let rotation = {
+          x: character.mesh.rotation.x,
+          y: character.mesh.rotation.y,
+          z: character.mesh.rotation.z,
+        };
+        socket.emit("newCharacter", {
+          id: socket.id,
+          userName: character.user.userName,
+          isProfessor: character.user.isProfessor,
+          position: position,
+          rotation: rotation,
+          user: user,
+          color: user.isProfessor ? "#00FF47" : "#0094FF",
+          accessoryName: character.accessoryName,
+        });
+
+        socket.emit("recuperarPersonajes", socket.id);
+        socket.emit("recuperarActividades");
+
+        const sphereSize = 0.5;
+
+        character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
+          character.mesh,
+          BABYLON.PhysicsImpostor.SphereImpostor,
+          { mass: 10, radius: sphereSize, restitution: 0, friction: 1 },
+          scene
+        );
+
+        move = true;
+      }
+    );
+    return character;
+  }
+
+  socket.on("getUser", (obj) => {
+    console.log("obj en getUser", obj);
+    setTimeout(() => {
+      character = createCharacter(obj);
     }, 500);
   });
 
@@ -363,8 +404,8 @@ export function initScene(canvas, user) {
           mesh.rotation.copyFrom(obj.rotation);
         });
         character.playAnimation(obj.animation);
-        if(character.headAccessory) {
-          character.moveAccessory(obj.keys)
+        if (character.headAccessory) {
+          character.moveAccessory(obj.keys);
         }
       } catch (err) {
         // console.log(err);

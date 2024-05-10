@@ -1,11 +1,14 @@
+import { UserModel } from "./models/userModel.js";
+
 export default function WebSocketServer() {
   this.users = {};
   this.usersWorld = {};
   this.activities = {};
 
-  this.start = function (io) {
+  this.start = function (io, system) {
     io.on("connection", (socket) => {
       console.log("Se ha conectado el usuario: " + socket.id);
+
       socket.emit("init");
       this.users[socket.id] = socket.id;
       console.log("USERS", this.users);
@@ -14,6 +17,15 @@ export default function WebSocketServer() {
 
       socket.on("init", () => {
         socket.emit("init");
+      });
+
+      socket.on("getUser", async (obj) => {
+        let user = await system.buscarUsuario(obj);
+        if (user) {
+          socket.emit("getUser", user);
+        } else {
+          socket.emit("getUser", null);
+        }
       });
 
       socket.on("disconnect", () => {
@@ -33,9 +45,32 @@ export default function WebSocketServer() {
         socket.emit("changeCamera");
       });
 
-      socket.on("newCharacter", (obj) => {
+      socket.on("newCharacter", async (obj) => {
         obj.users = this.users;
         obj.id = socket.id;
+
+        console.log("obj", obj);
+        const searchUser = {
+          userName: obj.userName,
+          isProfessor: obj.isProfessor,
+        };
+        //
+        let usuario = await system.buscarUsuario(searchUser);
+        if (usuario) {
+          console.log("Usuario encontrado", usuario);
+        } else {
+          console.log("Usuario no encontrado");
+          const newUser = new UserModel({
+            userName: obj.userName || null,
+            isProfessor: obj.isProfessor,
+            position: obj.position || null,
+            rotation: obj.rotation || null,
+            color: obj.color || null,
+            accessoryName: obj.accessoryName || null,
+          });
+          await system.insertarUsuario(newUser);
+        }
+
         socket.broadcast.emit("newCharacter", obj);
       });
 
@@ -71,12 +106,11 @@ export default function WebSocketServer() {
         socket.broadcast.emit("recuperarActividades");
       });
 
-      socket.on("newUserWorld", (obj) => {
+      socket.on("newUserWorld", async (obj) => {
         this.usersWorld[socket.id] = {
           userName: obj.userName,
           isProfessor: obj.isProfessor,
         };
-        console.log("USERS ACTUALIZADOS", this.usersWorld);
       });
 
       socket.on("getUsers", () => {

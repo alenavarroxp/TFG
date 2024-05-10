@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import "babylonjs-loaders";
 export class Character {
-  constructor(id, position, rotation, user, scene, callback) {
+  constructor(id, position, rotation, user, color, accessoryName, scene, callback) {
     this.scene = scene;
     this.id = id;
     this.user = user;
@@ -29,7 +29,8 @@ export class Character {
 
     // console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
-
+    console.log("COLOR", color);
+    console.log("ACCESSORYNAME", accessoryName);
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
@@ -71,12 +72,11 @@ export class Character {
           "characterMaterial",
           scene
         );
+        
         // eslint-disable-next-line no-undef
         characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
           !this.hexColor
-            ? this.user.isProfessor
-              ? "#00FF47"
-              : "#0094FF"
+            ? color
             : this.hexColor
         );
 
@@ -99,6 +99,10 @@ export class Character {
         this.showBoundingCapsule(scene, this.mesh);
 
         this.createDisplayName(scene, this.mesh);
+
+        if(accessoryName){
+          this.reloadAccessory(accessoryName);
+        }
 
         if (callback) {
           callback(this);
@@ -698,6 +702,7 @@ export class Character {
       (newMeshes) => {
         // El modelo GLB contiene varios meshes, pero solo queremos el primero
         this.accessoryName = accessoryName;
+        console.log("ACCESSORYNAME2", accessoryName);
         this.headAccessory = newMeshes[0];
         this.headAccessory.name = accessoryName;
         switch (accessoryName) {

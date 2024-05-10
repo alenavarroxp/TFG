@@ -7,6 +7,7 @@ import path, { dirname } from "path";
 import { Server } from "socket.io";
 import cors from "cors";
 import { SERVER_URL } from "./config/config.js";
+import { System } from "./servidor/system.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,12 +15,13 @@ const __dirname = dirname(__filename);
 const app = express();
 const httpServer = http.createServer(app);
 const ws = new WebSocketServer();
+const system = new System();
 
-// Configurar la carpeta de archivos estáticos
-app.use(express.static(path.join(__dirname, "public")));
+  // Configurar la carpeta de archivos estáticos
+  app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "dist")));
 // Configura cors para permitir solicitudes desde cualquier origen
-console.log("Mi variable",SERVER_URL);
+console.log("Mi variable", SERVER_URL);
 app.use(
   cors({
     origin: ["http://localhost:5172", "http://localhost:5173", SERVER_URL],
@@ -51,7 +53,7 @@ const io = new Server(httpServer, {
 });
 // io.listen(httpServer);
 
-ws.start(io);
+ws.start(io,system);
 // Iniciar el servidor
 httpServer.listen(5173, () => {
   console.log("Server is running on port 5173");
