@@ -38,8 +38,7 @@ export class Character {
 
     // console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
-    console.log("COLOR", color);
-    console.log("ACCESSORYNAME", accessoryName);
+    
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
@@ -69,7 +68,6 @@ export class Character {
             false
           );
         // Posición y rotación
-        console.log("position,rotation", position, rotation);
         this.mesh.position.set(position.x, position.y, position.z);
         this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
         this.mesh.scaling.set(0.05, 0.05, 0.05);
@@ -701,12 +699,10 @@ export class Character {
 
   changeAccessory = (accessoryName, scene) => {
     if (this.headAccessory) {
-      console.log("ELIMINAR ACCESORIO");
       this.headAccessory.dispose();
     }
 
     if (this.headAccessory && this.headAccessory.name === accessoryName) {
-      console.log("ELIMINAR ACCESORIO (null)");
       this.headAccessory = null;
       return;
     }
@@ -719,7 +715,6 @@ export class Character {
       (newMeshes) => {
         // El modelo GLB contiene varios meshes, pero solo queremos el primero
         this.accessoryName = accessoryName;
-        console.log("ACCESSORYNAME2", accessoryName);
         this.headAccessory = newMeshes[0];
         this.headAccessory.name = accessoryName;
         switch (accessoryName) {
@@ -788,14 +783,6 @@ export class Character {
   };
 
   reloadAccessory = (accessoryName) => {
-    console.log(
-      "this.accesosruName",
-      this.accessoryName,
-      "accessoryName",
-      accessoryName,
-      "this.headAccessory",
-      this.headAccessory
-    );
     if (accessoryName === undefined) return;
     if (!this.accessoryName && !accessoryName && !this.headAccessory) return;
     if (this.accessoryName === accessoryName) return;

@@ -11,7 +11,6 @@ export const ColorComponent = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const handleColorSelection = (color) => {
-    console.log("selectedCOlorItem", selectedColorItem);
     if (selectedColorItem === color) {
       setSelectedColorItem(null);
       return;
@@ -21,17 +20,8 @@ export const ColorComponent = ({
   };
 
   const handleCustomizeCharacter = (color) => {
-    console.log(
-      "selectedColorItem",
-      selectedColorItem,
-      "color",
-      color,
-      "oldColor",
-      oldColor
-    );
-
     const finalColor = selectedColorItem === color ? oldColor : color;
-    console.log("¡CUSTOMIZAR!");
+
     const objSend = {
       type: "color",
       color: finalColor,

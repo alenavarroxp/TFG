@@ -9,7 +9,6 @@ export const AccesorioComponent = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const handleAccesorioSelection = (obj) => {
-    console.log("selectedAccessoryItem", selectedAccessoryItem);
     if (selectedAccessoryItem === obj) {
       setSelectedAccessoryItem(null);
       return;
@@ -29,7 +28,6 @@ export const AccesorioComponent = ({
       key={index}
       className="flex justify-center items-center flex-col select-none"
       onClick={() => {
-        console.log("ACCESORIO SELECCIONADO", accesorio);
         handleAccesorioSelection(accesorio);
         handleCustomizeCharacter(accesorio.id);
       }}

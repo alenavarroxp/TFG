@@ -192,7 +192,6 @@ export function initScene(canvas, user) {
   }
 
   function changeCameraMode() {
-    console.log("change camera");
     if (cameraMode === "default") {
       cameraMode = "followPlayer";
     } else {
@@ -327,7 +326,6 @@ export function initScene(canvas, user) {
       scene,
       (character) => {
         characters.push(character);
-        console.log("character.user", character.user);
         let position = {
           x: character.mesh.position.x,
           y: character.mesh.position.y,
@@ -368,7 +366,6 @@ export function initScene(canvas, user) {
   }
 
   socket.on("getUser", (obj) => {
-    console.log("obj en getUser", obj);
     setTimeout(() => {
       character = createCharacter(obj);
     }, 500);
@@ -626,7 +623,6 @@ export function initScene(canvas, user) {
   });
 
   socket.on("reloadCustomizeCharacter", (obj) => {
-    console.log("RELOAD CUSTOMIZE CHARACTER", obj);
     if (obj.color) character.reloadColor(obj.color);
 
     if (obj.accessoryName && !character.headAccessory)
@@ -635,7 +631,6 @@ export function initScene(canvas, user) {
   });
 
   socket.on("reloadAvatar", (obj) => {
-    console.log("RELOAD AVATAR", obj);
     const character = characters.find((character) => character.id === obj.id);
     if (character) {
       if (obj.obj.color) character.reloadColor(obj.obj.color);
@@ -734,7 +729,6 @@ function customizeScene(character) {
     isProfessor: character.user.isProfessor,
   };
 
-  console.log("CHARACTER QUE LE LLEGA AL CUSTOMIZE", character);
   // Crear un personaje
   const copyCharacter = new Character(
     "characterCopy",
@@ -748,7 +742,6 @@ function customizeScene(character) {
       camera.setTarget(
         characterCallback.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
       );
-      console.log("dharacter", characterCallback);
       characterCallback.playAnimation("CharacterArmature|Idle");
       characterCallback.stopAnimation();
     }
@@ -768,7 +761,6 @@ function customizeScene(character) {
   });
 
   socket.on("customizeCharacter", (obj) => {
-    console.log("¡CUSTOMIZARIZACIÓN!", obj);
     if (obj.type === "color") copyCharacter.changeColor(obj.color, scene);
     if (obj.type === "accessory") {
       copyCharacter.changeAccessory(obj.accessory, scene);
@@ -779,7 +771,6 @@ function customizeScene(character) {
 
   // Desuscribirte del evento antes de suscribirte nuevamente
   socket.off("saveCustomizeCharacter").on("saveCustomizeCharacter", (obj) => {
-    console.log("saveCustomizeCharacterpene", obj);
     socket.emit("reloadCustomizeCharacter", {
       color: obj.color,
       accessoryName: obj.accessoryName,
