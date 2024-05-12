@@ -49,18 +49,20 @@ export default function WebSocketServer() {
         obj.users = this.users;
         obj.id = socket.id;
 
-        console.log("obj",socket.id, obj);
+        console.log("obj", socket.id, obj);
         const searchUser = {
           userName: obj.user.userName,
           isProfessor: obj.user.isProfessor,
         };
         //
         let usuario = await system.buscarUsuario(searchUser);
+        let userIns = null;
         if (usuario) {
-          console.log("Usuario encontrado",socket.id, usuario);
-          usuario.user = obj.user
+          console.log("Usuario encontrado", socket.id, usuario);
+          userIns = usuario;
+          console.log("USERINS", userIns);
         } else {
-          console.log("Usuario no encontrado",socket.id);
+          console.log("Usuario no encontrado", socket.id);
           const newUser = new UserModel({
             userName: obj.userName || null,
             isProfessor: obj.isProfessor,
@@ -71,11 +73,20 @@ export default function WebSocketServer() {
           });
           await system.insertarUsuario(newUser);
 
-          socket.broadcast.emit("newCharacter", newUser);
-          return;
+          let newUserToCreate = {
+            id: socket.id,
+            userName: obj.userName,
+            isProfessor: obj.isProfessor,
+            position: obj.position,
+            rotation: obj.rotation,
+            color: obj.color,
+            accessoryName: obj.accessoryName,
+          };
+          userIns = newUserToCreate;
+          console.log("USERINS INSERCION", userIns);
         }
-
-        socket.broadcast.emit("newCharacter", usuario);
+        userIns.id = socket.id;
+        socket.broadcast.emit("newCharacter", userIns);
       });
 
       socket.on("newActivity", (obj) => {
@@ -255,6 +266,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("reloadCustomizeCharacter", (obj) => {
+        console.log("socket.id", socket.id, "con obj", obj);
         socket.emit("reloadCustomizeCharacter", obj);
       });
 

@@ -389,27 +389,18 @@ export function initScene(canvas, user) {
 
   socket.on("newCharacter", (obj) => {
     const object = characters.find((character) => character.id === obj.id);
-    console.log("CHARACTER EN NEW CHARACTER", obj);
+    console.log("CHARACTER EN NEW CHARACTER en ",socket.id, "con ", obj);
     if (!object) {
       const character = new Character(
         obj.id,
         obj.position,
         obj.rotation,
-        obj.user,
+        {userName: obj.userName, isProfessor: obj.isProfessor},
         obj.color,
         obj.accessoryName,
         scene,
         function (character) {
           characters.push(character);
-
-          const sphereSize = 0.5;
-
-          character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
-            character.mesh,
-            BABYLON.PhysicsImpostor.SphereImpostor,
-            { mass: 10, radius: sphereSize, restitution: 0, friction: 1 },
-            scene
-          );
         }
       );
       console.log("character Creado", character);
@@ -644,13 +635,14 @@ export function initScene(canvas, user) {
   });
 
   socket.on("reloadAvatar", (obj) => {
+    console.log("RELOAD AVATAR", obj);
     const character = characters.find((character) => character.id === obj.id);
     if (character) {
       if (obj.obj.color) character.reloadColor(obj.obj.color);
 
-      if (obj.obj.accessory && !character.headAccessory)
-        character.changeAccessory(obj.obj.accessory, scene);
-      else character.reloadAccessory(obj.obj.accessory);
+      if (obj.obj.accessoryName && !character.headAccessory)
+        character.changeAccessory(obj.obj.accessoryName, scene);
+      else character.reloadAccessory(obj.obj.accessoryName);
     }
   });
 }
