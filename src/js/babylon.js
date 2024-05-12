@@ -315,7 +315,7 @@ export function initScene(canvas, user) {
     let color =
       obj && obj.color ? obj.color : user.isProfessor ? "#00FF47" : "#0094FF";
 
-      let accessoryName = obj && obj.accessoryName ? obj.accessoryName : null;
+    let accessoryName = obj && obj.accessoryName ? obj.accessoryName : null;
 
     character = new Character(
       socket.id,
@@ -377,21 +377,33 @@ export function initScene(canvas, user) {
   socket.on("disconnected", (id) => {
     console.log("Desconectado del servidor", id);
     eliminarPersonaje(id);
+    socket.emit("saveCharacter", {
+      userName: character.user.userName,
+      isProfessor: character.user.isProfessor,
+      position: character.mesh.position,
+      rotation: character.mesh.rotation,
+      color: character.hexColor,
+      accessoryName: character.accessoryName,
+    });
   });
 
   socket.on("newCharacter", (obj) => {
     const object = characters.find((character) => character.id === obj.id);
-    // console.log("CHARACTER EN NEW CHARACTER", object);
+    console.log("CHARACTER EN NEW CHARACTER", obj);
     if (!object) {
       const character = new Character(
         obj.id,
         obj.position,
         obj.rotation,
         obj.user,
-        scene
+        obj.color,
+        obj.accessoryName,
+        scene,
+        function (character) {
+          characters.push(character);
+        }
       );
-      // console.log("Se ha creado el personaje: ", character);
-      characters.push(character);
+      console.log("character Creado", character);
     }
   });
 
@@ -417,11 +429,23 @@ export function initScene(canvas, user) {
     // console.log("Recuperando personajes...");
     for (const character of characters) {
       try {
+        let position = {
+          x: character.mesh.position.x,
+          y: character.mesh.position.y,
+          z: character.mesh.position.z,
+        };
+        let rotation = {
+          x: character.mesh.rotation.x,
+          y: character.mesh.rotation.y,
+          z: character.mesh.rotation.z,
+        };
         socket.emit("newCharacter", {
-          id: character.id,
-          position: character.mesh.position,
-          rotation: character.mesh.rotation,
-          user: character.user,
+          id: socket.id,
+          position: position,
+          rotation: rotation,
+          user: user,
+          color: character.hexColor,
+          accessoryName: character.accessoryName,
         });
       } catch (err) {
         // console.log(err);
@@ -605,10 +629,9 @@ export function initScene(canvas, user) {
     console.log("RELOAD CUSTOMIZE CHARACTER", obj);
     if (obj.color) character.reloadColor(obj.color);
 
-    if (obj.accessory && !character.headAccessory)
-      character.changeAccessory(obj.accessory, scene);
-    else if (obj.accessory && character.headAccessory)
-      character.reloadAccessory(obj.accessory, scene);
+    if (obj.accessoryName && !character.headAccessory)
+      character.changeAccessory(obj.accessoryName, scene);
+    else character.reloadAccessory(obj.accessoryName);
   });
 
   socket.on("reloadAvatar", (obj) => {
@@ -618,8 +641,8 @@ export function initScene(canvas, user) {
 
       if (obj.obj.accessory && !character.headAccessory)
         character.changeAccessory(obj.obj.accessory, scene);
-      else if (obj.obj.accessory && character.headAccessory)
-        character.reloadAccessory(obj.obj.accessory, scene);
+      else 
+        character.reloadAccessory(obj.obj.accessory);
     }
   });
 }
@@ -709,12 +732,15 @@ function customizeScene(character) {
     isProfessor: character.user.isProfessor,
   };
 
+  console.log("CHARACTER QUE LE LLEGA AL CUSTOMIZE", character);
   // Crear un personaje
   const copyCharacter = new Character(
     "characterCopy",
     new BABYLON.Vector3(0, 0, 0),
     new BABYLON.Vector3(0, 0, 0),
     user,
+    character.hexColor,
+    character.accessoryName,
     scene,
     (characterCallback) => {
       camera.setTarget(
@@ -742,15 +768,19 @@ function customizeScene(character) {
   socket.on("customizeCharacter", (obj) => {
     console.log("¡CUSTOMIZARIZACIÓN!", obj);
     if (obj.type === "color") copyCharacter.changeColor(obj.color, scene);
-    if (obj.type === "accessory")
+    if (obj.type === "accessory") {
       copyCharacter.changeAccessory(obj.accessory, scene);
+    } else {
+      copyCharacter.reloadAccessory(obj.accessory, scene);
+    }
   });
 
   // Desuscribirte del evento antes de suscribirte nuevamente
   socket.off("saveCustomizeCharacter").on("saveCustomizeCharacter", (obj) => {
+    console.log("saveCustomizeCharacterpene", obj);
     socket.emit("reloadCustomizeCharacter", {
       color: obj.color,
-      accessory: obj.accessory,
+      accessoryName: obj.accessoryName,
     });
   });
 }

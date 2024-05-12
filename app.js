@@ -21,7 +21,6 @@ const system = new System();
   app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "dist")));
 // Configura cors para permitir solicitudes desde cualquier origen
-console.log("Mi variable", SERVER_URL);
 app.use(
   cors({
     origin: ["http://localhost:5172", "http://localhost:5173", SERVER_URL],

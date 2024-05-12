@@ -10,13 +10,14 @@ import { toast, Toaster } from "sonner";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../context/atoms/userAtom";
 import { CustomizeTourComponent } from "./CustomizeTourComponent";
+import { accesorios } from "./accesorios";
 
 export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
   const [selectedTab, setSelectedTab] = useState("Colores");
   const user = useAtomValue(userAtom);
-  const [selectedColorItem, setSelectedColorItem] = useState(
-    user.isProfessor ? "#00FF47" : "#0094FF"
-  );
+
+  const [oldColor, setOldColor] = useState(null);
+  const [selectedColorItem, setSelectedColorItem] = useState(null);
   const [selectedAccessoryItem, setSelectedAccessoryItem] = useState(null);
   const handleClickCerrar = () => {
     setCustomizeScreen(false);
@@ -25,8 +26,19 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
   const [customizeTourVisible, setCustomizeTourVisible] = useState(false);
 
   useEffect(() => {
-    if (customizeScreen) socket.emit("renderCustomizeScene");
+    if (customizeScreen) socket.emit("renderCustomizeScene", user);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customizeScreen]);
+
+  useEffect(() => {
+    socket.on("colorAndAccessoryBBDD", (obj) => {
+      setOldColor(obj.color);
+      setSelectedColorItem(obj.color);
+      setSelectedAccessoryItem(
+        accesorios.find((a) => a.id === obj.accessoryName)
+      );
+    });
+  }, []);
 
   const handleOk = () => {
     const promise = () =>
@@ -46,8 +58,10 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
       socket.emit("move");
     }, 4000);
     socket.emit("saveCustomizeCharacter", {
-      color: selectedColorItem,
-      accessory: selectedAccessoryItem ? selectedAccessoryItem.id : null,
+      userName: user.userName,
+      isProfessor: user.isProfessor,
+      color: selectedColorItem ? selectedColorItem : null,
+      accessoryName: selectedAccessoryItem ? selectedAccessoryItem.id : null,
     });
   };
 
@@ -95,6 +109,7 @@ export const CustomizeScreen = ({ customizeScreen, setCustomizeScreen }) => {
             setSelectedColorItem={setSelectedColorItem}
             selectedAccessoryItem={selectedAccessoryItem}
             setSelectedAccessoryItem={setSelectedAccessoryItem}
+            oldColor={oldColor}
           />
         </div>
         <div className="w-1/3 flex flex-col h-[515px] items-center justify-center px-16 tourC-step7">

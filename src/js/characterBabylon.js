@@ -1,7 +1,16 @@
 /* eslint-disable no-undef */
 import "babylonjs-loaders";
 export class Character {
-  constructor(id, position, rotation, user, color, accessoryName, scene, callback) {
+  constructor(
+    id,
+    position,
+    rotation,
+    user,
+    color,
+    accessoryName,
+    scene,
+    callback
+  ) {
     this.scene = scene;
     this.id = id;
     this.user = user;
@@ -60,6 +69,7 @@ export class Character {
             false
           );
         // Posición y rotación
+        console.log("position,rotation", position, rotation);
         this.mesh.position.set(position.x, position.y, position.z);
         this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
         this.mesh.scaling.set(0.05, 0.05, 0.05);
@@ -72,13 +82,13 @@ export class Character {
           "characterMaterial",
           scene
         );
-        
+
         // eslint-disable-next-line no-undef
         characterMaterial.diffuseColor = new BABYLON.Color3.FromHexString(
-          !this.hexColor
-            ? color
-            : this.hexColor
+          !this.hexColor ? color : this.hexColor
         );
+
+        this.hexColor = color;
 
         const partsToColor = [
           "Body_primitive0",
@@ -100,7 +110,7 @@ export class Character {
 
         this.createDisplayName(scene, this.mesh);
 
-        if(accessoryName){
+        if (accessoryName) {
           this.reloadAccessory(accessoryName);
         }
 
@@ -164,13 +174,13 @@ export class Character {
 
     // Aplicar el material al plano
     this.displayName.material = planeMaterial;
-
+    
     // Mantener el plano enfocado hacia la cámara
     scene.registerBeforeRender(() => {
       if (!this.headAccessory && this.mesh && this.displayName)
         this.displayName.position = new BABYLON.Vector3(
           mesh.position.x,
-          mesh.position.y + 0.2,
+          mesh.position.y + 0.22,
           mesh.position.z
         );
 
@@ -547,6 +557,7 @@ export class Character {
     });
     this.capsule.dispose();
     this.displayName.dispose();
+    this.headAccessory.dispose();
   }
 
   doFeedbackAnimation(score) {
@@ -748,6 +759,7 @@ export class Character {
 
   reloadColor = (hexColor) => {
     // eslint-disable-next-line no-undef
+    this.hexColor = hexColor;
     const characterMaterial = new BABYLON.StandardMaterial(
       "characterMaterial",
       this.scene
@@ -770,10 +782,25 @@ export class Character {
   };
 
   reloadAccessory = (accessoryName) => {
+    console.log(
+      "this.accesosruName",
+      this.accessoryName,
+      "accessoryName",
+      accessoryName,
+      "this.headAccessory",
+      this.headAccessory
+    );
     if (this.accessoryName === accessoryName) return;
     if (this.headAccessory) {
       this.headAccessory.dispose();
     }
+
+    if(accessoryName === null) {
+      this.accessoryName = null;
+      this.headAccessory.dispose();
+      return;
+    }
+
 
     BABYLON.SceneLoader.ImportMesh(
       "",

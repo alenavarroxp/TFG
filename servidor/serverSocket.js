@@ -214,7 +214,17 @@ export default function WebSocketServer() {
         // socket.emit("feedbackScene");
       });
 
-      socket.on("renderCustomizeScene", () => {
+      socket.on("renderCustomizeScene", async (obj) => {
+        let usuario = await system.buscarUsuario({
+          userName: obj.userName,
+          isProfessor: obj.isProfessor,
+        });
+        if (usuario) {
+          socket.emit("colorAndAccessoryBBDD", {
+            color: usuario.color,
+            accessoryName: usuario.accessoryName,
+          });
+        }
         socket.emit("renderCustomizeScene");
       });
 
@@ -222,13 +232,39 @@ export default function WebSocketServer() {
         socket.emit("customizeCharacter", obj);
       });
 
-      socket.on("saveCustomizeCharacter", (obj) => {
-        socket.emit("saveCustomizeCharacter", obj);
-        socket.broadcast.emit("reloadAvatar", { id: socket.id, obj: obj });
+      socket.on("saveCustomizeCharacter", async (obj) => {
+        let usuario = await system.buscarUsuario({
+          userName: obj.userName,
+          isProfessor: obj.isProfessor,
+        });
+        console.log("USUARIO", usuario);
+        console.log("OBJETO", obj);
+        if (usuario) {
+          usuario.color = obj.color ? obj.color : usuario.color;
+          usuario.accessoryName = obj.accessoryName;
+          await system.actualizarUsuario(usuario);
+          socket.emit("saveCustomizeCharacter", obj);
+          socket.broadcast.emit("reloadAvatar", { id: socket.id, obj: obj });
+        } else {
+          console.log("Usuario no encontrado");
+        }
       });
 
       socket.on("reloadCustomizeCharacter", (obj) => {
         socket.emit("reloadCustomizeCharacter", obj);
+      });
+
+      socket.on("saveCharacter", async (obj) => {
+        let usuario = await system.buscarUsuario({
+          userName: obj.userName,
+          isProfessor: obj.isProfessor,
+        });
+
+        if (usuario) {
+          usuario.color = obj.color;
+          usuario.accessoryName = obj.accessoryName;
+          await system.actualizarUsuario(usuario);
+        }
       });
     });
   };

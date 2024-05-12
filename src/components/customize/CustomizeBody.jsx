@@ -7,8 +7,6 @@ import { colors } from "./colors";
 import { accesorios } from "./accesorios";
 import { RiCreativeCommonsFill } from "react-icons/ri";
 import { ModalCC } from "../ModalCC";
-import { userAtom } from "../../context/atoms/userAtom";
-import { useAtomValue } from "jotai";
 import { SaveModal } from "./SaveModal";
 
 export const CustomizeBody = ({
@@ -18,9 +16,8 @@ export const CustomizeBody = ({
   setSelectedColorItem,
   selectedAccessoryItem,
   setSelectedAccessoryItem,
+  oldColor
 }) => {
-  const user = useAtomValue(userAtom);
-  const oldColor = user.isProfessor ? "#00FF47" : "#0094FF";
   const [modalCC, setModalCC] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
 

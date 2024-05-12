@@ -1,5 +1,7 @@
 import { PiPaintBrushFill } from "react-icons/pi";
 import { socket } from "../../utils/socket";
+import { useState } from "react";
+import { FaTrash } from "react-icons/fa";
 
 export const ColorComponent = ({
   colors,
@@ -7,7 +9,9 @@ export const ColorComponent = ({
   setSelectedColorItem,
   oldColor,
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const handleColorSelection = (color) => {
+    console.log("selectedCOlorItem", selectedColorItem);
     if (selectedColorItem === color) {
       setSelectedColorItem(null);
       return;
@@ -17,13 +21,20 @@ export const ColorComponent = ({
   };
 
   const handleCustomizeCharacter = (color) => {
-    if (selectedColorItem === color) {
-      color = oldColor;
-    }
+    console.log(
+      "selectedColorItem",
+      selectedColorItem,
+      "color",
+      color,
+      "oldColor",
+      oldColor
+    );
+
+    const finalColor = selectedColorItem === color ? oldColor : color;
     console.log("¡CUSTOMIZAR!");
     const objSend = {
       type: "color",
-      color: color,
+      color: finalColor,
     };
     socket.emit("customizeCharacter", objSend);
   };
@@ -38,12 +49,18 @@ export const ColorComponent = ({
       }}
     >
       <div
-        className="border-2 bg-white rounded-full w-20 h-20 flex justify-center items-center"
+        className="relative border-2 bg-white rounded-full w-20 h-20 flex justify-center items-center"
         style={{
           border:
             selectedColorItem === color.color
               ? "4px solid gold"
               : "4px solid transparent",
+        }}
+        onMouseEnter={() => {
+          if (selectedColorItem === color.color) setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          if (selectedColorItem === color.color) setIsHovered(false);
         }}
       >
         <PiPaintBrushFill
@@ -53,6 +70,11 @@ export const ColorComponent = ({
             filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.75))",
           }}
         />
+        {selectedColorItem === color.color && isHovered && (
+          <div className="text-black absolute w-full h-full bg-black bg-opacity-60 rounded-full flex items-center justify-center">
+            <FaTrash size={30} color="red" />
+          </div>
+        )}
       </div>
 
       <p className="text-sm mt-1">Color {color.title}</p>

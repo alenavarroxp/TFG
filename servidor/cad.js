@@ -22,19 +22,34 @@ export class CAD {
   };
 
   buscar = async function (filtro) {
+    if(!this.usuarios || !this.usuarios.findOne()) return null;
     let usuario = await this.usuarios.findOne(filtro);
     return usuario;
   };
 
   insertar = async function (usuario, callback) {
     try {
-      let admin = await this.usuarios.insertOne(usuario);
-      if (admin) {
+      let userInserted = await this.usuarios.insertOne(usuario);
+      if (userInserted) {
         console.log("Usuario insertado correctamente");
       }
-      callback(admin);
+      callback(userInserted);
     } catch (error) {
       console.error("Error al insertar el usuario", error);
+    }
+  };
+
+  actualizar = async function (usuario, callback) {
+    try {
+      console.log("CAD usuario", usuario);
+
+      let userUpdated = await this.usuarios.updateOne(
+        { _id: usuario._id },
+        { $set: usuario }
+      );
+      callback(userUpdated);
+    } catch (error) {
+      console.error("Error al actualizar el usuario", error);
     }
   };
 }

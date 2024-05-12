@@ -25,5 +25,12 @@ export class System {
     });
   }
 
+  async actualizarUsuario(obj) {
+    console.log("Actualizando usuario...", obj);
+    await this.cad.actualizar(obj, function () {
+      console.log("Usuario actualizado correctamente");
+    });
+  }
+
 
 }
