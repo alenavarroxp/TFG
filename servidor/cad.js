@@ -22,7 +22,9 @@ export class CAD {
   };
 
   buscar = async function (filtro) {
-    if(!this.usuarios || !this.usuarios.findOne()) return null;
+    if (!this.usuarios || typeof this.usuarios.findOne !== "function")
+      return null;
+
     let usuario = await this.usuarios.findOne(filtro);
     return usuario;
   };

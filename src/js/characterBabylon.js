@@ -174,7 +174,7 @@ export class Character {
 
     // Aplicar el material al plano
     this.displayName.material = planeMaterial;
-    
+
     // Mantener el plano enfocado hacia la cámara
     scene.registerBeforeRender(() => {
       if (!this.headAccessory && this.mesh && this.displayName)
@@ -790,17 +790,18 @@ export class Character {
       "this.headAccessory",
       this.headAccessory
     );
+    if (accessoryName === undefined) return;
+    if (!this.accessoryName && !accessoryName && !this.headAccessory) return;
     if (this.accessoryName === accessoryName) return;
     if (this.headAccessory) {
       this.headAccessory.dispose();
     }
 
-    if(accessoryName === null) {
+    if (accessoryName === null) {
       this.accessoryName = null;
       this.headAccessory.dispose();
       return;
     }
-
 
     BABYLON.SceneLoader.ImportMesh(
       "",
