@@ -401,6 +401,15 @@ export function initScene(canvas, user) {
         scene,
         function (character) {
           characters.push(character);
+
+          const sphereSize = 0.5;
+
+          character.mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
+            character.mesh,
+            BABYLON.PhysicsImpostor.SphereImpostor,
+            { mass: 10, radius: sphereSize, restitution: 0, friction: 1 },
+            scene
+          );
         }
       );
       console.log("character Creado", character);
@@ -641,8 +650,7 @@ export function initScene(canvas, user) {
 
       if (obj.obj.accessory && !character.headAccessory)
         character.changeAccessory(obj.obj.accessory, scene);
-      else 
-        character.reloadAccessory(obj.obj.accessory);
+      else character.reloadAccessory(obj.obj.accessory);
     }
   });
 }
@@ -681,6 +689,8 @@ function feedbackScene(character, score) {
     new BABYLON.Vector3(0, 0, 0),
     new BABYLON.Vector3(0, 0, 0),
     user,
+    character.hexColor,
+    null,
     scene,
     (characterCallback) => {
       camera.setTarget(

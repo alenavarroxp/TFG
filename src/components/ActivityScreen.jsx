@@ -13,6 +13,7 @@ import { totalAnswersAtom } from "../context/atoms/totalAnswers";
 import { ConfirmModal } from "./activity/ConfirmModal";
 import { FinalScore } from "./activity/FinalScore";
 import { TourComponent } from "./TourComponent";
+import { toast, Toaster } from "sonner";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
   const [activity, setActivity] = useState({});
@@ -62,12 +63,13 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     setActualQuestion(activity.questions[0]);
     // Verifica que haya preguntas y respuestas antes de realizar la comparación.
     if (activity.questions.length === 0 || answers.length === 0) {
-      console.log("No hay preguntas o respuestas para comparar.");
+      toast.warning("No has respondido ninguna pregunta. Rellena las respuestas para continuar.");
       return;
     }
 
     if(answers.length < activity.questions.length) {
       console.log("Faltan responder preguntas");
+      toast.warning("Revisa bien las preguntas de la actividad, tienes preguntas sin responder.");
       return;
     }
     
@@ -94,6 +96,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
 
   return (
     <div className="min-h-full w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
+      <Toaster richColors position="bottom-right" />
       {confirmModal && (
         <ConfirmModal
           confirmModal={confirmModal}

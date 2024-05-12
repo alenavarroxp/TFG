@@ -49,17 +49,18 @@ export default function WebSocketServer() {
         obj.users = this.users;
         obj.id = socket.id;
 
-        console.log("obj", obj);
+        console.log("obj",socket.id, obj);
         const searchUser = {
-          userName: obj.userName,
-          isProfessor: obj.isProfessor,
+          userName: obj.user.userName,
+          isProfessor: obj.user.isProfessor,
         };
         //
         let usuario = await system.buscarUsuario(searchUser);
         if (usuario) {
-          console.log("Usuario encontrado", usuario);
+          console.log("Usuario encontrado",socket.id, usuario);
+          usuario.user = obj.user
         } else {
-          console.log("Usuario no encontrado");
+          console.log("Usuario no encontrado",socket.id);
           const newUser = new UserModel({
             userName: obj.userName || null,
             isProfessor: obj.isProfessor,
@@ -69,9 +70,12 @@ export default function WebSocketServer() {
             accessoryName: obj.accessoryName || null,
           });
           await system.insertarUsuario(newUser);
+
+          socket.broadcast.emit("newCharacter", newUser);
+          return;
         }
 
-        socket.broadcast.emit("newCharacter", obj);
+        socket.broadcast.emit("newCharacter", usuario);
       });
 
       socket.on("newActivity", (obj) => {

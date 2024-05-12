@@ -180,6 +180,12 @@ export class Character {
       if (!this.headAccessory && this.mesh && this.displayName)
         this.displayName.position = new BABYLON.Vector3(
           mesh.position.x,
+          mesh.position.y + 0.2,
+          mesh.position.z
+        );
+      else if (this.headAccessory && this.mesh && this.displayName)
+        this.displayName.position = new BABYLON.Vector3(
+          mesh.position.x,
           mesh.position.y + 0.22,
           mesh.position.z
         );
