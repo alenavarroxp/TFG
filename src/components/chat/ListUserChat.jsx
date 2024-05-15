@@ -8,9 +8,9 @@ export const ListUserChat = () => {
   const myUser = useAtomValue(userAtom);
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    socket.emit("getUsers");
+  socket.emit("getUsers");
 
+  useEffect(() => {
     socket.on("getUsers", (users) => {
       const userList = Object.keys(users).map((userId) => ({
         id: userId,
@@ -22,7 +22,7 @@ export const ListUserChat = () => {
   }, []);
 
   const handleUserPress = (user) => () => {
-    socket.emit("selectedChatUser", {emisor:myUser, receptor:user});
+    socket.emit("selectedChatUser", { emisor: myUser, receptor: user });
   };
 
   return (

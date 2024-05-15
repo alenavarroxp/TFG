@@ -28,7 +28,7 @@ export const ChatBody = ({ selectedChat }) => {
   }, []);
   return (
     <div className="flex-1 flex flex-col">
-      <div className="bg-[#FAFAFA] h-full max-h-[630px] overflow-y-auto">
+      <div className="bg-[#eaeaea] h-full max-h-[405px] overflow-y-auto chat-scrollbar rounded-b-xl">
         {messages.map((message) =>
           message.emisor.userName === myUser.userName &&
           message.emisor.isProfessor === myUser.isProfessor ? (
