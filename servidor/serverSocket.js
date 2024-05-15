@@ -281,6 +281,10 @@ export default function WebSocketServer() {
       socket.on("selectedChatUser", (user) => {
         socket.emit("selectedChatUser", user);
       });
+
+      socket.on("chatMessage", (obj) => {
+        io.emit("chatMessage", obj);
+      });
     });
   };
 }

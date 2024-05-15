@@ -38,7 +38,7 @@ export class Character {
 
     // console.log("USER en crear personaje", this.user);
     // Carga el modelo GLB utilizando SceneLoader.ImportMesh
-    
+
     BABYLON.SceneLoader.ImportMesh(
       "",
       "models/",
@@ -561,7 +561,7 @@ export class Character {
     });
     this.capsule.dispose();
     this.displayName.dispose();
-    this.headAccessory.dispose();
+    if (this.headAccessory) this.headAccessory.dispose();
   }
 
   doFeedbackAnimation(score) {

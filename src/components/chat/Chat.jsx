@@ -13,7 +13,7 @@ export const Chat = () => {
     });
   }, []);
   return (
-    <div className=" flex mb-4 mr-4 w-3/5">
+    <div className=" flex mb-4 mr-4 w-3/5 min-w-[300px]">
       {selectedChat ? (
         <div className="flex flex-col w-full">
           <ChatHeader

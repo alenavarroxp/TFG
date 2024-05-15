@@ -6,24 +6,10 @@ import { useAtomValue } from "jotai";
 
 export const ListUserChat = () => {
   const myUser = useAtomValue(userAtom);
-  const [users, setUsers] = useState([
-    { id: 1, name: "Usuario1", role: "Estudiante" },
-    { id: 2, name: "Usuario2", role: "Profesor" },
-    { id: 3, name: "Usuario3", role: "Estudiante" },
-    { id: 4, name: "Usuario4", role: "Profesor" },
-    { id: 5, name: "Usuario5", role: "Estudiante" },
-    { id: 6, name: "Usuario6", role: "Profesor" },
-    { id: 7, name: "Usuario7", role: "Estudiante" },
-    { id: 8, name: "Usuario8", role: "Profesor" },
-    { id: 9, name: "Usuario9", role: "Estudiante" },
-    { id: 10, name: "Usuario10", role: "Profesor" },
-    { id: 11, name: "Usuario11", role: "Estudiante" },
-    { id: 12, name: "Usuario12", role: "Profesor" },
-    { id: 13, name: "Usuario13", role: "Estudiante" },
-  ]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // socket.emit("getUsers");
+    socket.emit("getUsers");
 
     socket.on("getUsers", (users) => {
       const userList = Object.keys(users).map((userId) => ({
@@ -36,7 +22,7 @@ export const ListUserChat = () => {
   }, []);
 
   const handleUserPress = (user) => () => {
-    socket.emit("selectedChatUser", user);
+    socket.emit("selectedChatUser", {emisor:myUser, receptor:user});
   };
 
   return (
