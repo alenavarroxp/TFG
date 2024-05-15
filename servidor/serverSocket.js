@@ -277,6 +277,10 @@ export default function WebSocketServer() {
           await system.actualizarUsuario(usuario);
         }
       });
+
+      socket.on("selectedChatUser", (user) => {
+        socket.emit("selectedChatUser", user);
+      });
     });
   };
 }
