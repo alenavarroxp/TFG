@@ -17,3 +17,23 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: #999999; /* color de la scrollbar al pasar el cursor sobre ella */
   }
+
+
+  .chat-scrollbar::-webkit-scrollbar {
+    width: 13px; /* ancho de la scrollbar */
+    padding-right: 8px;
+  }
+  .chat-scrollbar::-webkit-scrollbar-track {
+    background-color: #D9D9D9; /* color del fondo */
+  }
+  
+  .chat-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #ffffff; /* color de la scrollbar */
+    border-radius: 4px; /* borde redondeado */
+    border-radius: 20px;
+    border: 4px solid #D9D9D9;
+  }
+  
+  .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #999999; /* color de la scrollbar al pasar el cursor sobre ella */
+  }

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { UserModal } from "./UserModal";
-import { HiVideoCamera } from "react-icons/hi2";
+import { HiChatBubbleLeftRight, HiVideoCamera } from "react-icons/hi2";
 import { FaUsers } from "react-icons/fa";
 import { HiMiniSquaresPlus } from "react-icons/hi2";
 import { handleKeyDown } from "../utils/handleKeyDown";
@@ -21,6 +21,7 @@ import { ActivityScreen } from "./ActivityScreen";
 import { CgDebug } from "react-icons/cg";
 import { GiPaintBrush } from "react-icons/gi";
 import { CustomizeScreen } from "./customize/CustomizeScreen";
+import { ChatScreen } from "./chat/ChatScreen";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -28,6 +29,7 @@ export const GUI = () => {
   const [crearScreen, setCrearScreen] = useState(false);
   const [activityScreen, setActivityScreen] = useState(false);
   const [customizeScreen, setCustomizeScreen] = useState(false);
+  const [chatScreen, setChatScreen] = useState(false);
   const getUser = useAtomValue(userAtom);
   const [chooseLocation] = useAtom(chooseLocationAtom);
   const [test] = useAtom(testAtom);
@@ -106,6 +108,11 @@ export const GUI = () => {
     socket.emit("NoMove");
   };
 
+  const handleChatClick = () => {
+    socket.emit("NoMove");
+    setChatScreen(true);
+  };
+
   return (
     <>
       {!chooseLocation.isChoosing && !modal ? (
@@ -120,6 +127,15 @@ export const GUI = () => {
               onKeyDown={handleKeyDown}
               icon={<IoHome size={22} />}
               label="Inicio"
+              props="mt-6 ml-6"
+              labelProps="px-4 p-1.5 translate-x-10"
+            />
+            <GUIButton
+              id="chatBtn"
+              onClick={handleChatClick}
+              onKeyDown={handleKeyDown}
+              icon={<HiChatBubbleLeftRight size={22} />}
+              label="Chat"
               props="mt-6 ml-6"
               labelProps="px-4 p-1.5 translate-x-10"
             />
@@ -194,6 +210,9 @@ export const GUI = () => {
           customizeScreen={customizeScreen}
           setCustomizeScreen={setCustomizeScreen}
         />
+      )}
+      {chatScreen && (
+        <ChatScreen setChatScreen={setChatScreen} />
       )}
       {modal && (
         <CustomModal
