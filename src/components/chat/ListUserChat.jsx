@@ -1,36 +1,28 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
+import { useAtomValue } from "jotai";
 import { socket } from "../../utils/socket";
 import { UserInfo } from "./UserInfo";
 import { userAtom } from "../../context/atoms/userAtom";
-import { useAtomValue } from "jotai";
+import { useEffect } from "react";
 
-export const ListUserChat = () => {
+export const ListUserChat = ({ users }) => {
   const myUser = useAtomValue(userAtom);
-  const [users, setUsers] = useState([]);
-
-  socket.emit("getUsers");
-
-  useEffect(() => {
-    socket.on("getUsers", (users) => {
-      const userList = Object.keys(users).map((userId) => ({
-        id: userId,
-        name: users[userId].userName,
-        role: users[userId].isProfessor ? "Profesor" : "Estudiante",
-      }));
-      setUsers(userList);
-    });
-  }, []);
 
   const handleUserPress = (user) => () => {
     socket.emit("selectedChatUser", { emisor: myUser, receptor: user });
   };
 
+  useEffect(()=>{
+    console.log("users en list", users);
+  
+  },[users])
+
   return (
     <ul
       id="usersList"
-      className="text-[#5F6368] w-full overflow-y-auto max-h-[800px] chat-scrollbar "
+      className="text-[#5F6368] w-full overflow-y-auto max-h-[800px] chat-scrollbar flex-1"
     >
-      {users.length > 0 &&
+      {users.length > 0 ?
         users.map((user) => {
           if (
             user.name === myUser.userName &&
@@ -49,7 +41,7 @@ export const ListUserChat = () => {
               </button>
             </li>
           );
-        })}
+        }): <div className="flex flex-1 justify-center items-center">No hay usuarios</div>}
     </ul>
   );
 };
