@@ -35,6 +35,7 @@ export const ChatInput = ({ selectedChat }) => {
   };
 
   const handleKeyPress = (e) => {
+    setEmojiPicker(false);
     if (e.key === "Enter") {
       handleChatInput();
     }

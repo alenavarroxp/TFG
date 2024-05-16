@@ -22,6 +22,7 @@ import { CgDebug } from "react-icons/cg";
 import { GiPaintBrush } from "react-icons/gi";
 import { CustomizeScreen } from "./customize/CustomizeScreen";
 import { ChatScreen } from "./chat/ChatScreen";
+import { ToastContainer, toast } from "react-toastify";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -44,7 +45,61 @@ export const GUI = () => {
     socket.on("modalActivity", (obj) => {
       modalActivity(obj);
     });
-  }, []);
+
+    socket.on("notificationMessage", (obj) => {
+      console.log("NOTIFICATION", obj);
+      if (!chatScreen && !activityScreen && !customizeScreen && !crearScreen) {
+        console.log("renderizar notificacion");
+        handleNotification(obj);
+      }
+    });
+
+    return () => {
+      socket.off("notificationMessage");
+    };
+  }, [chatScreen, activityScreen, customizeScreen, crearScreen]);
+
+  const handleNotification = (obj) => {
+    if (chatScreen) {
+      console.log("QUE EL CHAT ESTA ABIERTO COPON");
+    }
+    // if (currentNotification !== null) {
+    //   toast.dismiss(currentNotification);
+    // }
+    toast(
+      `Tienes un nuevo mensaje del ${
+        obj.emisor.isProfessor ? "Profesor" : "Estudiante"
+      } ${obj.emisor.userName}`,
+      {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "bg-[#F3F4F6] border border-[#D1D5DB] rounded-lg shadow-lg",
+        onClick: () => {
+          toast.dismiss();
+          setChatScreen(!chatScreen);
+          socket.emit("NoMove");
+
+          socket.emit("selectedChatUser", {
+            emisor: {
+              userName: obj.receptor.name,
+              isProfessor:
+                obj.receptor.isProfessor === "Profesor" ? true : false,
+            },
+            receptor: {
+              id: socket.id,
+              name: obj.emisor.userName,
+              role: obj.emisor.isProfessor ? "Profesor" : "Estudiante",
+            },
+          });
+        },
+      }
+    );
+  };
 
   const modalActivity = (obj) => {
     setModal(true);
@@ -100,17 +155,17 @@ export const GUI = () => {
 
   const handleDebugClick = () => {
     socket.emit("debug");
-    setActivityScreen(true);
+    setActivityScreen(!activityScreen);
   };
 
   const handleCustomizeClick = () => {
-    setCustomizeScreen(true);
+    setCustomizeScreen(!customizeScreen);
     socket.emit("NoMove");
   };
 
   const handleChatClick = () => {
     socket.emit("NoMove");
-    setChatScreen(true);
+    setChatScreen(!chatScreen);
   };
 
   return (
@@ -120,6 +175,22 @@ export const GUI = () => {
           id="GUI"
           className="absolute w-full h-full flex flex-row pointer-events-none"
         >
+          <ToastContainer
+            stacked
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={true}
+            newestOnTop={true}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition:Bounce
+            className="pointer-events-auto w-96 font-"
+          />
+
           <div className="items-start justify-between h-1/3 flex flex-col w-full">
             <GUIButton
               id="homeBtn"
@@ -211,9 +282,7 @@ export const GUI = () => {
           setCustomizeScreen={setCustomizeScreen}
         />
       )}
-      {chatScreen && (
-        <ChatScreen setChatScreen={setChatScreen} />
-      )}
+      {chatScreen && <ChatScreen setChatScreen={setChatScreen} />}
       {modal && (
         <CustomModal
           modal={modal}
