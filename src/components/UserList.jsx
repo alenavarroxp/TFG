@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-import { BsChatLeft, BsThreeDots } from "react-icons/bs";
-import { ToastContainer, toast } from "react-toastify";
+import { BsChatLeft } from "react-icons/bs";
 import "react-toastify/dist/ReactToastify.css"; // Importa los estilos de react-toastify
 import { socket } from "../utils/socket";
 import { useEffect, useState } from "react";
@@ -12,16 +11,7 @@ export const UserList = ({ setChatScreen }) => {
   const myUser = useAtomValue(userAtom);
   const [users, setUsers] = useState([]);
   const [isMyUser, setIsMyUser] = useState(false);
-
-  const notify = () =>
-    toast.error("Función no implementada", {
-      autoClose: 4000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      draggable: false,
-      progress: undefined,
-      theme: "colored",
-    });
+ 
 
   useEffect(() => {
     socket.on("getUsers", (users) => {
@@ -100,19 +90,12 @@ export const UserList = ({ setChatScreen }) => {
                 >
                   <BsChatLeft color="black" />
                 </button>
-                <button
-                  className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white"
-                  onClick={notify}
-                  onKeyDown={handleKeyDown}
-                >
-                  <BsThreeDots color="black" />
-                </button>
+                
               </div>
             )}
           </li>
         ))}
       </ul>
-      <ToastContainer className="overflow-hidden" />
     </div>
   );
 };

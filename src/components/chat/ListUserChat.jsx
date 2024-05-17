@@ -83,17 +83,17 @@ export const ListUserChat = ({ users, selectedChat }) => {
               className="flex items-center p-2 mx-3 my-1"
               onClick={handleUserPress(user)}
             >
-              <button className="w-full flex justify-start items-start relative">
+              <button className="w-full flex justify-start items-start">
                 <UserInfo user={user} />
                 {!selectedChat && numMessagesWithoutRead[user.id] > 0 && (
-                  <span className="absolute top-0 right-0 mt-1 mr-3 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                  <span className="font-semibold top-0 right-0 mt-1 mr-3 bg-red-500 text-white rounded-full text-xs min-w-5 min-h-5 max-h-5 max-w-5 flex items-center justify-center">
                     {numMessagesWithoutRead[user.id]}
                   </span>
                 )}
                 {selectedChat &&
                   numMessagesWithoutRead[user.id] > 0 &&
                   selectedChat.receptor.id !== user.id && (
-                    <span className="absolute top-0 right-0 mt-1 mr-3 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                    <span className=" top-0 right-0 mt-1 mr-3 bg-red-500 text-white rounded-full text-xs min-w-5 min-h-5 max-h-5 max-w-5 flex items-center justify-center font-semibold">
                       {numMessagesWithoutRead[user.id] || ""}
                     </span>
                   )}
