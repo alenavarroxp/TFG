@@ -51,11 +51,11 @@ export const UserList = ({ setChatScreen }) => {
     socket.emit("NoMove");
     setChatScreen(true);
     socket.emit("selectedChatUser", {
-      emisor: { userName: user.name, isProfessor: user.role === "Profesor" },
+      emisor: { userName: myUser.userName, isProfessor: myUser.isProfessor },
       receptor: {
-        id: socket.id,
-        name: myUser.userName,
-        role: myUser.isProfessor ? "Profesor" : "Estudiante",
+        id: user.id,
+        name: user.name,
+        role: user.role,
       },
     });
   };
@@ -86,29 +86,27 @@ export const UserList = ({ setChatScreen }) => {
               <p className="text-sm">{user.role}</p>
             </div>
 
-            {isMyUser &&
-              user.name !== myUser.userName &&
-              user.role === (myUser.isProfessor ? "Profesor" : "Estudiante") &&
-              user.name === myUser.userName &&
-              user.role !==
-                (myUser.isProfessor ? "Profesor" : "Estudiante") && (
-                <div className="ml-auto flex items-center">
-                  <button
-                    className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white"
-                    onClick={() => handleChat(user)}
-                    onKeyDown={handleKeyDown}
-                  >
-                    <BsChatLeft color="black" />
-                  </button>
-                  <button
-                    className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white"
-                    onClick={notify}
-                    onKeyDown={handleKeyDown}
-                  >
-                    <BsThreeDots color="black" />
-                  </button>
-                </div>
-              )}
+            {(user.name !== myUser.userName ||
+              (user.name === myUser.userName &&
+                user.role !==
+                  (myUser.isProfessor ? "Profesor" : "Estudiante"))) && (
+              <div className="ml-auto flex items-center">
+                <button
+                  className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white"
+                  onClick={() => handleChat(user)}
+                  onKeyDown={handleKeyDown}
+                >
+                  <BsChatLeft color="black" />
+                </button>
+                <button
+                  className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white"
+                  onClick={notify}
+                  onKeyDown={handleKeyDown}
+                >
+                  <BsThreeDots color="black" />
+                </button>
+              </div>
+            )}
           </li>
         ))}
       </ul>
