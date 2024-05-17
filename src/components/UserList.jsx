@@ -1,12 +1,18 @@
+/* eslint-disable react/prop-types */
 import { BsChatLeft, BsThreeDots } from "react-icons/bs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Importa los estilos de react-toastify
 import { socket } from "../utils/socket";
 import { useEffect, useState } from "react";
 import { handleKeyDown } from "../utils/handleKeyDown";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../context/atoms/userAtom";
 
-export const UserList = () => {
+export const UserList = ({ setChatScreen }) => {
+  const myUser = useAtomValue(userAtom);
   const [users, setUsers] = useState([]);
+  const [isMyUser, setIsMyUser] = useState(false);
+
   const notify = () =>
     toast.error("Función no implementada", {
       autoClose: 4000,
@@ -25,10 +31,34 @@ export const UserList = () => {
         role: users[userId].isProfessor ? "Profesor" : "Estudiante",
       }));
       setUsers(userList);
-    });
-  });
 
-  socket.emit("getUsers");
+      const foundUser = userList.some(
+        (user) =>
+          user.name === myUser.userName &&
+          user.role === (myUser.isProfessor ? "Profesor" : "Estudiante")
+      );
+      setIsMyUser(foundUser);
+    });
+
+    socket.emit("getUsers");
+
+    return () => {
+      socket.off("getUsers");
+    };
+  }, [myUser]);
+
+  const handleChat = (user) => {
+    socket.emit("NoMove");
+    setChatScreen(true);
+    socket.emit("selectedChatUser", {
+      emisor: { userName: user.name, isProfessor: user.role === "Profesor" },
+      receptor: {
+        id: socket.id,
+        name: myUser.userName,
+        role: myUser.isProfessor ? "Profesor" : "Estudiante",
+      },
+    });
+  };
 
   return (
     <div className="text-white w-full mt-2 relative">
@@ -42,23 +72,43 @@ export const UserList = () => {
               {user.name ? user.name.substring(0, 2) : ""}
             </div>
             <div>
-              <p className="font-semibold">{user.name}</p>
+              <div className="flex items-center">
+                <p className="font-semibold" />
+                <span className="mr-1">{user.name}</span>
+                {isMyUser &&
+                  user.name === myUser.userName &&
+                  user.role ===
+                    (myUser.isProfessor ? "Profesor" : "Estudiante") && (
+                    <span>(Tú)</span>
+                  )}
+              </div>
+
               <p className="text-sm">{user.role}</p>
             </div>
-            <button
-              className="btn btn-sm btn-circle ml-auto focus:outline-none bg-white"
-              onClick={notify}
-              onKeyDown={handleKeyDown}
-            >
-              <BsChatLeft color="black" />
-            </button>
-            <button
-              className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white"
-              onClick={notify}
-              onKeyDown={handleKeyDown}
-            >
-              <BsThreeDots color="black" />
-            </button>
+
+            {isMyUser &&
+              user.name !== myUser.userName &&
+              user.role === (myUser.isProfessor ? "Profesor" : "Estudiante") &&
+              user.name === myUser.userName &&
+              user.role !==
+                (myUser.isProfessor ? "Profesor" : "Estudiante") && (
+                <div className="ml-auto flex items-center">
+                  <button
+                    className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white"
+                    onClick={() => handleChat(user)}
+                    onKeyDown={handleKeyDown}
+                  >
+                    <BsChatLeft color="black" />
+                  </button>
+                  <button
+                    className="btn btn-sm btn-circle ml-3 focus:outline-none bg-white"
+                    onClick={notify}
+                    onKeyDown={handleKeyDown}
+                  >
+                    <BsThreeDots color="black" />
+                  </button>
+                </div>
+              )}
           </li>
         ))}
       </ul>

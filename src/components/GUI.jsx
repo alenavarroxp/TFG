@@ -60,19 +60,27 @@ export const GUI = () => {
   }, [chatScreen, activityScreen, customizeScreen, crearScreen]);
 
   const handleNotification = (obj) => {
-    if (chatScreen) {
-      console.log("QUE EL CHAT ESTA ABIERTO COPON");
-    }
-    // if (currentNotification !== null) {
-    //   toast.dismiss(currentNotification);
-    // }
+    if (toast) toast.dismiss();
     toast(
-      `Tienes un nuevo mensaje del ${
-        obj.emisor.isProfessor ? "Profesor" : "Estudiante"
-      } ${obj.emisor.userName}`,
+      <div>
+        <strong
+          className="text-md"
+          style={{ display: "block", marginBottom: "5px" }}
+        >
+          📬 Tienes un nuevo mensaje 📬
+        </strong>
+        <span className="text-sm">
+          {`${obj.emisor.isProfessor ? "Profesor" : "Estudiante"} ${
+            obj.emisor.userName
+          } te ha enviado un mensaje.`}
+        </span>
+        <div className="mt-4 text-right text-xs text-blue-500 underline hover:text-blue-700">
+          Pulsa para ver el mensaje
+        </div>
+      </div>,
       {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 50000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -271,7 +279,7 @@ export const GUI = () => {
         <></>
       )}
 
-      {userModal && <UserModal />}
+      {userModal && <UserModal setChatScreen={setChatScreen} />}
       {crearScreen && <CrearActividad setCrearScreen={setCrearScreen} />}
       {activityScreen && (
         <ActivityScreen setActivityScreen={setActivityScreen} />

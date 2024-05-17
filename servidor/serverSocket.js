@@ -10,7 +10,7 @@ export default function WebSocketServer() {
       console.log("Se ha conectado el usuario: " + socket.id);
 
       socket.emit("init");
-      
+
       this.users[socket.id] = socket.id;
       console.log("USERS", this.users);
       socket.broadcast.emit("recuperarPersonajes", socket.id);
@@ -38,7 +38,7 @@ export default function WebSocketServer() {
         if (this.usersWorld[socket.id]) {
           delete this.usersWorld[socket.id];
         }
-        
+
         io.emit("getUsers", this.usersWorld);
         socket.broadcast.emit("disconnected", socket.id);
       });
@@ -123,7 +123,7 @@ export default function WebSocketServer() {
           userName: obj.userName,
           isProfessor: obj.isProfessor,
         };
-        
+
         io.emit("getUsers", this.usersWorld);
       });
 
@@ -283,7 +283,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("selectedChatUser", (user) => {
-        console.log("selectedChatUser", user)
+        console.log("selectedChatUser", user);
         socket.emit("selectedChatUser", user);
       });
 
