@@ -50,7 +50,9 @@ export const UserList = ({ setChatScreen }) => {
   const handleChat = (user) => {
     socket.emit("NoMove");
     setChatScreen(true);
+    console.log("users", users);
     socket.emit("selectedChatUser", {
+      emisorId: socket.id,
       emisor: { userName: myUser.userName, isProfessor: myUser.isProfessor },
       receptor: {
         id: user.id,

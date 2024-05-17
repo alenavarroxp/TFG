@@ -4,6 +4,7 @@ export default function WebSocketServer() {
   this.users = {};
   this.usersWorld = {};
   this.activities = {};
+  this.messages = [];
 
   this.start = function (io, system) {
     io.on("connection", (socket) => {
@@ -285,12 +286,56 @@ export default function WebSocketServer() {
       socket.on("selectedChatUser", (user) => {
         console.log("selectedChatUser", user);
         socket.emit("selectedChatUser", user);
+
+        const key1 = `${user.emisorId}-${user.receptor.id}`;
+        const key2 = `${user.receptor.id}-${user.emisorId}`;
+        const filterMessages = this.messages.filter(
+          (item) => item.key === key1 || item.key === key2
+        );
+
+        console.log("filterMessages", filterMessages);
+        io.to(user.emisorId).emit("lastMessages", filterMessages);
       });
 
       socket.on("chatMessage", (obj) => {
-        const idReceptor = obj.receptor.id;
+        const message = {
+          id: obj.id,
+          emisorId: obj.emisorId,
+          receptorId: obj.receptorId,
+          emisor: obj.emisor,
+          receptor: obj.receptor,
+          message: obj.message,
+          date: obj.date,
+        };
+        const key = `${obj.emisorId}-${obj.receptorId}`;
+
+        this.messages.push({ key: key, message: message });
+
+        console.log("MESNAGES", this.messages);
+        const idReceptor = obj.receptorId;
         io.to(idReceptor).emit("notificationMessage", obj);
         io.emit("chatMessage", obj);
+      });
+
+      socket.on("getLastMessages", (obj) => {
+        const key1 = `${obj.emisorId}-${obj.receptor.id}`;
+        const key2 = `${obj.receptor.id}-${obj.emisorId}`;
+        const filterMessages = this.messages.filter(
+          (item) => item.key === key1 || item.key === key2
+        );
+        console.log("filterMessages", filterMessages);
+        io.to(obj.emisorId).emit("lastMessages", filterMessages);
+      });
+
+      socket.on("getLastMessage", (obj) => {
+        console.log
+        const key1 = `${obj.emisorId}-${obj.receptor.id}`;
+        const key2 = `${obj.receptor.id}-${obj.emisorId}`;
+        const filterMessages = this.messages.filter(
+          (item) => item.key === key1 || item.key === key2
+        );
+        console.log("filterMessages", filterMessages);
+        io.to(obj.emisorId).emit("lastMessages", filterMessages);
       });
     });
   };

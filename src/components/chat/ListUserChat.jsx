@@ -9,20 +9,24 @@ export const ListUserChat = ({ users }) => {
   const myUser = useAtomValue(userAtom);
 
   const handleUserPress = (user) => () => {
-    socket.emit("selectedChatUser", { emisor: myUser, receptor: user });
+    socket.emit("selectedChatUser", {
+      emisorId: socket.id,
+      emisor: myUser,
+      receptor: user,
+    });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("users en list", users);
+  }, [users]);
   
-  },[users])
 
   return (
     <ul
       id="usersList"
       className="text-[#5F6368] w-full overflow-y-auto max-h-[800px] chat-scrollbar flex-1"
     >
-      {users.length > 0 ?
+      {users.length > 0 ? (
         users.map((user) => {
           if (
             user.name === myUser.userName &&
@@ -41,7 +45,12 @@ export const ListUserChat = ({ users }) => {
               </button>
             </li>
           );
-        }): <div className="flex flex-1 justify-center items-center">No hay usuarios</div>}
+        })
+      ) : (
+        <div className="flex flex-1 justify-center items-center">
+          No hay usuarios
+        </div>
+      )}
     </ul>
   );
 };

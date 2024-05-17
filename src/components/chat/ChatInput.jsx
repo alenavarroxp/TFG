@@ -26,8 +26,10 @@ export const ChatInput = ({ selectedChat }) => {
     }${minutes} ${amOrPm}`;
     socket.emit("chatMessage", {
       id: new Date().getTime(),
+      emisorId: socket.id,
       emisor: selectedChat.emisor,
       receptor: selectedChat.receptor,
+      receptorId: selectedChat.receptor.id,
       message,
       date: formattedTime,
     });

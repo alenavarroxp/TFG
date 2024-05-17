@@ -23,6 +23,7 @@ import { GiPaintBrush } from "react-icons/gi";
 import { CustomizeScreen } from "./customize/CustomizeScreen";
 import { ChatScreen } from "./chat/ChatScreen";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -61,6 +62,8 @@ export const GUI = () => {
 
   const handleNotification = (obj) => {
     if (toast) toast.dismiss();
+
+    console.log("OBJ NOTIFICATION", obj);
     toast(
       <div>
         <strong
@@ -86,20 +89,23 @@ export const GUI = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
+        delay: 100,
         className: "bg-[#F3F4F6] border border-[#D1D5DB] rounded-lg shadow-lg",
         onClick: () => {
           toast.dismiss();
           setChatScreen(!chatScreen);
           socket.emit("NoMove");
 
+          console.log("OBJ QUE RECIBO")
           socket.emit("selectedChatUser", {
+            emisorId: obj.receptorId,
             emisor: {
               userName: obj.receptor.name,
               isProfessor:
                 obj.receptor.isProfessor === "Profesor" ? true : false,
             },
             receptor: {
-              id: socket.id,
+              id: obj.emisorId,
               name: obj.emisor.userName,
               role: obj.emisor.isProfessor ? "Profesor" : "Estudiante",
             },
@@ -196,6 +202,7 @@ export const GUI = () => {
             pauseOnHover
             theme="light"
             transition:Bounce
+            limit={1}
             className="pointer-events-auto w-96 font-"
           />
 
