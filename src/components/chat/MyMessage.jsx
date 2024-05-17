@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 export const MyMessage = ({ emisor, message, date }) => {
   return (
-    <div className="flex justify-end items-end flex-col w-full mt-2">
+    <div className="flex justify-end items-end flex-col w-full mt-2 mb-2">
       <div className="flex items-center">
         <div className="bg-[#3B82F6] p-2 m-2 rounded-2xl text-white text-md ">
           <p>{message}</p>

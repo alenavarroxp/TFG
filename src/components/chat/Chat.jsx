@@ -1,17 +1,9 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
 import { ChatHeader } from "./ChatHeader";
 import { NoSelectedChat } from "./NoSelectedChat";
-import { socket } from "../../utils/socket";
 import { ChatBody } from "./ChatBody";
 
-export const Chat = () => {
-  const [selectedChat, setSelectedChat] = useState(null);
-
-  useEffect(() => {
-    socket.on("selectedChatUser", (user) => {
-      setSelectedChat(user);
-    });
-  }, []);
+export const Chat = ({ selectedChat, setSelectedChat }) => {
   return (
     <div className=" flex mb-4 mr-4 w-3/5 min-w-[300px]">
       {selectedChat ? (

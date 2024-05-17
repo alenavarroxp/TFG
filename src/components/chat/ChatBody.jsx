@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChatInput } from "./ChatInput";
 import { socket } from "../../utils/socket";
 import { useAtomValue } from "jotai";
@@ -9,6 +9,7 @@ import { MyMessage } from "./MyMessage";
 
 export const ChatBody = ({ selectedChat }) => {
   const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
   const myUser = useAtomValue(userAtom);
 
   useEffect(() => {
@@ -67,6 +68,14 @@ export const ChatBody = ({ selectedChat }) => {
     console.log("messages", messages);
   }, [messages]);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [selectedChat, messages]);
+
   return (
     <div className="flex-1 flex flex-col">
       <div className="bg-[#eaeaea] h-full max-h-[405px] overflow-y-auto chat-scrollbar rounded-b-xl">
@@ -88,6 +97,7 @@ export const ChatBody = ({ selectedChat }) => {
             />
           )
         )}
+        <div ref={messagesEndRef} />
       </div>
       <ChatInput selectedChat={selectedChat} />
     </div>

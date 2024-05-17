@@ -40,6 +40,13 @@ export default function WebSocketServer() {
           delete this.usersWorld[socket.id];
         }
 
+        //Eliminar si el usuario tenía mensajes
+        this.messages = this.messages.filter(
+          ({ message }) =>
+            message.emisorId !== socket.id && message.receptorId !== socket.id
+        );
+        console.log("MENSJAES ELIMINADOS", this.messages);
+
         io.emit("getUsers", this.usersWorld);
         socket.broadcast.emit("disconnected", socket.id);
       });
@@ -328,7 +335,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("getLastMessage", (obj) => {
-        console.log
+        console.log;
         const key1 = `${obj.emisorId}-${obj.receptor.id}`;
         const key2 = `${obj.receptor.id}-${obj.emisorId}`;
         const filterMessages = this.messages.filter(
@@ -336,6 +343,11 @@ export default function WebSocketServer() {
         );
         console.log("filterMessages", filterMessages);
         io.to(obj.emisorId).emit("lastMessages", filterMessages);
+      });
+
+      socket.on("exitChat", (obj) => {
+        console.log("exitChat", obj);
+        socket.emit("exitChat", obj);
       });
     });
   };

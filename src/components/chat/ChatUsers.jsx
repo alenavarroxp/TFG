@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { ListUserChat } from "./ListUserChat";
 import { SearchUser } from "./SearchUser";
@@ -5,7 +6,7 @@ import { socket } from "../../utils/socket";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../context/atoms/userAtom";
 
-export const ChatUsers = () => {
+export const ChatUsers = ({ selectedChat }) => {
   const myUser = useAtomValue(userAtom);
   const getMyUserRef = () => {
     return {
@@ -52,7 +53,7 @@ export const ChatUsers = () => {
   return (
     <div className="w-2/5 rounded-xl ml-4 mb-4 mr-4 bg-[#D9D9D9]">
       <SearchUser setUsers={setUsers} allUsers={allUsers} />
-      <ListUserChat users={users} />
+      <ListUserChat users={users} selectedChat={selectedChat} />
     </div>
   );
 };
