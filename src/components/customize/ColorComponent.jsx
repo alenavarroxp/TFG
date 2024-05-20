@@ -2,16 +2,21 @@ import { PiPaintBrushFill } from "react-icons/pi";
 import { socket } from "../../utils/socket";
 import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../context/atoms/userAtom";
 
 export const ColorComponent = ({
-  colors,
+  initialColors,
   selectedColorItem,
   setSelectedColorItem,
   oldColor,
   setModalShop,
   setModalTitle,
 }) => {
+  const [colors, setColors] = useState(initialColors);
   const [isHovered, setIsHovered] = useState(false);
+  const myUser = useAtomValue(userAtom);
+
   const handleColorSelection = (color) => {
     if (selectedColorItem === color) {
       setSelectedColorItem(null);
@@ -50,11 +55,70 @@ export const ColorComponent = ({
   useEffect(() => {
     socket.on("buyItem", () => {
       console.log("selectedColorItem", selectedColorItem);
-      socket.emit("saveColor", selectedColorItem);
+      const color = colors.find((color) => color.color === selectedColorItem);
+      socket.emit("saveColor", { user: myUser, color: color });
     });
 
     return () => socket.off("buyItem");
-  }, [selectedColorItem]);
+  }, [selectedColorItem, myUser, colors]);
+
+  useEffect(() => {
+    socket.on("changeTag", (data) => {
+      console.log("data", data);
+      setColors((prev) =>
+        prev.map((color) =>
+          color.color === data
+            ? {
+                ...color,
+                label: <div className="text-lg font-semibold">Obtenido</div>,
+                precio: 0,
+              }
+            : color
+        )
+      );
+    });
+
+    return () => socket.off("changeTag");
+  }, []);
+
+  useEffect(() => {
+    const handleCanShop = (data) => {
+      console.log("DATA", data, selectedColorItem);
+      const color = colors.find((color) => color.color === selectedColorItem);
+      console.log("color", color);
+      if (color) {
+        socket.emit("shop", { user: data, precio: color.precio });
+      } else {
+        console.warn("Color no encontrado o seleccionado.");
+      }
+    };
+
+    socket.on("canShop", handleCanShop);
+
+    return () => {
+      socket.off("canShop", handleCanShop);
+    };
+  }, [selectedColorItem, colors]);
+
+  useEffect(() => {
+    socket.emit("getColors", myUser);
+
+    socket.on("getColors", (data) => {
+      setColors((prev) => {
+        return prev.map((color) => {
+          const found = data.find((item) => item === color.color);
+          if (found) {
+            return {
+              ...color,
+              label: <div className="text-lg font-semibold">Obtenido</div>,
+              precio: 0,
+            };
+          }
+          return color;
+        });
+      });
+    });
+  }, [myUser]);
 
   return colors.map((color, index) => (
     <button

@@ -56,7 +56,7 @@ export const CustomizeBody = ({
         {selectedTab === "Colores" && (
           <div className="grid grid-cols-5 grid-rows-2 gap-4 p-3 h-full  justify-center items-center relative">
             <ColorComponent
-              colors={colors}
+              initialColors={colors}
               selectedColorItem={selectedColorItem}
               setSelectedColorItem={setSelectedColorItem}
               oldColor={oldColor}

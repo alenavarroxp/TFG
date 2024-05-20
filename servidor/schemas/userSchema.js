@@ -29,4 +29,8 @@ export const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  colors: {
+    type: Array,
+    required: true,
+  },
 });

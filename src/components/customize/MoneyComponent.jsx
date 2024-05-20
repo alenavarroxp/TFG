@@ -3,11 +3,11 @@ import { TbCoinFilled } from "react-icons/tb";
 import { socket } from "../../utils/socket";
 
 // eslint-disable-next-line react/prop-types
-export const MoneyComponent = ({ style, isCharacterNurse ,fixedValue }) => {
+export const MoneyComponent = ({ style, isCharacterNurse, fixedValue }) => {
   const [money, setMoney] = useState(isCharacterNurse ? 0 : "");
 
   useEffect(() => {
-    if(!isCharacterNurse) return;
+    if (!isCharacterNurse) return;
     socket.on("getMoney", (data) => {
       setMoney(data);
     });
@@ -16,6 +16,13 @@ export const MoneyComponent = ({ style, isCharacterNurse ,fixedValue }) => {
       socket.off("getMoney");
     };
   });
+
+  useEffect(() => {
+    socket.on("updatePurse", (data) => {
+      setMoney(data);
+    });
+  }, []);
+  
 
   const displayValue = isCharacterNurse ? money : fixedValue;
 

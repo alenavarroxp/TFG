@@ -4,8 +4,14 @@ export const colors = [
   {
     title: "Rojo",
     color: "#FF0000",
-    label: <div className="text-lg font-semibold">Obtenido</div>,
-    precio: 0,
+    label: (
+      <MoneyComponent
+        style="text-2xl font-semibold"
+        isCharacterNurse={false}
+        fixedValue={15}
+      />
+    ),
+    precio: 15,
   },
   {
     title: "Naranja",
@@ -34,7 +40,7 @@ export const colors = [
   {
     title: "Azul",
     color: "#0094FF",
-    label: <div className="text-lg font-semibold">Obtenido</div>,
+    label: <div className="text-lg font-semibold">Gratis</div>,
     precio: 0,
   },
   {
@@ -70,8 +76,14 @@ export const colors = [
   {
     title: "Magenta",
     color: "#FF00FF",
-    label: <div className="text-lg font-semibold">Obtenido</div>,
-    precio: 0,
+    label: (
+      <MoneyComponent
+        style="text-2xl font-semibold"
+        isCharacterNurse={false}
+        fixedValue={20}
+      />
+    ),
+    precio: 20,
   },
   {
     title: "Blanco",

@@ -77,6 +77,7 @@ export default function WebSocketServer() {
             color: obj.color || null,
             accessoryName: obj.accessoryName || null,
             purse: 0,
+            colors: obj.color ? [obj.color] : [],
           });
           await system.insertarUsuario(newUser);
 
@@ -264,6 +265,7 @@ export default function WebSocketServer() {
         console.log("OBJETO", obj);
         if (usuario) {
           usuario.color = obj.color ? obj.color : usuario.color;
+          usuario.colors.push(obj.color);
           usuario.accessoryName = obj.accessoryName;
           await system.actualizarUsuario(usuario);
           socket.emit("saveCustomizeCharacter", obj);
@@ -360,14 +362,59 @@ export default function WebSocketServer() {
 
         if (usuario) {
           socket.emit("getMoney", usuario.purse);
-        }else{
-          console.log("Usuario no encontrado")
+        } else {
+          console.log("Usuario no encontrado");
         }
       });
 
-      socket.on("buyItem",()=>{
+      socket.on("buyItem", () => {
         socket.emit("buyItem");
-      })
+      });
+
+      socket.on("saveColor", async (obj) => {
+        let usuario = await system.buscarUsuario({
+          userName: obj.user.userName,
+          isProfessor: obj.user.isProfessor,
+        });
+
+        console.log("objsaveColor", obj);
+
+        if (usuario) {
+          usuario.purse -= obj.color.precio;
+          usuario.colors.push(obj.color.color);
+          await system.actualizarUsuario(usuario);
+          socket.emit("updatePurse", usuario.purse);
+          socket.emit("changeTag", obj.color.color);
+        }
+      });
+
+      socket.on("canShop", (obj) => {
+        socket.emit("canShop", obj);
+      });
+
+      socket.on("shop", async (obj) => {
+        let usuario = await system.buscarUsuario({
+          userName: obj.user.userName,
+          isProfessor: obj.user.isProfessor,
+        });
+
+        if (usuario) {
+          if (usuario.purse >= obj.precio) {
+            socket.emit("shop");
+          } else socket.emit("NoMoney");
+        }
+      });
+
+      socket.on("getColors", async (obj) => {
+        let usuario = await system.buscarUsuario({
+          userName: obj.userName,
+          isProfessor: obj.isProfessor,
+        });
+
+        if (usuario) {
+          socket.emit("getColors", usuario.colors);
+        }
+      });
     });
   };
 }
