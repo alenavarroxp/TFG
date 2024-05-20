@@ -66,6 +66,7 @@ export const CustomizeBody = ({
 
             {modalShop && (
               <ModalShop
+                isColor={true}
                 setModalShop={setModalShop}
                 modalTitle={modalTitle}
                 setSelectedColorItem={setSelectedColorItem}
@@ -76,12 +77,24 @@ export const CustomizeBody = ({
         )}
         {selectedTab === "Accesorios" && (
           <>
-            <div className="grid grid-cols-3 grid-rows-1 gap-4 p-3 h-full  justify-center items-center">
+            <div className="grid grid-cols-3 grid-rows-1 gap-4 p-3 h-full  justify-center items-center relative">
               <AccesorioComponent
-                accesorios={accesorios}
+                initialAccesorios={accesorios}
                 selectedAccessoryItem={selectedAccessoryItem}
                 setSelectedAccessoryItem={setSelectedAccessoryItem}
+                setModalShop={setModalShop}
+                setModalTitle={setModalTitle}
               />
+              {modalShop && (
+                <ModalShop
+                  isColor={false}
+                  setModalShop={setModalShop}
+                  modalTitle={modalTitle}
+                  setSelectedAccessoryItem={setSelectedAccessoryItem}
+                  selectedAccessoryItem={selectedAccessoryItem}
+                  oldColor={oldColor}
+                />
+              )}
             </div>
             <div className="py-6 flex justify-center items-center">
               <div

@@ -6,7 +6,7 @@ export const NoSelectedChat = () => {
         <img
           src="/img/noselectedchat.png"
           alt="No selected chat"
-          className="xl:w-40 mt-5 mb-5 lg:w-32 w-28"
+          className="xl:w-40 mt-5 mb-5 lg:w-32 w-28 pointer-events-none"
         />
         <p className="font-medium xl:text-xl xl:w-[400px] text-center lg:w-80 lg:text-md md:text-sm md:w-72 sm:text-sm sm:w-64 text-xs   ">Pulsa en algún usuario de la izquierda para abrir su chat</p>
       </div>

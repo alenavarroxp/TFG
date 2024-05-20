@@ -17,6 +17,26 @@ export const ColorComponent = ({
   const [isHovered, setIsHovered] = useState(false);
   const myUser = useAtomValue(userAtom);
 
+  useEffect(() => {
+    socket.emit("getColors", myUser);
+
+    socket.on("getColors", (data) => {
+      setColors((prev) => {
+        return prev.map((color) => {
+          const found = data.find((item) => item === color.color);
+          if (found) {
+            return {
+              ...color,
+              label: <div className="text-lg font-semibold">Obtenido</div>,
+              precio: 0,
+            };
+          }
+          return color;
+        });
+      });
+    });
+  }, [myUser]);
+  
   const handleColorSelection = (color) => {
     if (selectedColorItem === color) {
       setSelectedColorItem(null);
@@ -100,25 +120,7 @@ export const ColorComponent = ({
     };
   }, [selectedColorItem, colors]);
 
-  useEffect(() => {
-    socket.emit("getColors", myUser);
-
-    socket.on("getColors", (data) => {
-      setColors((prev) => {
-        return prev.map((color) => {
-          const found = data.find((item) => item === color.color);
-          if (found) {
-            return {
-              ...color,
-              label: <div className="text-lg font-semibold">Obtenido</div>,
-              precio: 0,
-            };
-          }
-          return color;
-        });
-      });
-    });
-  }, [myUser]);
+  
 
   return colors.map((color, index) => (
     <button

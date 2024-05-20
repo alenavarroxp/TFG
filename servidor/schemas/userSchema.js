@@ -33,4 +33,8 @@ export const UserSchema = new Schema({
     type: Array,
     required: true,
   },
+  accessories: {
+    type: Array,
+    required: true,
+  },
 });

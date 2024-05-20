@@ -76,8 +76,9 @@ export default function WebSocketServer() {
             rotation: obj.rotation || null,
             color: obj.color || null,
             accessoryName: obj.accessoryName || null,
-            purse: 0,
+            purse: 150,
             colors: obj.color ? [obj.color] : [],
+            accessories: obj.accessoryName ? [obj.accessoryName] : [],
           });
           await system.insertarUsuario(newUser);
 
@@ -265,7 +266,6 @@ export default function WebSocketServer() {
         console.log("OBJETO", obj);
         if (usuario) {
           usuario.color = obj.color ? obj.color : usuario.color;
-          usuario.colors.push(obj.color);
           usuario.accessoryName = obj.accessoryName;
           await system.actualizarUsuario(usuario);
           socket.emit("saveCustomizeCharacter", obj);
@@ -413,6 +413,34 @@ export default function WebSocketServer() {
 
         if (usuario) {
           socket.emit("getColors", usuario.colors);
+        }
+      });
+
+      socket.on("saveAccessory", async (obj) => {
+        let usuario = await system.buscarUsuario({
+          userName: obj.user.userName,
+          isProfessor: obj.user.isProfessor,
+        });
+
+        console.log("objsaveAccessory", obj);
+
+        if (usuario) {
+          usuario.purse -= obj.accessory.precio;
+          usuario.accessories.push(obj.accessory.id);
+          await system.actualizarUsuario(usuario);
+          socket.emit("updatePurse", usuario.purse);
+          socket.emit("changeTagAccessory", obj.accessory);
+        }
+      });
+
+      socket.on("getAccessories", async (obj) => {
+        let usuario = await system.buscarUsuario({
+          userName: obj.userName,
+          isProfessor: obj.isProfessor,
+        });
+
+        if (usuario) {
+          socket.emit("getAccessories", usuario.accessories);
         }
       });
     });
