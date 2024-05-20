@@ -1,6 +1,6 @@
 import { PiPaintBrushFill } from "react-icons/pi";
 import { socket } from "../../utils/socket";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 
 export const ColorComponent = ({
@@ -8,6 +8,8 @@ export const ColorComponent = ({
   selectedColorItem,
   setSelectedColorItem,
   oldColor,
+  setModalShop,
+  setModalTitle,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const handleColorSelection = (color) => {
@@ -29,6 +31,31 @@ export const ColorComponent = ({
     socket.emit("customizeCharacter", objSend);
   };
 
+  const handleColorAction = (color) => {
+    if (selectedColorItem === color.color) return;
+
+    if (color.label.props.children === "Gratis") {
+      setModalTitle(`¿Quieres obtener el color ${color.title}?`);
+      setModalShop(true);
+    } else if (color.label.props.children === "Obtenido") {
+      console.log("Ya tienes el color.");
+    } else {
+      setModalTitle(
+        `¿Quieres comprar el color ${color.title} por ${color.precio} monedas?`
+      );
+      setModalShop(true);
+    }
+  };
+
+  useEffect(() => {
+    socket.on("buyItem", () => {
+      console.log("selectedColorItem", selectedColorItem);
+      socket.emit("saveColor", selectedColorItem);
+    });
+
+    return () => socket.off("buyItem");
+  }, [selectedColorItem]);
+
   return colors.map((color, index) => (
     <button
       key={index}
@@ -36,6 +63,7 @@ export const ColorComponent = ({
       onClick={() => {
         handleColorSelection(color.color);
         handleCustomizeCharacter(color.color);
+        handleColorAction(color);
       }}
     >
       <div

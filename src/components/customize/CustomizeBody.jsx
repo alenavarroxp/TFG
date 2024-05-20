@@ -8,6 +8,7 @@ import { accesorios } from "./accesorios";
 import { RiCreativeCommonsFill } from "react-icons/ri";
 import { ModalCC } from "../ModalCC";
 import { SaveModal } from "./SaveModal";
+import { ModalShop } from "./ModalShop";
 
 export const CustomizeBody = ({
   selectedTab,
@@ -16,9 +17,11 @@ export const CustomizeBody = ({
   setSelectedColorItem,
   selectedAccessoryItem,
   setSelectedAccessoryItem,
-  oldColor
+  oldColor,
 }) => {
   const [modalCC, setModalCC] = useState(false);
+  const [modalShop, setModalShop] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
   const [saveModal, setSaveModal] = useState(false);
 
   const handleCreativeModal = () => {
@@ -51,13 +54,24 @@ export const CustomizeBody = ({
         </div>
 
         {selectedTab === "Colores" && (
-          <div className="grid grid-cols-5 grid-rows-2 gap-4 p-3 h-full  justify-center items-center">
+          <div className="grid grid-cols-5 grid-rows-2 gap-4 p-3 h-full  justify-center items-center relative">
             <ColorComponent
               colors={colors}
               selectedColorItem={selectedColorItem}
               setSelectedColorItem={setSelectedColorItem}
               oldColor={oldColor}
+              setModalShop={setModalShop}
+              setModalTitle={setModalTitle}
             />
+
+            {modalShop && (
+              <ModalShop
+                setModalShop={setModalShop}
+                modalTitle={modalTitle}
+                setSelectedColorItem={setSelectedColorItem}
+                oldColor={oldColor}
+              />
+            )}
           </div>
         )}
         {selectedTab === "Accesorios" && (

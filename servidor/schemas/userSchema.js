@@ -17,6 +17,10 @@ export const UserSchema = new Schema({
     type: Object,
     required: true,
   },
+  purse: {
+    type: Number,
+    required: true,
+  },
   color: {
     type: String,
     required: true,

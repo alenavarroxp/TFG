@@ -76,6 +76,7 @@ export default function WebSocketServer() {
             rotation: obj.rotation || null,
             color: obj.color || null,
             accessoryName: obj.accessoryName || null,
+            purse: 0,
           });
           await system.insertarUsuario(newUser);
 
@@ -349,6 +350,24 @@ export default function WebSocketServer() {
         console.log("exitChat", obj);
         socket.emit("exitChat", obj);
       });
+
+      socket.on("getMoney", async (obj) => {
+        console.log("obj", obj);
+        let usuario = await system.buscarUsuario({
+          userName: obj.userName,
+          isProfessor: obj.isProfessor,
+        });
+
+        if (usuario) {
+          socket.emit("getMoney", usuario.purse);
+        }else{
+          console.log("Usuario no encontrado")
+        }
+      });
+
+      socket.on("buyItem",()=>{
+        socket.emit("buyItem");
+      })
     });
   };
 }
