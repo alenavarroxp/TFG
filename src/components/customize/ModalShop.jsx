@@ -25,7 +25,7 @@ export const ModalShop = ({
     setTimeout(() => {
       setIsProcessing(false);
       setModalShop(false);
-    }, 3000);
+    }, 1500);
   };
 
   const handleExit = () => {
