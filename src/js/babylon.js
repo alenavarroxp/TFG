@@ -669,7 +669,11 @@ export function initScene(canvas, user) {
 function feedbackScene(character, score) {
   // Crear una escena de babylonJS
   const canvas = document.getElementById("feedbackScene");
+
+  if(!canvas) return;
+
   const engine = new BABYLON.Engine(canvas, true);
+  engine.displayLoadingUI();
   const scene = new BABYLON.Scene(engine);
 
   scene.clearColor = new BABYLON.Color4(0.0863, 0.4588, 0.3882, 1);
@@ -708,6 +712,7 @@ function feedbackScene(character, score) {
         characterCallback.mesh.position.add(new BABYLON.Vector3(0, 0.1, 0))
       );
       characterCallback.doFeedbackAnimation(score);
+      engine.hideLoadingUI();
     }
   );
 

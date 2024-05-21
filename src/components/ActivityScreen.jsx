@@ -203,7 +203,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
                 answers={answers}
                 debug={debug}
               />
-              <div className="flex mt-12 bg-white h-[calc(100vh - 12rem)]">
+              <div className="flex mt-12 bg-[#167563] h-[calc(100vh - 12rem)]">
                 <canvas id="feedbackScene" className="h-96 w-full"></canvas>
               </div>
             </>
