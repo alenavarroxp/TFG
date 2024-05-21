@@ -8,7 +8,7 @@ import { UnderlinedText } from "./UnderlinedText";
 import { GridActivity } from "./activity/GridActivity";
 import { EndActivity } from "./activity/EndActivity";
 import { useEffect, useState } from "react";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { totalAnswersAtom } from "../context/atoms/totalAnswers";
 import { ConfirmModal } from "./activity/ConfirmModal";
 import { FinalScore } from "./activity/FinalScore";
@@ -16,12 +16,14 @@ import { TourComponent } from "./TourComponent";
 import { toast, Toaster } from "sonner";
 import { userAtom } from "../context/atoms/userAtom";
 import { questionAnsweredAtom } from "../context/atoms/questionAnsweredAtom";
+import { feedbackAtom } from "../context/atoms/feedbackAtom";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
   const myUser = useAtomValue(userAtom);
   const [activity, setActivity] = useState({});
   const [actualQuestion, setActualQuestion] = useState({});
   const [answers] = useAtom(totalAnswersAtom);
+  const setAnswers = useSetAtom(totalAnswersAtom);
   const [endActivity, setEndActivity] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(false);
@@ -29,7 +31,8 @@ export const ActivityScreen = ({ setActivityScreen }) => {
   const [tourVisible, setTourVisible] = useState(false);
   const [score, setScore] = useState(0);
   const [debug, setDebug] = useState(false);
-  const [questionAnswered] = useAtom(questionAnsweredAtom)
+  const setQuestionAnswered = useSetAtom(questionAnsweredAtom);
+  const setFeedback = useSetAtom(feedbackAtom);
 
   const handleClickCerrar = () => {
     setActivityScreen(false);
@@ -64,9 +67,16 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     setConfirmModal(true);
   };
 
-  const resetAll = () =>{
-    //TODO
-  } 
+  const resetAll = () => {
+    setAnswers([]);
+    setQuestionAnswered([]);
+    setFeedback([
+      {
+        corrects: [],
+        wrongs: [],
+      },
+    ]);
+  };
 
   const exitActivity = () => {
     console.log("Saliendo de la actividad", activity);

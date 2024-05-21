@@ -166,11 +166,7 @@ export const GUI = () => {
   const handleHomeClick = () => {
     window.location.reload();
   };
-
-  const handleDebugClick = () => {
-    socket.emit("debug");
-    setActivityScreen(!activityScreen);
-  };
+  
 
   const handleCustomizeClick = () => {
     setCustomizeScreen(!customizeScreen);
@@ -340,13 +336,7 @@ export const GUI = () => {
               props=" mr-6"
               labelProps="px-4 p-1.5 -translate-x-44"
             />
-            <GUIButton
-              id="debugBtn"
-              onClick={handleDebugClick}
-              onKeyDown={handleKeyDown}
-              icon={<CgDebug size={22} />}
-              props="mb-6 mr-6"
-            />
+            
             <JumpButton />
           </div>
         </div>
