@@ -443,7 +443,7 @@ export const CrearActividad = ({ setCrearScreen }) => {
                         id="optionQuestion"
                         value={optionQuestion}
                         name="Tipo de pregunta"
-                        list={["Test", "Redacción"]}
+                        list={["Test"]}
                         onChange={(e) => {
                           setOptionQuestion(e.target.value);
                           setQuestion((prev) => ({
@@ -461,8 +461,6 @@ export const CrearActividad = ({ setCrearScreen }) => {
                         name="Tipo de respuesta"
                         list={[
                           "Opción múltiple",
-                          "Rellenar",
-                          "Verdadero o Falso",
                         ]}
                         onChange={(e) => {
                           setOptionAnswer(e.target.value);

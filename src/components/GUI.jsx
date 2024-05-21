@@ -18,7 +18,6 @@ import { JoyStickContainer } from "./JoyStickContainer";
 import { JumpButton } from "./JumpButton";
 import { CustomModal } from "./CustomModal";
 import { ActivityScreen } from "./ActivityScreen";
-import { CgDebug } from "react-icons/cg";
 import { GiPaintBrush } from "react-icons/gi";
 import { CustomizeScreen } from "./customize/CustomizeScreen";
 import { ChatScreen } from "./chat/ChatScreen";
