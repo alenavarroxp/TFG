@@ -13,7 +13,6 @@ export default function WebSocketServer() {
       socket.emit("init");
 
       this.users[socket.id] = socket.id;
-      console.log("USERS", this.users);
       socket.broadcast.emit("recuperarPersonajes", socket.id);
       socket.broadcast.emit("recuperarActividades");
 
@@ -32,8 +31,6 @@ export default function WebSocketServer() {
 
       socket.on("disconnect", () => {
         console.log("Se ha desconectado el usuario", socket.id);
-        console.log("USERS", this.users);
-        console.log("USERS WORLD", this.usersWorld);
         delete this.users[socket.id];
 
         if (this.usersWorld[socket.id]) {
@@ -45,7 +42,6 @@ export default function WebSocketServer() {
           ({ message }) =>
             message.emisorId !== socket.id && message.receptorId !== socket.id
         );
-        console.log("MENSJAES ELIMINADOS", this.messages);
 
         io.emit("getUsers", this.usersWorld);
         socket.broadcast.emit("disconnected", socket.id);
@@ -98,9 +94,7 @@ export default function WebSocketServer() {
       });
 
       socket.on("newActivity", (obj) => {
-        console.log("Nueva actividad...", obj);
         const activity = this.activities[obj.id];
-        console.log("NEW ACTIVITIES", activity);
         if (!activity) {
           const objActivity = {
             [obj.id]: {
@@ -120,12 +114,10 @@ export default function WebSocketServer() {
       });
 
       socket.on("recuperarPersonajes", (id) => {
-        console.log("Recuperando personajes...");
         socket.broadcast.emit("recuperarPersonajes", id);
       });
 
       socket.on("recuperarActividades", () => {
-        console.log("Recuperando actividades...");
         socket.broadcast.emit("recuperarActividades");
       });
 
@@ -143,7 +135,6 @@ export default function WebSocketServer() {
       });
 
       socket.on("currentLocation", (socketId) => {
-        console.log("Obteniendo ubicación actual...");
         socket.emit("getCurrentLocation", socketId);
       });
 
@@ -168,7 +159,6 @@ export default function WebSocketServer() {
       });
 
       socket.on("createPointer", (obj) => {
-        console.log("Creando puntero... PROFESOR", obj);
         socket.emit("createPointer", obj);
         socket.broadcast.emit("newActivity", obj);
       });
@@ -194,7 +184,6 @@ export default function WebSocketServer() {
       });
 
       socket.on("getActivity", (obj) => {
-        console.log("GET ACTIVITY", this.activities[obj.id]);
         const getObj = {
           id: obj.id,
           activity: this.activities[obj.id],
@@ -208,11 +197,7 @@ export default function WebSocketServer() {
           this.activities[obj.id].location._y != obj.location._y ||
           this.activities[obj.id].location._z != obj.location._z
         ) {
-          console.log(
-            "UBICACIONES DISTINTAS",
-            this.activities[obj.id].location,
-            obj.location
-          );
+          
           socket.emit("updatePointer", { id: obj.id, location: obj.location });
         }
         const objActivity = {
@@ -223,7 +208,6 @@ export default function WebSocketServer() {
           questions: obj.questions,
         };
         this.activities[obj.id] = objActivity;
-        console.log("ACTIVITIES UPDATE", this.activities);
       });
 
       socket.on("startActivity", (obj) => {
@@ -236,7 +220,6 @@ export default function WebSocketServer() {
 
       socket.on("debug", () => {
         socket.emit("debug");
-        // socket.emit("feedbackScene");
       });
 
       socket.on("renderCustomizeScene", async (obj) => {
@@ -262,8 +245,6 @@ export default function WebSocketServer() {
           userName: obj.userName,
           isProfessor: obj.isProfessor,
         });
-        console.log("USUARIO", usuario);
-        console.log("OBJETO", obj);
         if (usuario) {
           usuario.color = obj.color ? obj.color : usuario.color;
           usuario.accessoryName = obj.accessoryName;
@@ -276,7 +257,6 @@ export default function WebSocketServer() {
       });
 
       socket.on("reloadCustomizeCharacter", (obj) => {
-        console.log("socket.id", socket.id, "con obj", obj);
         socket.emit("reloadCustomizeCharacter", obj);
       });
 
@@ -294,7 +274,6 @@ export default function WebSocketServer() {
       });
 
       socket.on("selectedChatUser", (user) => {
-        console.log("selectedChatUser", user);
         socket.emit("selectedChatUser", user);
 
         const key1 = `${user.emisorId}-${user.receptor.id}`;
@@ -303,7 +282,6 @@ export default function WebSocketServer() {
           (item) => item.key === key1 || item.key === key2
         );
 
-        console.log("filterMessages", filterMessages);
         io.to(user.emisorId).emit("lastMessages", filterMessages);
       });
 
@@ -321,7 +299,6 @@ export default function WebSocketServer() {
 
         this.messages.push({ key: key, message: message });
 
-        console.log("MESNAGES", this.messages);
         const idReceptor = obj.receptorId;
         io.to(idReceptor).emit("notificationMessage", obj);
         io.emit("chatMessage", obj);
@@ -333,28 +310,23 @@ export default function WebSocketServer() {
         const filterMessages = this.messages.filter(
           (item) => item.key === key1 || item.key === key2
         );
-        console.log("filterMessages", filterMessages);
         io.to(obj.emisorId).emit("lastMessages", filterMessages);
       });
 
       socket.on("getLastMessage", (obj) => {
-        console.log;
         const key1 = `${obj.emisorId}-${obj.receptor.id}`;
         const key2 = `${obj.receptor.id}-${obj.emisorId}`;
         const filterMessages = this.messages.filter(
           (item) => item.key === key1 || item.key === key2
         );
-        console.log("filterMessages", filterMessages);
         io.to(obj.emisorId).emit("lastMessages", filterMessages);
       });
 
       socket.on("exitChat", (obj) => {
-        console.log("exitChat", obj);
         socket.emit("exitChat", obj);
       });
 
       socket.on("getMoney", async (obj) => {
-        console.log("obj", obj);
         let usuario = await system.buscarUsuario({
           userName: obj.userName,
           isProfessor: obj.isProfessor,
@@ -376,8 +348,6 @@ export default function WebSocketServer() {
           userName: obj.user.userName,
           isProfessor: obj.user.isProfessor,
         });
-
-        console.log("objsaveColor", obj);
 
         if (usuario) {
           usuario.purse -= obj.color.precio;
@@ -422,8 +392,6 @@ export default function WebSocketServer() {
           isProfessor: obj.user.isProfessor,
         });
 
-        console.log("objsaveAccessory", obj);
-
         if (usuario) {
           usuario.purse -= obj.accessory.precio;
           usuario.accessories.push(obj.accessory.id);
@@ -449,7 +417,6 @@ export default function WebSocketServer() {
       });
 
       socket.on("plusPurse", async (obj) => {
-        console.log("objPurse", obj);
         let usuario = await system.buscarUsuario({
           userName: obj.user.userName,
           isProfessor: obj.user.isProfessor,
@@ -468,7 +435,6 @@ export default function WebSocketServer() {
       });
 
       socket.on("deleteActivity", (obj) => {
-        console.log("DELETE ACTIVITY CON ID", obj.id);
         socket.emit("deleteActivity", obj.id);
       });
     });

@@ -23,14 +23,6 @@ export const ListUserChat = ({ users, selectedChat }) => {
   };
 
   useEffect(() => {
-    console.log("users en list", users);
-  }, [users]);
-
-  useEffect(() => {
-    console.log("numMessagesWithoutRead en listasdasd", numMessagesWithoutRead);
-  }, [numMessagesWithoutRead]);
-
-  useEffect(() => {
     socket.on("exitChat", (chat) => {
       setNumMessagesWithoutRead((prevState) => ({
         ...prevState,
@@ -41,7 +33,6 @@ export const ListUserChat = ({ users, selectedChat }) => {
 
   useEffect(() => {
     const handleChatMessage = (data) => {
-      console.log("data en listuuser", data, "y", selectedChat);
       if (
         data.receptor.name === myUser.userName &&
         data.receptor.role === (myUser.isProfessor ? "Profesor" : "Estudiante")
@@ -59,10 +50,6 @@ export const ListUserChat = ({ users, selectedChat }) => {
       socket.off("chatMessage", handleChatMessage);
     };
   }, [selectedChat, myUser]);
-
-  useEffect(() => {
-    console.log("numMessagesWithoutRead", numMessagesWithoutRead);
-  }, [numMessagesWithoutRead]);
 
   return (
     <ul

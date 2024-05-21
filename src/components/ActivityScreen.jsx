@@ -79,7 +79,6 @@ export const ActivityScreen = ({ setActivityScreen }) => {
   };
 
   const exitActivity = () => {
-    console.log("Saliendo de la actividad", activity);
     handleClickCerrar();
     const truncScore = Math.trunc(score);
     socket.emit("plusPurse", { user: myUser, score: truncScore });
@@ -97,7 +96,6 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     }
 
     if (answers.length < activity.questions.length) {
-      console.log("Faltan responder preguntas");
       toast.warning(
         "Revisa bien las preguntas de la actividad, tienes preguntas sin responder."
       );
@@ -118,7 +116,6 @@ export const ActivityScreen = ({ setActivityScreen }) => {
   useEffect(() => {
     // Escuchar el evento "debug"
     socket.on("debug", () => {
-      console.log("DEBUG");
       setDebug(true);
       setScoreVisible(true);
       socket.emit("feedbackScene");
@@ -128,7 +125,6 @@ export const ActivityScreen = ({ setActivityScreen }) => {
 
   useEffect(() => {
     socket.on("endActivity", () => {
-      console.log("endActivity");
       setEndActivity(true);
     });
 

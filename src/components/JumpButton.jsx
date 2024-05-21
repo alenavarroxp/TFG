@@ -2,7 +2,6 @@ import { FaAnglesDown } from "react-icons/fa6";
 import { socket } from "../utils/socket";
 export const JumpButton = () => {
   const sendJump = () => {
-    console.log("Jumping");
     socket.emit("jump");
   };
 

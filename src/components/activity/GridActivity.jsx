@@ -19,23 +19,11 @@ export const GridActivity = ({
   const [feedback] = useAtom(feedbackAtom);
   const [questionsAnswered] = useAtom(questionAnsweredAtom);
 
-  useEffect(() => {
-    console.log("questionAnswered", questionsAnswered);
-  }, [questionsAnswered]);
-
   const customColor = (question) => {
     if (feedbackVisible) {
       const questionFeedback = feedback[question.id - 1];
       const correctsAnswers = questionFeedback?.corrects[0] || [];
       const wrongsAnswers = questionFeedback?.wrongs[0] || [];
-
-      console.log(
-        "idquestion, question, corrects and wrongs",
-        question.id,
-        questionFeedback,
-        correctsAnswers,
-        wrongsAnswers
-      );
 
       if (
         correctsAnswers.length === questions[question.id - 1].correct.length &&

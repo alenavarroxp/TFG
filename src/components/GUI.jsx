@@ -48,9 +48,7 @@ export const GUI = () => {
     });
 
     socket.on("notificationMessage", (obj) => {
-      console.log("NOTIFICATION", obj);
       if (!chatScreen && !activityScreen && !customizeScreen && !crearScreen) {
-        console.log("renderizar notificacion");
         handleNotification(obj);
       }
     });
@@ -63,7 +61,6 @@ export const GUI = () => {
   const handleNotification = (obj) => {
     if (toast) toast.dismiss();
 
-    console.log("OBJ NOTIFICATION", obj);
     toast(
       <div>
         <strong
@@ -96,7 +93,6 @@ export const GUI = () => {
           setChatScreen(!chatScreen);
           socket.emit("NoMove");
 
-          console.log("OBJ QUE RECIBO");
           socket.emit("selectedChatUser", {
             emisorId: obj.receptorId,
             emisor: {

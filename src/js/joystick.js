@@ -47,8 +47,6 @@ export class JoyStick {
       //   if (data.direction) {
       //     const { x, y } = data.direction;
 
-      //     console.log("Dirección:", x, y);
-
       //     this.resetKeys(keys);
 
       //     if (y === "up") {
@@ -66,7 +64,6 @@ export class JoyStick {
     });
 
     this.joystickManager.on("end", () => {
-      console.log("Joystick ended");
       this.resetKeys(keys);
     });
   };
@@ -85,12 +82,10 @@ export class JoyStick {
       this.joystickManager = null;
       this.enabled = false;
     }
-    console.log("Joystick disabled");
   };
 
   enable = (keys, container) => {
     if (!this.enabled) {
-      console.log("Joystick enabled");
       this.container = container;
       this.joystickManager = nipplejs.create({
         ...this.joystickOptions,

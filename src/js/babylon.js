@@ -8,7 +8,6 @@ import { JoyStick } from "./joystick.js";
 import { Stand } from "./stand.js";
 
 export function initScene(canvas, user) {
-  console.log("Iniciando escena...");
   socket.emit("init");
   window.CANNON = CANNON;
   // Crear el motor de Babylon.js
@@ -57,7 +56,6 @@ export function initScene(canvas, user) {
   const escenario = new Escenario();
   // engine.hideLoadingUI();
   escenario.initMap(scene, camera, function () {
-    console.log("Escenario cargado");
     engine.hideLoadingUI();
   });
 
@@ -373,7 +371,6 @@ export function initScene(canvas, user) {
   });
 
   socket.on("disconnected", (id) => {
-    console.log("Desconectado del servidor", id);
     eliminarPersonaje(id);
     socket.emit("saveCharacter", {
       userName: character.user.userName,
@@ -387,8 +384,8 @@ export function initScene(canvas, user) {
 
   socket.on("newCharacter", (obj) => {
     const object = characters.find((character) => character.id === obj.id);
-    console.log("CHARACTER EN NEW CHARACTER en ", socket.id, "con ", obj);
     if (!object) {
+      // eslint-disable-next-line no-unused-vars
       const character = new Character(
         obj.id,
         obj.position,
@@ -401,7 +398,6 @@ export function initScene(canvas, user) {
           characters.push(character);
         }
       );
-      console.log("character Creado", character);
     }
   });
 
@@ -424,7 +420,6 @@ export function initScene(canvas, user) {
   });
 
   socket.on("recuperarPersonajes", () => {
-    // console.log("Recuperando personajes...");
     for (const character of characters) {
       try {
         let position = {
@@ -452,10 +447,8 @@ export function initScene(canvas, user) {
   });
 
   socket.on("recuperarActividades", () => {
-    // console.log("Recuperando actividades...");
     for (const activity of activities) {
       try {
-        // console.log("activity", activity);
         socket.emit("newActivity", {
           id: activity.id,
           location: activity.element.pointer._position,
@@ -560,7 +553,6 @@ export function initScene(canvas, user) {
             id: key,
             element: element,
           };
-          console.log("ACTIVITY", activity);
           activities.push(activity);
           createExclamation();
           updateInfoStand();
@@ -577,7 +569,6 @@ export function initScene(canvas, user) {
   });
 
   socket.on("newActivity", (obj) => {
-    // console.log("Nueva actividad en babylonJS", obj);
     createPointer(obj);
   });
 
@@ -619,7 +610,6 @@ export function initScene(canvas, user) {
   socket.on("updatePointer", (obj) => {
     const activity = activities.find((activity) => activity.id === obj.id);
     if (activity) {
-      // console.log("ACTIVITY", activity);
       activity.element.updatePosition(obj.location);
     }
   });

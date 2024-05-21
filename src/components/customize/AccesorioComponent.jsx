@@ -48,9 +48,7 @@ export const AccesorioComponent = ({
 
   useEffect(() => {
     const handleCanShop = (data) => {
-      console.log("DATA", data, selectedAccessoryItem);
       const accessory = accessorios.find((accessory) => accessory === selectedAccessoryItem);
-      console.log("color", accessory);
       if (accessory) {
         socket.emit("shop", { user: data, precio: accessory.precio });
       } else {
@@ -67,7 +65,6 @@ export const AccesorioComponent = ({
 
   useEffect(() => {
     socket.on("buyItem", () => {
-      console.log("selectedAccesory", selectedAccessoryItem);
       const accessory = accessorios.find((accessory) => accessory === selectedAccessoryItem);
       socket.emit("saveAccessory", { user: myUser, accessory: accessory });
     });
@@ -77,7 +74,6 @@ export const AccesorioComponent = ({
 
   useEffect(() => {
     socket.on("changeTagAccessory", (data) => {
-      console.log("data", data);
       setAccessorios((prev) =>
         prev.map((accessory) =>
           accessory.id === data.id

@@ -38,7 +38,6 @@ export const ModalShop = ({
         color: oldColor,
       });
     } else {
-      console.log("selectedAccessoryItem", selectedAccessoryItem);
       setSelectedAccessoryItem(null);
       socket.emit("customizeCharacter", {
         type: "accessory",

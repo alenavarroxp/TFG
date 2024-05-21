@@ -74,7 +74,6 @@ export const ColorComponent = ({
 
   useEffect(() => {
     socket.on("buyItem", () => {
-      console.log("selectedColorItem", selectedColorItem);
       const color = colors.find((color) => color.color === selectedColorItem);
       socket.emit("saveColor", { user: myUser, color: color });
     });
@@ -84,7 +83,6 @@ export const ColorComponent = ({
 
   useEffect(() => {
     socket.on("changeTag", (data) => {
-      console.log("data", data);
       setColors((prev) =>
         prev.map((color) =>
           color.color === data
@@ -103,9 +101,7 @@ export const ColorComponent = ({
 
   useEffect(() => {
     const handleCanShop = (data) => {
-      console.log("DATA", data, selectedColorItem);
       const color = colors.find((color) => color.color === selectedColorItem);
-      console.log("color", color);
       if (color) {
         socket.emit("shop", { user: data, precio: color.precio });
       } else {

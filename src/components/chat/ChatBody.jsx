@@ -14,7 +14,6 @@ export const ChatBody = ({ selectedChat }) => {
 
   useEffect(() => {
     const handleChatMessage = (data) => {
-      console.log("chatMessage", data, selectedChat);
       if (
         (data.emisor.userName === selectedChat.emisor.userName &&
           data.receptor.name === selectedChat.receptor.name) ||
@@ -43,7 +42,6 @@ export const ChatBody = ({ selectedChat }) => {
 
   useEffect(() => {
     const handleLastMessages = (data) => {
-      console.log("data last messages", data);
       const oldMessages = data.map((message) => ({
         id: message.message.id,
         emisor: message.message.emisor,
@@ -52,7 +50,6 @@ export const ChatBody = ({ selectedChat }) => {
         date: message.message.date,
       }));
 
-      console.log("oldMessages", oldMessages);
       setMessages(oldMessages);
     };
 
@@ -63,10 +60,6 @@ export const ChatBody = ({ selectedChat }) => {
       socket.off("lastMessages", handleLastMessages);
     };
   }, [selectedChat]);
-
-  useEffect(() => {
-    console.log("messages", messages);
-  }, [messages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
