@@ -445,6 +445,7 @@ export class Character {
     }
 
     for (const activity of activities) {
+      if(!activity.element.pointer) continue;
       if (activity.element.pointer.intersectsMesh(this.capsule, true)) {
         // console.log("Colisión con actividad", activity);
         return { collisionType: "activity_collision", activityId: activity.id };

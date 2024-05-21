@@ -2,16 +2,14 @@ import { Modal } from "antd";
 import { useState } from "react";
 
 // eslint-disable-next-line react/prop-types
-export const ConfirmModal = ({ confirmModal, setConfirmModal, onConfirm}) => {
+export const ConfirmModal = ({ confirmModal, setConfirmModal, onConfirm }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState(
     "Al finalizar, no podrás volver a responder las preguntas, se guardarán tus respuestas y se mostrará tu puntuación."
   );
 
   const handleOk = () => {
-    setModalText(
-      "Corrigiendo tus respuestas... Por favor, espera..."
-    );
+    setModalText("Corrigiendo tus respuestas... Por favor, espera...");
     setConfirmLoading(true);
     setTimeout(() => {
       setConfirmModal(false);
@@ -23,6 +21,7 @@ export const ConfirmModal = ({ confirmModal, setConfirmModal, onConfirm}) => {
   const handleCancel = () => {
     setConfirmModal(false);
   };
+
   return (
     <>
       <Modal

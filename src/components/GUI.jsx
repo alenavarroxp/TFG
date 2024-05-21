@@ -96,7 +96,7 @@ export const GUI = () => {
           setChatScreen(!chatScreen);
           socket.emit("NoMove");
 
-          console.log("OBJ QUE RECIBO")
+          console.log("OBJ QUE RECIBO");
           socket.emit("selectedChatUser", {
             emisorId: obj.receptorId,
             emisor: {
@@ -181,6 +181,71 @@ export const GUI = () => {
     socket.emit("NoMove");
     setChatScreen(!chatScreen);
   };
+
+  const handleToastPurse = (obj) => {
+    if (obj.purse >= 5) {
+      toast(
+        <div>
+          <strong
+            className="text-md"
+            style={{ display: "block", marginBottom: "5px" }}
+          >
+            🎒 Actualización de monedero 🎒
+          </strong>
+          <span className="text-sm">
+            {`Has recibido ${obj.purse} monedas. Ahora tienes un total de ${obj.totalPurse} monedas.`}
+          </span>
+        </div>,
+        {
+          position: "top-right",
+          autoClose: 50000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          delay: 100,
+          className:
+            "bg-[#F3F4F6] border border-[#D1D5DB] rounded-lg shadow-lg",
+        }
+      );
+    } else {
+      toast(
+        <div>
+          <strong
+            className="text-md"
+            style={{ display: "block", marginBottom: "5px" }}
+          >
+            🎒 Actualización de monedero 🎒
+          </strong>
+          <span className="text-sm">
+            {`No has recibido monedas. Sacaste menos de 5 en la actividad.`}
+          </span>
+        </div>,
+        {
+          position: "top-right",
+          autoClose: 50000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          delay: 100,
+          className:
+            "bg-[#F3F4F6] border border-[#D1D5DB] rounded-lg shadow-lg",
+        }
+      );
+    }
+  };
+  useEffect(() => {
+    socket.on("updatePurse", (obj) => {
+      if (obj.totalPurse) handleToastPurse(obj);
+    });
+
+    return () => {
+      socket.off("updatePurse");
+    };
+  }, []);
 
   return (
     <>

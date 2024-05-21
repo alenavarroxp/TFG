@@ -8,17 +8,20 @@ import { UnderlinedText } from "./UnderlinedText";
 import { GridActivity } from "./activity/GridActivity";
 import { EndActivity } from "./activity/EndActivity";
 import { useEffect, useState } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { totalAnswersAtom } from "../context/atoms/totalAnswers";
 import { ConfirmModal } from "./activity/ConfirmModal";
 import { FinalScore } from "./activity/FinalScore";
 import { TourComponent } from "./TourComponent";
 import { toast, Toaster } from "sonner";
+import { userAtom } from "../context/atoms/userAtom";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
+  const myUser = useAtomValue(userAtom);
   const [activity, setActivity] = useState({});
   const [actualQuestion, setActualQuestion] = useState({});
   const [answers] = useAtom(totalAnswersAtom);
+  const [endActivity, setEndActivity] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(false);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
@@ -59,26 +62,38 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     setConfirmModal(true);
   };
 
+  const exitActivity = () => {
+    console.log("Saliendo de la actividad");
+    handleClickCerrar();
+    const truncScore = Math.trunc(score);
+    socket.emit("plusPurse", { user: myUser, score: truncScore });
+  };
+
   const handleCheckAnswer = () => {
     setActualQuestion(activity.questions[0]);
     // Verifica que haya preguntas y respuestas antes de realizar la comparación.
     if (activity.questions.length === 0 || answers.length === 0) {
-      toast.warning("No has respondido ninguna pregunta. Rellena las respuestas para continuar.");
+      toast.warning(
+        "No has respondido ninguna pregunta. Rellena las respuestas para continuar."
+      );
       return;
     }
 
-    if(answers.length < activity.questions.length) {
+    if (answers.length < activity.questions.length) {
       console.log("Faltan responder preguntas");
-      toast.warning("Revisa bien las preguntas de la actividad, tienes preguntas sin responder.");
+      toast.warning(
+        "Revisa bien las preguntas de la actividad, tienes preguntas sin responder."
+      );
       return;
     }
-    
+
     setScoreVisible(true);
     setFeedbackVisible(true);
   };
 
   useEffect(() => {
     if (scoreVisible) {
+      socket.emit("endActivity");
       socket.emit("feedbackScene", score);
     }
   }, [score, scoreVisible]);
@@ -92,12 +107,23 @@ export const ActivityScreen = ({ setActivityScreen }) => {
       socket.emit("feedbackScene");
     });
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Lista de dependencias vacía para ejecutar el efecto solo una vez al montar el componente
+  }, []);
+
+  useEffect(() => {
+    socket.on("endActivity", () => {
+      console.log("endActivity");
+      setEndActivity(true);
+    });
+
+    return () => {
+      socket.off("endActivity");
+    };
+  }, []);
 
   return (
     <div className="min-h-full w-full flex flex-col absolute bg-[#167563] text-white overflow-x-hidden overflow-y-hidden custom-scrollbar">
       <Toaster richColors position="bottom-right" />
-      {confirmModal && (
+      {confirmModal && !endActivity && (
         <ConfirmModal
           confirmModal={confirmModal}
           setConfirmModal={setConfirmModal}
@@ -112,7 +138,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
         />
       )}
       <div className="absolute top-2 right-3">
-        <button onClick={handleClickCerrar}>
+        <button onClick={!endActivity ? handleClickCerrar : exitActivity}>
           <IoCloseOutline size={24} />
         </button>
       </div>
@@ -146,7 +172,10 @@ export const ActivityScreen = ({ setActivityScreen }) => {
             setActualQuestion={setActualQuestion}
             feedbackVisible={feedbackVisible}
           />
-          <EndActivity onClick={handleConfirmModal} />
+          <EndActivity
+            text={!endActivity ? "Terminar actividad" : "Salir de la actividad"}
+            onClick={!endActivity ? handleConfirmModal : exitActivity}
+          />
           {scoreVisible && (
             <>
               <FinalScore

@@ -443,6 +443,29 @@ export default function WebSocketServer() {
           socket.emit("getAccessories", usuario.accessories);
         }
       });
+
+      socket.on("endActivity", () => {
+        socket.emit("endActivity");
+      });
+
+      socket.on("plusPurse", async (obj) => {
+        console.log("objPurse", obj);
+        let usuario = await system.buscarUsuario({
+          userName: obj.user.userName,
+          isProfessor: obj.user.isProfessor,
+        });
+
+        if (usuario) {
+          if (obj.score >= 5) {
+            usuario.purse += obj.score;
+            await system.actualizarUsuario(usuario);
+          }
+          socket.emit("updatePurse", {
+            purse: obj.score,
+            totalPurse: usuario.purse,
+          });
+        }
+      });
     });
   };
 }
