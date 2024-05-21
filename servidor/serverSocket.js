@@ -466,6 +466,11 @@ export default function WebSocketServer() {
           });
         }
       });
+
+      socket.on("deleteActivity", (obj) => {
+        console.log("DELETE ACTIVITY CON ID", obj.id);
+        socket.emit("deleteActivity", obj.id);
+      });
     });
   };
 }

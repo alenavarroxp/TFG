@@ -218,4 +218,12 @@ export class Stand {
       }
     );
   }
+
+  deleteExclamation() {
+    if (this.exclamation) {
+      this.exclamation.dispose();
+      this.exclamation = null;
+    }
+  }
+
 }

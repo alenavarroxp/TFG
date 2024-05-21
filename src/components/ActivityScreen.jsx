@@ -15,6 +15,7 @@ import { FinalScore } from "./activity/FinalScore";
 import { TourComponent } from "./TourComponent";
 import { toast, Toaster } from "sonner";
 import { userAtom } from "../context/atoms/userAtom";
+import { questionAnsweredAtom } from "../context/atoms/questionAnsweredAtom";
 
 export const ActivityScreen = ({ setActivityScreen }) => {
   const myUser = useAtomValue(userAtom);
@@ -28,6 +29,7 @@ export const ActivityScreen = ({ setActivityScreen }) => {
   const [tourVisible, setTourVisible] = useState(false);
   const [score, setScore] = useState(0);
   const [debug, setDebug] = useState(false);
+  const [questionAnswered] = useAtom(questionAnsweredAtom)
 
   const handleClickCerrar = () => {
     setActivityScreen(false);
@@ -62,11 +64,16 @@ export const ActivityScreen = ({ setActivityScreen }) => {
     setConfirmModal(true);
   };
 
+  const resetAll = () =>{
+    //TODO
+  } 
+
   const exitActivity = () => {
-    console.log("Saliendo de la actividad");
+    console.log("Saliendo de la actividad", activity);
     handleClickCerrar();
     const truncScore = Math.trunc(score);
     socket.emit("plusPurse", { user: myUser, score: truncScore });
+    resetAll();
   };
 
   const handleCheckAnswer = () => {

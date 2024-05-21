@@ -239,13 +239,16 @@ export const GUI = () => {
   };
   useEffect(() => {
     socket.on("updatePurse", (obj) => {
-      if (obj.totalPurse) handleToastPurse(obj);
+      if (obj.totalPurse) {
+        handleToastPurse(obj);
+        socket.emit("deleteActivity", { id: activityId });
+      }
     });
 
     return () => {
       socket.off("updatePurse");
     };
-  }, []);
+  }, [activityId]);
 
   return (
     <>

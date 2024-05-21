@@ -102,6 +102,7 @@ export function initScene(canvas, user) {
   let character;
 
   const activities = [];
+  const activitiesCompleted = [];
 
   // Control de teclado
   const keys = {
@@ -386,13 +387,13 @@ export function initScene(canvas, user) {
 
   socket.on("newCharacter", (obj) => {
     const object = characters.find((character) => character.id === obj.id);
-    console.log("CHARACTER EN NEW CHARACTER en ",socket.id, "con ", obj);
+    console.log("CHARACTER EN NEW CHARACTER en ", socket.id, "con ", obj);
     if (!object) {
       const character = new Character(
         obj.id,
         obj.position,
         obj.rotation,
-        {userName: obj.userName, isProfessor: obj.isProfessor},
+        { userName: obj.userName, isProfessor: obj.isProfessor },
         obj.color,
         obj.accessoryName,
         scene,
@@ -529,20 +530,28 @@ export function initScene(canvas, user) {
 
   const updateInfoStand = () => {
     const activityCount = activities.length;
-    const activityText =
-      activityCount === 1 ? "actividad pendiente" : "actividades pendientes";
-    infoStand.createDisplayInfo(
-      "¡Descubre y completa " +
-        activityCount +
-        " " +
-        activityText +
-        " en el mundo!"
-    );
+    if (activityCount >= 1) {
+      const activityText =
+        activityCount === 1 ? "actividad pendiente" : "actividades pendientes";
+      infoStand.createDisplayInfo(
+        "¡Descubre y completa " +
+          activityCount +
+          " " +
+          activityText +
+          " en el mundo!"
+      );
+    } else {
+      infoStand.createDisplayInfo("No tienes actividades pendientes");
+      infoStand.deleteExclamation();
+    }
   };
 
   const createPointer = (obj) => {
     Object.keys(obj).forEach((key) => {
-      if (!activities.map((activity) => activity.id).includes(key)) {
+      if (
+        !activities.map((activity) => activity.id).includes(key) &&
+        !activitiesCompleted.map((activity) => activity.id).includes(key)
+      ) {
         try {
           let element = new Pointer(scene);
           element.createPointer(obj[key].location, "book");
@@ -551,6 +560,7 @@ export function initScene(canvas, user) {
             id: key,
             element: element,
           };
+          console.log("ACTIVITY", activity);
           activities.push(activity);
           createExclamation();
           updateInfoStand();
@@ -638,6 +648,20 @@ export function initScene(canvas, user) {
       if (obj.obj.accessoryName && !character.headAccessory)
         character.changeAccessory(obj.obj.accessoryName, scene);
       else character.reloadAccessory(obj.obj.accessoryName);
+    }
+  });
+
+  socket.on("deleteActivity", (id) => {
+    const activity = activities.find((activity) => activity.id === id);
+    if (activity) {
+      const activityCompleted = {
+        id: activity.id,
+      };
+      activitiesCompleted.push(activityCompleted);
+      activity.element.dispose();
+      const index = activities.indexOf(activity);
+      activities.splice(index, 1);
+      updateInfoStand();
     }
   });
 }
