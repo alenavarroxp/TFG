@@ -54,7 +54,7 @@ export const CustomizeBody = ({
         </div>
 
         {selectedTab === "Colores" && (
-          <div className="grid grid-cols-5 grid-rows-2 gap-4 p-3 h-full  justify-center items-center relative">
+          <div className="grid grid-cols-5 grid-rows-2 gap-4 p-3 h-full  justify-center items-center ">
             <ColorComponent
               initialColors={colors}
               selectedColorItem={selectedColorItem}
@@ -77,7 +77,7 @@ export const CustomizeBody = ({
         )}
         {selectedTab === "Accesorios" && (
           <>
-            <div className="grid grid-cols-3 grid-rows-1 gap-4 p-3 h-full  justify-center items-center relative">
+            <div className="grid grid-cols-3 grid-rows-1 gap-4 p-3 h-full  justify-center items-center">
               <AccesorioComponent
                 initialAccesorios={accesorios}
                 selectedAccessoryItem={selectedAccessoryItem}
