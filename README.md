@@ -10,7 +10,7 @@ El sistema se enmarca en el contexto educativo de los alumnos de infantil y prim
 ### Tecnologías Utilizadas
 Para el desarrollo de este proyecto, se han utilizado una variedad de tecnologías que permiten construir una aplicación web robusta y eficiente. A continuación se presenta una lista de las principales tecnologías utilizadas:
 
-
+<div align="center">
 <p align="center">
     <table style="margin: 0 auto; border-collapse: collapse;">
         <tr>
@@ -39,6 +39,8 @@ Para el desarrollo de este proyecto, se han utilizado una variedad de tecnologí
                 <p style="margin-top: 10px;">React</p>
                 <p style="margin-top: 10px;"><a href="https://reactjs.org/" target="_blank"><img src="https://img.shields.io/badge/-React-blue" alt="React Badge"/></a></p>
             </td>
+        </tr>
+        <tr>
             <td style="text-align:center; padding: 20px;">
                 <img src="https://avatars.githubusercontent.com/u/4855800?s=200&v=4" alt="BabylonJS" width="50" height="50"/>
                 <p style="margin-top: 10px;">BabylonJS</p>
@@ -67,6 +69,7 @@ Para el desarrollo de este proyecto, se han utilizado una variedad de tecnologí
         </tr>
     </table>
 </p>
+</div>
 
 ## Capturas de pantalla
 
