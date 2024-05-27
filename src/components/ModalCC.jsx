@@ -30,19 +30,19 @@ export const ModalCC = ({ modalCC, setModalCC }) => {
         <div>
           <a href="https://poly.pizza/m/ayNYjI4jcW4">Sheriff Hat</a> by{" "}
           <a href="https://poly.pizza/u/Poly%20by%20Google">Poly by Google</a> [
-          <a href="https://creativecommons.org/licenses/by/3.0/">CC-BY</a>] via
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>] via
           Poly Pizza
         </div>
         <div>
           <a href="https://poly.pizza/m/7VVumyY7L_u">Wizard hat</a> by{" "}
           <a href="https://poly.pizza/u/Poly%20by%20Google">Poly by Google</a> [
-          <a href="https://creativecommons.org/licenses/by/3.0/">CC-BY</a>] via
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>] via
           Poly Pizza
         </div>
         <div>
           <a href="https://poly.pizza/m/9QEds6cYAy6">Pirate Hat</a> by{" "}
           <a href="https://poly.pizza/u/Poly%20by%20Google">Poly by Google</a> [
-          <a href="https://creativecommons.org/licenses/by/3.0/">CC-BY</a>] via
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>] via
           Poly Pizza
         </div>
       </div>

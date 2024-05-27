@@ -654,13 +654,24 @@ export function initScene(canvas, user) {
       updateInfoStand();
     }
   });
+
+  socket.on("spawn", (obj) => {
+    const character = characters.find((character) => character.id === obj);
+    if (character) {
+      character.mesh.position = new BABYLON.Vector3(
+        Math.random() * (0.25 - -0.25) + -0.25,
+        0,
+        Math.random() * (0.25 - -0.25) + -0.25
+      );
+    }
+  });
 }
 
 function feedbackScene(character, score) {
   // Crear una escena de babylonJS
   const canvas = document.getElementById("feedbackScene");
 
-  if(!canvas) return;
+  if (!canvas) return;
 
   const engine = new BABYLON.Engine(canvas, true);
   engine.displayLoadingUI();

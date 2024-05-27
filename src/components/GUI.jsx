@@ -23,6 +23,7 @@ import { CustomizeScreen } from "./customize/CustomizeScreen";
 import { ChatScreen } from "./chat/ChatScreen";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaMapLocationDot } from "react-icons/fa6";
 
 export const GUI = () => {
   const [userModal, setUserModal] = useState(false);
@@ -241,6 +242,10 @@ export const GUI = () => {
     };
   }, [activityId]);
 
+  const handleSpawnClick = () => {
+    socket.emit("spawn",socket.id);
+  };
+
   return (
     <>
       {!chooseLocation.isChoosing && !modal ? (
@@ -298,6 +303,7 @@ export const GUI = () => {
               props="mt-6 ml-6"
               labelProps="px-4 p-1.5 translate-x-10"
             />
+            
             <JoyStickContainer />
           </div>
           <div className="flex flex-col justify-between items-end w-full h-2/3">
@@ -330,6 +336,19 @@ export const GUI = () => {
               label="Cambio de cámara"
               props=" mr-6"
               labelProps="px-4 p-1.5 -translate-x-44"
+            />
+            <GUIButton
+              id="spawnBtn"
+              onClick={handleSpawnClick}
+              onKeyDown={handleKeyDown}
+              icon={
+                <FaMapLocationDot
+                  size={22}
+                />
+              }
+              label="Volver al spawn"
+              props="mt-6 mr-6"
+              labelProps="px-4 p-1.5 -translate-x-40"
             />
             
             <JumpButton />

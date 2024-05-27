@@ -6,12 +6,14 @@ import { useEffect, useState } from "react";
 import { handleKeyDown } from "../utils/handleKeyDown";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../context/atoms/userAtom";
+import { FaCreativeCommons } from "react-icons/fa";
+import { ModalCCUserList } from "./ModalCCUserList";
 
 export const UserList = ({ setChatScreen }) => {
   const myUser = useAtomValue(userAtom);
   const [users, setUsers] = useState([]);
   const [isMyUser, setIsMyUser] = useState(false);
- 
+  const [modalCC, setModalCC] = useState(false);
 
   useEffect(() => {
     socket.on("getUsers", (users) => {
@@ -51,8 +53,12 @@ export const UserList = ({ setChatScreen }) => {
     });
   };
 
+  const handleCCModal = () => {
+    setModalCC(true);
+  };
   return (
-    <div className="text-white w-full mt-2 relative">
+    <div className="text-white w-full mt-2 relative flex flex-col justify-center items-center">
+      {modalCC && <ModalCCUserList modalCC={modalCC} setModalCC={setModalCC} />}
       <ul id="usersList" className="text-white w-full">
         {users.map((user) => (
           <li
@@ -89,12 +95,19 @@ export const UserList = ({ setChatScreen }) => {
                 >
                   <BsChatLeft color="black" />
                 </button>
-                
               </div>
             )}
           </li>
         ))}
       </ul>
+      <button
+        className="text-xs border-b rounded-full bg-white text-black w-fit px-3 py-1 mt-3 mb-3 font-semibold flex justify-center items-center"
+        onClick={() => handleCCModal()}
+      >
+        <FaCreativeCommons size={15} className="mr-2" />
+        Derechos de Creative Commons de los modelos 3D
+        <FaCreativeCommons size={15} className="ml-2" />
+      </button>
     </div>
   );
 };

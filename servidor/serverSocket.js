@@ -197,7 +197,6 @@ export default function WebSocketServer() {
           this.activities[obj.id].location._y != obj.location._y ||
           this.activities[obj.id].location._z != obj.location._z
         ) {
-          
           socket.emit("updatePointer", { id: obj.id, location: obj.location });
         }
         const objActivity = {
@@ -436,6 +435,10 @@ export default function WebSocketServer() {
 
       socket.on("deleteActivity", (obj) => {
         socket.emit("deleteActivity", obj.id);
+      });
+
+      socket.on("spawn", (obj) => {
+        socket.emit("spawn", obj);
       });
     });
   };
