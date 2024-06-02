@@ -73,10 +73,14 @@ Para el desarrollo de este proyecto, se han utilizado una variedad de tecnologí
 
 ## Capturas de pantalla
 
-![Home](public/readme/home.png)
-![Mundo](public/readme/mundo.png)
-![Actividad](public/readme/actividad.png)
-![Personalizar](public/readme/personalizar.png)
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; justify-items: center;">
+  <img src="public/readme/home.png" alt="Home" width="500" height="375" />
+  <img src="public/readme/mundo.png" alt="Mundo" width="500" height="375" />
+  <img src="public/readme/actividad.png" alt="Actividad" width="500" height="375" />
+  <img src="public/readme/personalizar.png" alt="Personalizar" width="500" height="375" />
+</div>
+
+
 
 ## Funcionalidades del sistema
 A continuación se presentan algunas de las principales funcionalidades del sistema:
@@ -98,7 +102,7 @@ Para utilizar este proyecto, sigue los siguientes pasos:
 
 1. **Clona el repositorio en tu máquina local:**
     ```
-    git clone https://github.com/username/repo.git
+    git clone https://github.com/alenavarroxp/TFG.git
     ```
 
 2. **Instala las dependencias del proyecto:**
